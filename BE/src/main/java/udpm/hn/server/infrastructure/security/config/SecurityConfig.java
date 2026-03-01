@@ -1,4 +1,5 @@
 package udpm.hn.server.infrastructure.security.config;
+import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +89,9 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "*"));
         
         if (allowedOrigin != null && !allowedOrigin.isEmpty()) {
-            String[] origins = allowedOrigin.split(",");
-            config.setAllowedOrigins(List.of(origins));
+            // Split by comma and trim each origin
+            String[] origins = allowedOrigin.split("\\s*,\\s*");
+            config.setAllowedOrigins(Arrays.asList(origins));
         }
         
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

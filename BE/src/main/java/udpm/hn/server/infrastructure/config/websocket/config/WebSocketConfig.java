@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        String[] origins = ALLOWED_ORIGIN.split(",");
+        String[] origins = ALLOWED_ORIGIN.split("\\s*,\\s*");
         registry
                 .addEndpoint(registerEndpoint)
                 .addInterceptors(new WebSocketInterceptor())
