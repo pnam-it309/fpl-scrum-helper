@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .addEndpoint(registerEndpoint)
                 .addInterceptors(new WebSocketInterceptor())
-                .setAllowedOriginPatterns(origins)
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 
