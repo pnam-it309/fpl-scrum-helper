@@ -131,6 +131,7 @@ public class SecurityConfig {
                         "/*/*.js"
                 )
                 .permitAll());
+        http.authorizeHttpRequests(
                 auth -> auth.requestMatchers(
                                 "/ws/**",
                                 "/auth/**",
