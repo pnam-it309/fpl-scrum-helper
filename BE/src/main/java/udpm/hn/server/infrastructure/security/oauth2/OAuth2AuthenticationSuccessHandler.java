@@ -38,8 +38,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Setter(onMethod_ = @Autowired)
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
-    @Value("${frontend.url}")
     private String DEFAULT_TARGET_URL_TUTOR_CLIENT;
+
+    @Value("${frontend.url}")
+    public void setFrontendUrl(String frontendUrl) {
+        if (frontendUrl != null && frontendUrl.contains(",")) {
+            this.DEFAULT_TARGET_URL_TUTOR_CLIENT = frontendUrl.split("\\s*,\\s*")[0];
+        } else {
+            this.DEFAULT_TARGET_URL_TUTOR_CLIENT = frontendUrl;
+        }
+    }
 
     @Override
     public void onAuthenticationSuccess(

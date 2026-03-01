@@ -18,8 +18,16 @@ import java.io.IOException;
 @Slf4j
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${frontend.url}")
     private String fontEndUrl;
+
+    @Value("${frontend.url}")
+    public void setFontEndUrl(String fontEndUrl) {
+        if (fontEndUrl != null && fontEndUrl.contains(",")) {
+            this.fontEndUrl = fontEndUrl.split("\\s*,\\s*")[0];
+        } else {
+            this.fontEndUrl = fontEndUrl;
+        }
+    }
 
     HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
