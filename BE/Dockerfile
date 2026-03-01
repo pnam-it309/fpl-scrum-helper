@@ -5,7 +5,7 @@ COPY . .
 RUN gradle build -x test --no-daemon
 
 # Stage 2: Run app
-FROM openjdk:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 ENV TZ=Asia/Ho_Chi_Minh
