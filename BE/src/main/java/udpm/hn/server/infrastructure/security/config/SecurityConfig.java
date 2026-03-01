@@ -131,9 +131,8 @@ public class SecurityConfig {
                         "/*/*.js"
                 )
                 .permitAll());
-        http.authorizeHttpRequests(
                 auth -> auth.requestMatchers(
-//                                "/ws/**",
+                                "/ws/**",
                                 "/auth/**",
                                 Helper.appendWildcard(MappingConstants.API_AUTH_PREFIX),
                                 "/oauth2/**"
