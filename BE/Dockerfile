@@ -17,10 +17,10 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 9999
 
 # Optimization for Render Free Tier (512MB RAM)
-# -Xmx320m: Max heap size (conservative to leave room for native memory)
-# -Xms128m: Lower initial heap
-# -XX:MaxMetaspaceSize=96m: Limit metaspace
+# -Xmx224m: Max heap size (conservative to leave room for native/system memory)
+# -Xms128m: Initial heap
+# -XX:MaxMetaspaceSize=160m: Increased from 96m to resolve OOM Metaspace
 # -XX:ReservedCodeCacheSize=64m: Limit code cache
 # -XX:+UseSerialGC: Use Serial GC for lowest overhead
 # -XX:+ExitOnOutOfMemoryError: Exit immediately if OOM occurs
-CMD ["java", "-Xmx320m", "-Xms128m", "-XX:MaxMetaspaceSize=96m", "-XX:ReservedCodeCacheSize=64m", "-XX:+UseSerialGC", "-XX:+ExitOnOutOfMemoryError", "-Dserver.port=${PORT:-9999}", "-jar", "app.jar"]
+CMD ["java", "-Xmx224m", "-Xms128m", "-XX:MaxMetaspaceSize=160m", "-XX:ReservedCodeCacheSize=64m", "-XX:+UseSerialGC", "-XX:+ExitOnOutOfMemoryError", "-Dserver.port=${PORT:-9999}", "-jar", "app.jar"]
