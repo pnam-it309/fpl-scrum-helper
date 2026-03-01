@@ -32,10 +32,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String[] origins = ALLOWED_ORIGIN.split("\\s*,\\s*");
+        System.out.println("🌍 Registering WebSocket origins: " + String.join(", ", origins));
         registry
                 .addEndpoint(registerEndpoint)
                 .addInterceptors(new WebSocketInterceptor())
-                .setAllowedOrigins(origins)
+                .setAllowedOriginPatterns(origins)
                 .withSockJS();
     }
 
