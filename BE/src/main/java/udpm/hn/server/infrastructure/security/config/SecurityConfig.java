@@ -86,8 +86,13 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         source.registerCorsConfiguration("/**", config.applyPermitDefaultValues());
         config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "*"));
-        config.setAllowedOrigins(Collections.singletonList(allowedOrigin));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT", "OPTIONS", "PATCH", "DELETE"));
+        
+        if (allowedOrigin != null && !allowedOrigin.isEmpty()) {
+            String[] origins = allowedOrigin.split(",");
+            config.setAllowedOrigins(List.of(origins));
+        }
+        
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowCredentials(true);
         config.setExposedHeaders(List.of("Authorization"));
         return source;
