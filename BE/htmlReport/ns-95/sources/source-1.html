@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RoleAuthRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: RoleAuthRepository (udpm.hn.server.infrastructure.security.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">RoleAuthRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.repository.RoleRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface RoleAuthRepository extends RoleRepository {
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;
+&nbsp;                    SELECT DISTINCT
+&nbsp;                          r.code
+&nbsp;                      FROM
+&nbsp;                          Role r
+&nbsp;                      LEFT JOIN
+&nbsp;                       StaffRole sr ON r.id = sr.role.id
+&nbsp;                      WHERE
+&nbsp;                          sr.staff.id = :id
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    List&lt;String&gt; findRoleByStaffId(@Param(&quot;id&quot;) String id);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT DISTINCT r.code
+&nbsp;    FROM StaffRole sr
+&nbsp;    JOIN sr.staff s
+&nbsp;    JOIN sr.role r
+&nbsp;    JOIN StaffMajorFacility smf ON smf.staff.id = s.id
+&nbsp;    JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;    JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;    WHERE df.facility.id = :facilityId
+&nbsp;    AND s.id = :staffId
+&nbsp;    AND s.status = :status
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;String&gt; findAllRoleCodesByFacilityIdAndStaffIdAndStatus(
+&nbsp;            @Param(&quot;staffId&quot;) String staffId,
+&nbsp;            @Param(&quot;facilityId&quot;) String facilityId,
+&nbsp;        @Param(&quot;status&quot;) EntityStatus status
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT DISTINCT r.code
+&nbsp;    FROM StaffRole sr
+&nbsp;    JOIN sr.staff s
+&nbsp;    JOIN sr.role r
+&nbsp;    JOIN StaffMajorFacility smf ON smf.staff.id = s.id
+&nbsp;    JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;    JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;    WHERE df.facility.id = :facilityId
+&nbsp;    AND s.id = :staffId
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;String&gt; findAllRoleCodesByFacilityIdAndStaffId(
+&nbsp;            @Param(&quot;staffId&quot;) String staffId,
+&nbsp;            @Param(&quot;facilityId&quot;) String facilityId
+&nbsp;    );
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

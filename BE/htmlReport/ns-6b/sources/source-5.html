@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffWriter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.staff.commonio</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffWriter (udpm.hn.server.infrastructure.job.staff.commonio)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaffWriter</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StaffWriter$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.staff.commonio;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.item.Chunk;
+&nbsp;import org.springframework.batch.item.ItemWriter;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffMajorFacility;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.dto.TransferStaffRole;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigStaffCustomRepository;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigStaffMajorFacilityRepository;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Transactional
+&nbsp;public class StaffWriter implements ItemWriter&lt;Staff&gt; {
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private ConfigStaffCustomRepository staffCustomRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private ConfigStaffMajorFacilityRepository staffMajorFacilityRepository;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public void write(Chunk&lt;? extends Staff&gt; chunk) throws Exception {
+&nbsp;//        int recordNumber = 0;
+&nbsp;//
+&nbsp;//        for (TransferStaffRole transferStaffRole : chunk) {
+&nbsp;//            recordNumber++;
+&nbsp;//            try {
+&nbsp;//                Staff savedStaff = saveOrUpdateStaff(transferStaffRole.getStaff());
+&nbsp;//                StaffMajorFacility savedStaffMajorFacility = saveStaffMajorFacility(savedStaff, transferStaffRole.getStaffMajorFacility());
+&nbsp;//                log.info(
+&nbsp;//                        &quot;Successfully processed record number {}: Saved Staff Major Facility - {}&quot;,
+&nbsp;//                        recordNumber, savedStaffMajorFacility
+&nbsp;//                );
+&nbsp;//            } catch (Exception e) {
+&nbsp;//                log.error(&quot;Error processing record number {}: {}&quot;, recordNumber, transferStaffRole, e);
+&nbsp;//            }
+&nbsp;//        }
+&nbsp;//    }
+&nbsp;
+&nbsp;//    private Staff saveOrUpdateStaff(Staff staff) {
+&nbsp;//        return staffCustomRepository
+&nbsp;//                .findByCodeAndStatus(staff.getCode(), EntityStatus.ACTIVE)
+&nbsp;//                .orElseGet(() -&gt; staffCustomRepository.save(staff));
+&nbsp;//    }
+&nbsp;//
+&nbsp;//
+&nbsp;//    private StaffMajorFacility saveStaffMajorFacility(Staff staff, StaffMajorFacility staffMajorFacility) {
+&nbsp;//        staffMajorFacility.setStaff(staff);
+&nbsp;//        return staffMajorFacilityRepository.save(staffMajorFacility);
+&nbsp;//    }
+<b class="nc">&nbsp;    }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

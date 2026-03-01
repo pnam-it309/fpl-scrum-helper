@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DepartmentServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.department.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: DepartmentServiceImpl (udpm.hn.server.core.admin.department.department.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DepartmentServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (12/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (44/48)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DepartmentServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (12/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (44/48)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.department.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.request.ADCreateOrUpdateDepartmentRequest;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.request.DepartmentSearchRequest;
+&nbsp;import udpm.hn.server.core.admin.department.department.repository.ADDepartmentExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.department.service.DepartmentService;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.Department;
+&nbsp;import udpm.hn.server.entity.Major;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class DepartmentServiceImpl implements DepartmentService {
+&nbsp;
+&nbsp;    private final ADDepartmentExtendRepository ADDepartmentExtendRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllDepartment(DepartmentSearchRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(ADDepartmentExtendRepository.getAllDepartmentByFilter(pageable, request)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy danh sách bộ môn thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; addDepartment(ADCreateOrUpdateDepartmentRequest request) {
+<b class="fc">&nbsp;        String code = Helper.generateCodeFromName((request.getDepartmentCode().trim()));</b>
+<b class="fc">&nbsp;        request.setDepartmentCode(code);</b>
+<b class="fc">&nbsp;        request.setDepartmentName(request.getDepartmentName().replaceAll(&quot;\\s+&quot;, &quot; &quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean checkExistName = ADDepartmentExtendRepository.existsByName(request.getDepartmentName().trim());</b>
+<b class="fc">&nbsp;        boolean checkExistCode = ADDepartmentExtendRepository.existsByCode(code);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (checkExistName){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_ACCEPTABLE, &quot;Tên bộ môn đã tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (checkExistCode){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_ACCEPTABLE, &quot;Mã bộ môn đã tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Department department = new Department();</b>
+<b class="fc">&nbsp;        department.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;        department.setCode(code);</b>
+<b class="fc">&nbsp;        department.setName(request.getDepartmentName().trim());</b>
+<b class="fc">&nbsp;        this.ADDepartmentExtendRepository.save(department);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK,&quot;Thêm bộ môn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateDepartment(ADCreateOrUpdateDepartmentRequest request, String id) {
+<b class="fc">&nbsp;        String code = Helper.generateCodeFromName((request.getDepartmentCode().trim()));</b>
+<b class="fc">&nbsp;        request.setDepartmentName(request.getDepartmentName().replaceAll(&quot;\\s+&quot;, &quot; &quot;));</b>
+<b class="fc">&nbsp;        request.setDepartmentCode(code);</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = ADDepartmentExtendRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (departmentOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Bộ môn không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Department updateDepartment = departmentOptional.get();</b>
+<b class="pc">&nbsp;        if (!updateDepartment.getCode().trim().equalsIgnoreCase(code)) {</b>
+<b class="pc">&nbsp;            if (ADDepartmentExtendRepository.existsByCode(code)) {</b>
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Mã bộ môn đã tồn tại: &quot; +</b>
+&nbsp;                        code);
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (!updateDepartment.getName().trim().equalsIgnoreCase(request.getDepartmentName().trim())) {</b>
+<b class="pc">&nbsp;            if (ADDepartmentExtendRepository.existsByName(request.getDepartmentName().trim())) {</b>
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Tên bộ môn đã tồn tại: &quot; +</b>
+<b class="nc">&nbsp;                        request.getDepartmentName().trim());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        updateDepartment.setCode(code);</b>
+<b class="fc">&nbsp;        updateDepartment.setName(request.getDepartmentName().trim());</b>
+<b class="fc">&nbsp;        this.ADDepartmentExtendRepository.save(updateDepartment);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật bộ môn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailDepartment(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                ADDepartmentExtendRepository.getDetailDepartment(id),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công chi tiết bộ môn&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; changeStatus(String id) {
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = ADDepartmentExtendRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (departmentOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Department department = departmentOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            department.setStatus(</b>
+<b class="pc">&nbsp;                    department.getStatus().name().equalsIgnoreCase(EntityStatus.ACTIVE.name())</b>
+<b class="fc">&nbsp;                            ? EntityStatus.INACTIVE : EntityStatus.ACTIVE</b>
+&nbsp;            );
+<b class="fc">&nbsp;            ADDepartmentExtendRepository.save(department);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Chuyển đổi thành công chuyên ngành &quot; +</b>
+<b class="fc">&nbsp;                    department.getName());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;chuyên ngành không tồn tại trong bộ môn&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

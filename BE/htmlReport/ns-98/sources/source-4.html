@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADStaffRoleRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.staff.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADStaffRoleRepository (udpm.hn.server.core.admin.staff.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADStaffRoleRepository$MockitoMock$4ImoZSfZ</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffRoleRepository$MockitoMock$4ImoZSfZ$auxiliary$DNqWl4wa</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffRoleRepository$MockitoMock$4ImoZSfZ$auxiliary$QEiyXmrd</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.staff.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.staff.model.response.StaffRoleResponse;
+&nbsp;import udpm.hn.server.entity.Role;
+&nbsp;import udpm.hn.server.entity.StaffRole;
+&nbsp;import udpm.hn.server.repository.RoleRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface ADStaffRoleRepository extends RoleRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;               select
+&nbsp;                row_number() over(
+&nbsp;                       order by r.id desc) as orderNumber,
+&nbsp;               sr.id as id,
+&nbsp;               r.name as name ,
+&nbsp;               r.id as idRole,
+&nbsp;               r.code as code,
+&nbsp;               f.name as nameFacility
+&nbsp;               from
+&nbsp;               	Role r
+&nbsp;               join StaffRole sr on
+&nbsp;               	r.id = sr.role.id
+&nbsp;               join Staff s on
+&nbsp;               	sr.staff.id = s.id
+&nbsp;               left join Facility f on r.facility = f
+&nbsp;               	where s.id = :idStaff
+&nbsp;               	ORDER BY sr.createdDate DESC
+&nbsp;               &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRoleResponse&gt; getRoleByStaff(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;               select
+&nbsp;                    r
+&nbsp;               from
+&nbsp;               	Role r
+&nbsp;               left join Facility f on r.facility = f
+&nbsp;               where f.id= :idFacility
+&nbsp;               &quot;&quot;&quot;)
+&nbsp;    List&lt;Role&gt; getRoleByFacility(@Param(&quot;idFacility&quot;) String idFacility);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;               select
+&nbsp;                    r
+&nbsp;               from
+&nbsp;               	Role r
+&nbsp;               left join Facility f on r.facility = f
+&nbsp;               where f is null
+&nbsp;               &quot;&quot;&quot;)
+&nbsp;    List&lt;Role&gt; getRoleDefault();
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;              SELECT DISTINCT 
+&nbsp;                    r.name as name,
+&nbsp;                    r.code as code,
+&nbsp;                    r.id as id,
+&nbsp;                    f.name as nameFacility
+&nbsp;              FROM Role r
+&nbsp;              LEFT JOIN Facility f ON r.facility = f
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRoleResponse&gt; getAllRole();
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;               select
+&nbsp;                sr.id as id,
+&nbsp;                r.name as name,
+&nbsp;                r.id as idRole,
+&nbsp;                r.code as code
+&nbsp;                from
+&nbsp;                	StaffRole sr
+&nbsp;                LEFT join Role r on
+&nbsp;                	r.id = sr.role.id
+&nbsp;                LEFT join Staff s on
+&nbsp;                	sr.staff.id = s.id
+&nbsp;                where s.id = :idStaff
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRoleResponse&gt; getStaffRoleByStaff(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;               select
+&nbsp;                    sr
+&nbsp;                from
+&nbsp;                	StaffRole sr
+&nbsp;                where sr.staff.id = :idStaff and sr.createdDate NOT IN (
+&nbsp;                    SELECT 
+&nbsp;                        MIN(sr1.createdDate) 
+&nbsp;                    FROM 
+&nbsp;                        StaffRole sr1
+&nbsp;                    LEFT JOIN Role r on r.id = sr1.role.id
+&nbsp;                    where sr1.staff.id = :idStaff and sr1.role.code = &quot;ADMIN&quot; 
+&nbsp;                )
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRole&gt; getStaffRoleByIdStaff(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            select
+&nbsp;                sr
+&nbsp;               from
+&nbsp;               	StaffRole sr
+&nbsp;               join Role r on
+&nbsp;               	r.id = sr.role.id
+&nbsp;               WHERE r.code = &quot;ADMIN&quot; and r.facility is null
+&nbsp;               ORDER BY sr.createdDate ASC
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRole&gt; getLastStaffRoleAdmin();
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            select r 
+&nbsp;            from Role r 
+&nbsp;            where r.code = :code
+&nbsp;            and r.facility is null
+&nbsp;                &quot;&quot;&quot;)
+&nbsp;    Optional&lt;Role&gt; findRoleDefaultByCode(@Param(&quot;code&quot;) String code);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT sr
+&nbsp;        FROM StaffRole sr
+&nbsp;        where sr.role.id = :idRole and sr.staff.id = :idStaff
+&nbsp;        ORDER BY sr.createdDate DESC
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRole&gt; findTheLastByRoleIdAndStaffId(@Param(&quot;idRole&quot;) String idRole,@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT sr
+&nbsp;        FROM StaffRole sr
+&nbsp;        where sr.role.id = :idRole and sr.staff.id = :idStaff
+&nbsp;        ORDER BY sr.createdDate DESC
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffRole&gt; findTheNewestByRoleIdAndStaffId(@Param(&quot;idRole&quot;) String idRole,@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

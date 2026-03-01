@@ -1,0 +1,106 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StudentAuthRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentAuthRepository (udpm.hn.server.infrastructure.security.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">StudentAuthRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.security.user.StudentFacilityResponse;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface StudentAuthRepository extends JpaRepository&lt;Student ,String&gt; {
+&nbsp;
+&nbsp;    @Query(&quot;SELECT s FROM Student s &quot; +
+&nbsp;            &quot;JOIN s.majorFacility mf &quot; +
+&nbsp;            &quot;JOIN mf.departmentFacility df &quot; +
+&nbsp;            &quot;JOIN df.facility f &quot; +
+&nbsp;            &quot;WHERE s.email = :email &quot; +
+&nbsp;            &quot;AND f.id = :facilityId &quot; +
+&nbsp;            &quot;AND s.status = :status&quot;)
+&nbsp;    Optional&lt;Student&gt; findStudentsByEmailAndFacility(
+&nbsp;            @Param(&quot;email&quot;) String email,
+&nbsp;            @Param(&quot;facilityId&quot;) String facilityId,
+&nbsp;            @Param(&quot;status&quot;) EntityStatus status);
+&nbsp;
+&nbsp;
+&nbsp;    Optional&lt;Student&gt; findByEmail(String email);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            SELECT df.facility.id AS facilityId FROM Student s 
+&nbsp;            JOIN s.majorFacility mf 
+&nbsp;            JOIN mf.departmentFacility df 
+&nbsp;            WHERE s.id = :idStudent
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;StudentFacilityResponse&gt; findFacilityIdByStudentId(@Param(&quot;idStudent&quot;) String idStudent);
+&nbsp;
+&nbsp;    Optional&lt;Student&gt; findByEmailAndStatus(String email, EntityStatus status);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

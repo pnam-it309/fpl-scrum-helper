@@ -1,0 +1,129 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaPhaseProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MaPhaseProjectRepository (udpm.hn.server.core.manage.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$IeC6AekQ</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$IeC6AekQ$auxiliary$uiYLSw3K</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$IeC6AekQ$auxiliary$YxTPjAhn</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$OPnd7vdY</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$OPnd7vdY$auxiliary$ceBm0UwO</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$OPnd7vdY$auxiliary$hUM93wlt</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$U922AQZF</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$U922AQZF$auxiliary$ktGdlOrC</td>
+  </tr>
+  <tr>
+    <td class="name">MaPhaseProjectRepository$MockitoMock$U922AQZF$auxiliary$qnx61Bno</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaPhaseProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaPhaseSummaryResponse;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MaPhaseProjectRepository extends PhaseRepository {
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT
+&nbsp;         pp.id AS idPhase ,
+&nbsp;         pp.name AS namePhaseProject
+&nbsp;         FROM PhaseProject pp
+&nbsp;         join Project p on pp.project.id = p.id
+&nbsp;         where p.id = :id and  pp.statusPhase NOT IN (:excludedStatuses)
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MaPhaseProjectResponse&gt; getALl(
+&nbsp;            @Param(&quot;id&quot;) String id,
+&nbsp;            @Param(&quot;excludedStatuses&quot;) List&lt;StatusPhase&gt; excludedStatuses
+&nbsp;    );
+&nbsp;    @Query(value= &quot;&quot;&quot;
+&nbsp;        SELECT count(1) as amount, pp.statusPhase as status
+&nbsp;        FROM PhaseProject pp
+&nbsp;        where pp.project.id = :idProject and pp.status = 0
+&nbsp;        GROUP BY pp.statusPhase
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;MaPhaseSummaryResponse&gt; getAmountOfPhaseByStatus(@Param(&quot;idProject&quot;) String idproject);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

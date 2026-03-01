@@ -1,0 +1,103 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProjectDFRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ProjectDFRepository (udpm.hn.server.core.admin.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ProjectDFRepository$MockitoMock$LqJdLegv</td>
+  </tr>
+  <tr>
+    <td class="name">ProjectDFRepository$MockitoMock$LqJdLegv$auxiliary$eWn0nB83</td>
+  </tr>
+  <tr>
+    <td class="name">ProjectDFRepository$MockitoMock$LqJdLegv$auxiliary$iqov1h58</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.ADProjectDFResponse;
+&nbsp;import udpm.hn.server.repository.DepartmentFacilityRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ProjectDFRepository extends DepartmentFacilityRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        select 
+&nbsp;            mf.id as id,
+&nbsp;            m.name as nameMajor,
+&nbsp;            d.name as nameDepartment
+&nbsp;        from MajorFacility mf
+&nbsp;        join Major m on mf.major.id = m.id
+&nbsp;        join DepartmentFacility df on mf.departmentFacility.id = df.id 
+&nbsp;        join Department d on df.department.id = d.id
+&nbsp;        join Facility f on df.facility.id = f.id
+&nbsp;        where f.id = :idFacility
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;ADProjectDFResponse&gt; getAllDepartmentFacility(@Param(&quot;idFacility&quot;) String idFacility);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

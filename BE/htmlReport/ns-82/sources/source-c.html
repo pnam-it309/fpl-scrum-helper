@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserContextHelper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: UserContextHelper (udpm.hn.server.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserContextHelper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.2%
+  </span>
+  <span class="absValue">
+    (1/16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.utils;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import lombok.Setter;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.util.StringUtils;
+&nbsp;import org.springframework.web.context.request.RequestContextHolder;
+&nbsp;import org.springframework.web.context.request.ServletRequestAttributes;
+&nbsp;import udpm.hn.server.infrastructure.security.service.TokenProvider;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class UserContextHelper {</b>
+&nbsp;
+&nbsp;    @Setter(onMethod = @__({@Autowired}))
+&nbsp;    private TokenProvider tokenProvider;
+&nbsp;
+&nbsp;    @Setter(onMethod = @__({@Autowired}))
+&nbsp;    private HttpServletRequest request;
+&nbsp;
+&nbsp;    public String getCurrentUserId() {
+<b class="nc">&nbsp;        String jwt = getJwtFromRequest(request);</b>
+<b class="nc">&nbsp;        return tokenProvider.getUserIdFromToken(jwt);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCurrentUserRoles() {
+<b class="nc">&nbsp;        String jwt = getJwtFromRequest(request);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;JWT lấy từ request: &quot; + jwt + &quot;-&quot; + tokenProvider.getRolesFromToken(jwt));</b>
+<b class="nc">&nbsp;        return tokenProvider.getRolesFromToken(jwt);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCurrentUserEmail() {
+<b class="nc">&nbsp;        String jwt = getJwtFromRequest(request);</b>
+<b class="nc">&nbsp;        return tokenProvider.getEmailFromToken(jwt);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCurrentIdFacility() {
+<b class="nc">&nbsp;        String jwt = getJwtFromRequest(request);</b>
+<b class="nc">&nbsp;        return tokenProvider.getIdFacilityFromToken(jwt);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private HttpServletRequest getCurrentHttpRequest() {
+&nbsp;        ServletRequestAttributes attributes =
+<b class="nc">&nbsp;                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();</b>
+<b class="nc">&nbsp;        return attributes != null ? attributes.getRequest() : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String getJwtFromRequest(HttpServletRequest request) {
+<b class="nc">&nbsp;        String bearerToken = request.getHeader(&quot;Authorization&quot;);</b>
+<b class="nc">&nbsp;        if (StringUtils.hasText(bearerToken) &amp;&amp; bearerToken.startsWith(&quot;Bearer &quot;)) {</b>
+<b class="nc">&nbsp;            return bearerToken.substring(7);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

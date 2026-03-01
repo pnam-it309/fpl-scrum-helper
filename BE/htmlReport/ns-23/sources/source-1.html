@@ -1,0 +1,226 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAPhaseRestController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.phase.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MAPhaseRestController (udpm.hn.server.core.manage.phase.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MAPhaseRestController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.4%
+  </span>
+  <span class="absValue">
+    (14/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.phase.controller;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.messaging.handler.annotation.DestinationVariable;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.Payload;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.phase.model.request.MACreatePhaseRequest;
+&nbsp;import udpm.hn.server.core.manage.phase.model.request.MAPhaseRequest;
+&nbsp;import udpm.hn.server.core.manage.phase.model.request.MATodoByPhase;
+&nbsp;import udpm.hn.server.core.manage.phase.model.request.StartAndSprintRequest;
+&nbsp;import udpm.hn.server.core.manage.phase.service.MAPhaseService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequestMapping(MappingConstants.API_MANAGE_PHASE_PROJECT)
+&nbsp;public class MAPhaseRestController {
+&nbsp;
+&nbsp;    private final MAPhaseService maPhaseService;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; getAllPhase(MAPhaseRequest request){
+<b class="fc">&nbsp;        log.info(&quot;Danh sách request nhận về trong getAll Phase : ===&gt;&quot;,request.toString());</b>
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.getAllPhase(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @GetMapping(&quot;/{id}&quot;)
+&nbsp;//    public ResponseEntity&lt;?&gt; getAllPhase(@PathVariable String id){
+&nbsp;//        return Helper.createResponseEntity(maPhaseService.detailPhase(id));
+&nbsp;//    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/statistics/{idProject}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllPhaseStatistics(@PathVariable String idProject){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.getAllPhase(idProject));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/phase-handle-success/{idProject}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getPhaseSuccess(@PathVariable String idProject){
+&nbsp;
+<b class="fc">&nbsp;        log.info(idProject +&quot;idproject&quot;);</b>
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.findByPhaseStatus(idProject));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/sprint&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllSprint(MAPhaseRequest request){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.getAllSprint(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllPhaseByIdProject(@PathVariable String id, MAPhaseRequest request) {
+<b class="fc">&nbsp;        ResponseObject&lt;?&gt; response = maPhaseService.getAllPhaseByProjectId(id);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (response == null || response.getStatus() == null) {</b>
+<b class="fc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;Không tìm thấy dữ liệu&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(response.getStatus()).body(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-phase&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createPhase(MACreatePhaseRequest request){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.createPhase(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-todo-by-phase&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-todo-by-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createTodoByPhase(MATodoByPhase request){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.createTodoByPhase(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-phase/{id}&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deletePhase(@DestinationVariable String id){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maPhaseService.deletePhase(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-todo-by-phase/{id}&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-todo-by-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteTodoByPhase(@DestinationVariable String id){
+<b class="nc">&nbsp;        return Helper.createResponseEntity(maPhaseService.deleteTodoByPhase(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-phase/{id}&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updatePhase(@DestinationVariable String id,MACreatePhaseRequest request){
+<b class="nc">&nbsp;        return Helper.createResponseEntity(maPhaseService.updatePhase(id,request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-status-phase/{id}&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-status-phase&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateStatusPhase(@DestinationVariable String id, @Payload Integer statusPhase){
+<b class="nc">&nbsp;        return Helper.createResponseEntity(maPhaseService.updateStatusPhase(id,statusPhase));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

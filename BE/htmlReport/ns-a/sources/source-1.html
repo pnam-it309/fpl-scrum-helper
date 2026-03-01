@@ -1,0 +1,317 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADMajorServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.department.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ADMajorServiceImpl (udpm.hn.server.core.admin.department.department.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ADMajorServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (15/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.7%
+  </span>
+  <span class="absValue">
+    (63/79)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ADMajorServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (15/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.7%
+  </span>
+  <span class="absValue">
+    (63/79)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.department.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.request.ADCreateOrUpdateMajorRequest;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.request.ADMajorRequest;
+&nbsp;import udpm.hn.server.core.admin.department.department.repository.ADMajorExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.department.repository.ADDepartmentExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.department.service.ADMajorService;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.Department;
+&nbsp;import udpm.hn.server.entity.Major;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class ADMajorServiceImpl implements ADMajorService {
+&nbsp;
+&nbsp;    private final ADMajorExtendRepository adMajorExtendRepository;
+&nbsp;
+&nbsp;    private final ADDepartmentExtendRepository ADDepartmentExtendRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllMajor(String id, ADMajorRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(adMajorExtendRepository.getAllMajorByDepartmentIdFilter(id, pageable, request)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công danh sách chuyên ngành&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; addMajor(ADCreateOrUpdateMajorRequest request) {
+<b class="fc">&nbsp;        String code = Helper.generateCodeFromName((request.getMajorCode().trim()));</b>
+<b class="fc">&nbsp;        request.setMajorCode(code);</b>
+<b class="fc">&nbsp;        request.setMajorName(request.getMajorName().replaceAll(&quot;\\s+&quot;, &quot; &quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Major&gt; existsMajor = adMajorExtendRepository.findMajorByNameAndDepartmentId(request.getMajorName().trim(), request.getDepartmentId());</b>
+<b class="fc">&nbsp;        Optional&lt;Major&gt; existsCode = adMajorExtendRepository.findMajorByCodeAndDepartmentId(request.getMajorCode().trim(), request.getDepartmentId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = ADDepartmentExtendRepository.findById(request.getDepartmentId());</b>
+<b class="fc">&nbsp;        Department currentDepartment = departmentOptional.get();</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Major&gt; existsMajorCode = adMajorExtendRepository</b>
+<b class="fc">&nbsp;                .findMajorByCodeAndDepartmentId(request.getMajorCode(), request.getDepartmentId());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (existsMajorCode.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT,</b>
+&nbsp;                    &quot;Mã chuyên ngành đã tồn tại&quot;);
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Major&gt; existsMajorName = adMajorExtendRepository</b>
+<b class="fc">&nbsp;                .findMajorByNameAndDepartmentId(request.getMajorName(), request.getDepartmentId());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (existsMajorName.isPresent()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT,</b>
+&nbsp;                    &quot;Tên chuyên ngành đã tồn tại &quot;);
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (departmentOptional.isPresent()) {</b>
+&nbsp;
+<b class="pc">&nbsp;            if (existsMajor.isEmpty() || existsCode.isEmpty()) {</b>
+<b class="fc">&nbsp;                Major addMajor = new Major();</b>
+<b class="fc">&nbsp;                addMajor.setName(request.getMajorName().trim());</b>
+<b class="fc">&nbsp;                addMajor.setCode(request.getMajorCode().trim());</b>
+<b class="fc">&nbsp;                addMajor.setDepartment(currentDepartment);</b>
+<b class="fc">&nbsp;                addMajor.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;                adMajorExtendRepository.save(addMajor);</b>
+&nbsp;
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm chuyên ngành vào bộ môn &quot; +</b>
+<b class="fc">&nbsp;                        currentDepartment.getName() + &quot; thành công&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT, &quot;Chuyên ngành đã tồn tại trong bộ môn &quot; +</b>
+<b class="nc">&nbsp;                        currentDepartment.getName());</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Bộ môn mà bạn đang thêm chuyên &quot; +</b>
+<b class="nc">&nbsp;                    &quot;ngành không tồn tại [ &quot; + departmentOptional.get().getName() + &quot; ]&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateMajor(ADCreateOrUpdateMajorRequest request, String id) {
+<b class="fc">&nbsp;        request.setMajorName(request.getMajorName().replaceAll(&quot;\\s+&quot;, &quot; &quot;));</b>
+<b class="fc">&nbsp;        Optional&lt;Major&gt; majorOptional = adMajorExtendRepository.findById(id);</b>
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = ADDepartmentExtendRepository.findById(request.getDepartmentId());</b>
+<b class="fc">&nbsp;        Department currentDepartment = departmentOptional.get();</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="pc">&nbsp;        if (departmentOptional.isPresent()) {</b>
+&nbsp;
+<b class="pc">&nbsp;            if (majorOptional.isPresent()) {</b>
+<b class="fc">&nbsp;                Major majorUpdate = majorOptional.get();</b>
+&nbsp;
+<b class="pc">&nbsp;                if (!majorUpdate.getCode().trim().equalsIgnoreCase(request.getMajorCode().trim())) {</b>
+<b class="fc">&nbsp;                    Optional&lt;Major&gt; existsCode = adMajorExtendRepository</b>
+<b class="fc">&nbsp;                            .findMajorByCodeAndDepartmentId(request.getMajorCode().trim(), request.getDepartmentId());</b>
+&nbsp;
+<b class="pc">&nbsp;                    if (existsCode.isPresent()) {</b>
+<b class="nc">&nbsp;                        return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE,</b>
+<b class="nc">&nbsp;                                &quot;Mã chuyên ngành đã tồn tại: &quot; + request.getMajorCode().trim());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+&nbsp;
+<b class="pc">&nbsp;                if (!majorUpdate.getName().trim().equalsIgnoreCase(request.getMajorName().trim())) {</b>
+<b class="fc">&nbsp;                    Optional&lt;Major&gt; existsMajor = adMajorExtendRepository.findMajorByNameAndDepartmentId(request.getMajorName().trim(), request.getDepartmentId());</b>
+<b class="pc">&nbsp;                    if(existsMajor.isPresent()){</b>
+<b class="nc">&nbsp;                        return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Tên chuyên ngành đã tồn tại: &quot; +</b>
+<b class="nc">&nbsp;                                request.getMajorName().trim());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                System.out.println(&quot;Check code: &quot; + request.getMajorCode() + &quot; | departmentId: &quot; + request.getDepartmentId());</b>
+&nbsp;
+<b class="pc">&nbsp;                if (!majorUpdate.getCode().trim().equalsIgnoreCase(request.getMajorCode().trim())) {</b>
+<b class="fc">&nbsp;                    Optional&lt;Major&gt; existsMajorCode = adMajorExtendRepository</b>
+<b class="fc">&nbsp;                            .findMajorByCodeAndDepartmentId(request.getMajorCode().trim(), request.getDepartmentId());</b>
+&nbsp;
+<b class="pc">&nbsp;                    if (existsMajorCode.isPresent()) {</b>
+<b class="nc">&nbsp;                        return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE,</b>
+<b class="nc">&nbsp;                                &quot;Mã chuyên ngành đã tồn tại: &quot; + request.getMajorCode().trim());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                majorUpdate.setCode(request.getMajorCode().trim());</b>
+<b class="fc">&nbsp;                majorUpdate.setName(request.getMajorName().trim());</b>
+<b class="fc">&nbsp;                majorUpdate.setDepartment(currentDepartment);</b>
+<b class="fc">&nbsp;                adMajorExtendRepository.save(majorUpdate);</b>
+&nbsp;
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhât chuyên ngành vào bộ môn &quot; +</b>
+<b class="fc">&nbsp;                        currentDepartment.getName() + &quot; thành công&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Chuyên ngành không tồn tại trong bộ môn &quot; +</b>
+<b class="nc">&nbsp;                        currentDepartment.getName());</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Bộ môn mà bạn đang cập nhật chuyên ngành &quot; +</b>
+<b class="nc">&nbsp;                    &quot;không tồn tại [ &quot; + departmentOptional.get().getName() + &quot; ]&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteMajor(String id) {
+<b class="fc">&nbsp;        Optional&lt;Major&gt; majorOptional = adMajorExtendRepository.findById(id);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (majorOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Major majorDelete = majorOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            majorDelete.setStatus(</b>
+<b class="pc">&nbsp;                    majorDelete.getStatus().name().equalsIgnoreCase(EntityStatus.ACTIVE.name())</b>
+<b class="fc">&nbsp;                            ? EntityStatus.INACTIVE : EntityStatus.ACTIVE</b>
+&nbsp;            );
+<b class="fc">&nbsp;            adMajorExtendRepository.save(majorDelete);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Chuyển đổi thành công chuyên ngành &quot; +</b>
+<b class="fc">&nbsp;                    majorDelete.getName());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;chuyên ngành không tồn tại trong bộ môn&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailMajor(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                adMajorExtendRepository.getDetailMajor(id),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công chi tiết chuyên ngành&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

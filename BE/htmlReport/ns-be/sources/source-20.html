@@ -1,0 +1,320 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ToDoRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ToDoRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$0gIQVPOw</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$0gIQVPOw$auxiliary$tuRfYlIP</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$0gIQVPOw$auxiliary$vsYmIJbs</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$2vhXcGJH</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$2vhXcGJH$auxiliary$3cFW7ZSD</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$2vhXcGJH$auxiliary$bSonGfM2</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$3v1v2Oa8</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$3v1v2Oa8$auxiliary$3ccLIdR7</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$3v1v2Oa8$auxiliary$LItXK0Qq</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$Bl7WUSjV</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$Bl7WUSjV$auxiliary$lbkcCGD3</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$Bl7WUSjV$auxiliary$YrVRuQdp</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$k3R5IPU1</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$k3R5IPU1$auxiliary$T9b4g0WX</td>
+  </tr>
+  <tr>
+    <td class="name">ToDoRepository$MockitoMock$k3R5IPU1$auxiliary$XqZf9Cqg</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Modifying;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardLabelResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardTodoListResponse;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface ToDoRepository extends JpaRepository&lt;Todo, String&gt; {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT COUNT(1) FROM todo WHERE id_todo_list = :todoListId 
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countSimpleEntityByIdTodo(@Param(&quot;todoListId&quot;) String todoListId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                        SELECT MAX(a.index_todo) FROM todo a JOIN phase_todo_project b ON a.id = b.id_todo
+&nbsp;                        JOIN phase_project c ON c.id = b.id_phase_project
+&nbsp;                        WHERE a.id_todo_list = :todoListId AND c.id = :idPhaseProject
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Short getIndexTodoMax(@Param(&quot;todoListId&quot;) String todoListId, @Param(&quot;idPhaseProject&quot;) String idPhaseProject);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT a.name, (SELECT COUNT(1) FROM todo b 
+&nbsp;                      WHERE b.id_todo_list = a.id) as List
+&nbsp;                      FROM todo_list a WHERE a.id_project = :projectId ORDER BY a.index_todo_list ASC
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListAllProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT COUNT(1) FROM todo a
+&nbsp;                      JOIN todo_list b ON a.id_todo_list = b.id 
+&nbsp;                      WHERE b.id_project = :projectId AND a.priority_level = :priority_level
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByPriorityLevel(@Param(&quot;projectId&quot;) String projectId, @Param(&quot;priority_level&quot;) Integer priorityLevel);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                       SELECT COUNT(1) FROM todo a 
+&nbsp;                       JOIN todo_list b ON a.id_todo_list = b.id
+&nbsp;                       WHERE b.id_project = :projectId
+&nbsp;                       AND a.todo_status = :statusTodo
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByDueDateAllProject(@Param(&quot;projectId&quot;) String projectId, @Param(&quot;statusTodo&quot;) Integer statusTodo);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                       SELECT COUNT(1) FROM todo a 
+&nbsp;                       JOIN todo_list b ON a.id_todo_list = b.id
+&nbsp;                       WHERE b.id_project = :projectId
+&nbsp;                       AND a.deadline IS NULL
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByNoDueDateAllProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;//    @Query(value = &quot;&quot;&quot;
+&nbsp;//    SELECT DISTINCT
+&nbsp;//       SUBSTRING_INDEX(c.email, &#39;@&#39;, 1) AS name,
+&nbsp;//       (SELECT COUNT(1) FROM todo )
+&nbsp;//&quot;&quot;&quot;)
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT DISTINCT a.name, (SELECT COUNT(1) FROM todo g 
+&nbsp;                      JOIN label_project_todo k ON g.id = k.id_todo WHERE k.id_label_project = a.id) as label from label_project a 
+&nbsp;                      JOIN label_project_todo b ON a.id = b.id_label_project
+&nbsp;                      JOIN todo c ON c.id = b.id_todo
+&nbsp;                      WHERE a.id_project = :projectId
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;MeDataDashboardLabelResponse&gt; countTodoByLabelAllProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT COUNT(1)
+&nbsp;                      FROM todo a
+&nbsp;                      JOIN todo_list b ON a.id_todo_list = b.id
+&nbsp;                      LEFT JOIN label_project_todo c ON a.id = c.id_todo
+&nbsp;                      WHERE b.id_project = :projectId
+&nbsp;                      AND c.id IS NULL 
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByNoLabelAllProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;
+&nbsp;    /// //////////////////////////////////////////
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                       SELECT a.name, (SELECT COUNT(1) FROM todo b JOIN phase_todo_project i ON b.id = i.id_todo
+&nbsp;                       WHERE b.id_todo_list = a.id AND a.id_phase_project = :phaseId) as List
+&nbsp;                       FROM todo_list a WHERE a.id_project = :projectId and a.id_phase_project = :phaseId
+&nbsp;                       ORDER BY a.index_todo_list ASC
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListPhase(@Param(&quot;projectId&quot;) String projectId, @Param(&quot;phaseId&quot;) String phaseId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT COUNT(1) FROM todo a 
+&nbsp;                      JOIN todo_list b ON a.id_todo_list = b.id
+&nbsp;                      JOIN phase_todo_project c ON a.id = c.id_todo
+&nbsp;                      WHERE b.id_peoject = :projectId
+&nbsp;                      AND a.status_todo = :statusTodo
+&nbsp;                      AND c.id_phase = :phaseId
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByDueDatePhase(@Param(&quot;projectId&quot;) String projectId, @Param(&quot;phaseId&quot;) String phaseId, @Param(&quot;statusTodo&quot;) Integer statusTodo);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                      SELECT COUNT(1) FROM todo a
+&nbsp;                      JOIN todo_list b ON a.id_todo_list = b.id
+&nbsp;                      JOIN phase_todo_project c ON a.id = c.id_todo 
+&nbsp;                      WHERE b.id_project = :projectId
+&nbsp;                      AND a.deadline IS NULL
+&nbsp;                      AND c.id_phase = :phaseId
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Integer countTodoByNoDueDatePhase(@Param(&quot;projectId&quot;) String projectId, @Param(&quot;phaseId&quot;) String phaseId);
+&nbsp;
+&nbsp;    Optional&lt;Todo&gt; findByCode(String code);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT MAX(t.indexTodo) FROM Todo t WHERE t.todoList.id = :todoListId&quot;)
+&nbsp;    Short findMaxIndexByTodoList(@Param(&quot;todoListId&quot;) String todoListId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT td FROM Todo td WHERE td.deliveryDate IS NOT NULL AND td.statusReminder = 0 
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; getAllTodoReminder();
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT b.phaseProject.id FROM Todo a 
+&nbsp;            JOIN PhaseTodoProject b ON a.id = b.todo.id
+&nbsp;            WHERE a.id = :todoId
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    String getPhaseByIdTodo(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT c.id FROM Todo a 
+&nbsp;            JOIN TodoList b ON a.todoList.id = b.id
+&nbsp;            JOIN Project c ON b.project.id = c.id
+&nbsp;            WHERE a.id = :todoId
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    String getProjectByIdTodo(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            UPDATE Todo td
+&nbsp;            SET td.statusReminder = 1
+&nbsp;            WHERE td.id = :todoId
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    void updateStatusReminder(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000)),
+&nbsp;            SUM(t.storyPoint)
+&nbsp;        FROM PhaseTodoProject ptp
+&nbsp;        JOIN ptp.todo t
+&nbsp;        WHERE ptp.phaseProject.id = :phaseId
+&nbsp;          AND ptp.phaseProject.project.id = :projectId
+&nbsp;          AND t.statusTodo IN :statuses
+&nbsp;          AND t.completionTime BETWEEN :startTime AND :endTime
+&nbsp;        GROUP BY FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000))
+&nbsp;        ORDER BY FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000))
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;Object[]&gt; getDonePointsByDateAndProject(@Param(&quot;projectId&quot;) String projectId,
+&nbsp;                                                 @Param(&quot;phaseId&quot;) String phaseId,
+&nbsp;                                                 @Param(&quot;startTime&quot;) Long startTime,
+&nbsp;                                                 @Param(&quot;endTime&quot;) Long endTime,
+&nbsp;                                                 @Param(&quot;statuses&quot;) List&lt;StatusTodo&gt; statuses);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT SUM(t.storyPoint)
+&nbsp;        FROM PhaseTodoProject ptp
+&nbsp;        JOIN ptp.todo t
+&nbsp;        WHERE ptp.phaseProject.id = :phaseId
+&nbsp;          AND ptp.phaseProject.project.id = :projectId
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Integer getTotalStoryPointByPhaseAndProject(@Param(&quot;projectId&quot;) String projectId,
+&nbsp;                                                @Param(&quot;phaseId&quot;) String phaseId);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000)),
+&nbsp;        SUM(t.storyPoint)
+&nbsp;    FROM PhaseTodoProject ptp
+&nbsp;    JOIN ptp.todo t
+&nbsp;    WHERE ptp.phaseProject.project.id = :projectId
+&nbsp;      AND t.statusTodo IN :statuses
+&nbsp;      AND t.completionTime BETWEEN :startTime AND :endTime
+&nbsp;    GROUP BY FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000))
+&nbsp;    ORDER BY FUNCTION(&#39;DATE&#39;, FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000))
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Object[]&gt; getDonePointsByDateAndProjectOnly(@Param(&quot;projectId&quot;) String projectId,
+&nbsp;                                                     @Param(&quot;startTime&quot;) Long startTime,
+&nbsp;                                                     @Param(&quot;endTime&quot;) Long endTime,
+&nbsp;                                                     @Param(&quot;statuses&quot;) List&lt;StatusTodo&gt; statuses);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT SUM(t.storyPoint)
+&nbsp;    FROM PhaseTodoProject ptp
+&nbsp;    JOIN ptp.todo t
+&nbsp;    WHERE ptp.phaseProject.project.id = :projectId
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Integer getTotalStoryPointByProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

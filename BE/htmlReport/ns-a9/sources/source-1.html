@@ -1,0 +1,102 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExportReportDocxRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.MBReport.Export.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ExportReportDocxRepository (udpm.hn.server.infrastructure.job.MBReport.Export.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ExportReportDocxRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.MBReport.Export.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.entity.Project;
+&nbsp;import udpm.hn.server.entity.Report;
+&nbsp;import udpm.hn.server.infrastructure.job.MBReport.Export.model.request.ReportData;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ExportReportDocxRepository extends JpaRepository&lt;Report, String&gt; {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select new udpm.hn.server.infrastructure.job.MBReport.Export.model.request.ReportData(
+&nbsp;            r.workDoneToday,
+&nbsp;        	r.obstacles,
+&nbsp;        	r.workPlanTomorrow,
+&nbsp;        	r.reportTime)
+&nbsp;        from Report r
+&nbsp;        JOIN StaffProject sp on r.staffProject.id = sp.id
+&nbsp;        JOIN Project p ON p.id = sp.project.id
+&nbsp;        where (sp.staff.id = :userId OR sp.student.id = :userId)
+&nbsp;        and p.id = :idProject
+&nbsp;       &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    List&lt;ReportData&gt; exportDocx(@Param(&quot;userId&quot;) String userId, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT p FROM Project p WHERE p.id = :id&quot;)
+&nbsp;    Project getProject(@Param(&quot;id&quot;) String id);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

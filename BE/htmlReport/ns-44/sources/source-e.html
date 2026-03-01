@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBTypeTodoController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MBTypeTodoController (udpm.hn.server.core.member.projectdetails.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBTypeTodoController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.Payload;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import udpm.hn.server.core.admin.category.modal.request.ADCategoryRequest;
+&nbsp;import udpm.hn.server.core.admin.category.modal.request.ADCreateUpdateCategoryRequest;
+&nbsp;import udpm.hn.server.core.admin.category.service.ADCategoryService;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.ADCreateUpdateTypeTodoRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBJoinTypeTodoRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBTypeTodoRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeTypeTodoService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(MappingConstants.API_PROJECT_DETAILS_TYPE_TODO)
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBTypeTodoController {
+&nbsp;
+&nbsp;    private final MBMeTypeTodoService mbMeTypeTodoService;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; getAllTypeTodo() {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.getAllTypeTodo());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-type-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-type-todo&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createTypeTodo(@RequestBody ADCreateUpdateTypeTodoRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.createTypeTodo(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/update/{typeId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateTypeTodo(@PathVariable String typeId, @RequestBody ADCreateUpdateTypeTodoRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.updateTypeTodo(typeId, request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/change-type-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/change-type-todo&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; changeStatusTypeTodo(@RequestBody ADCreateUpdateTypeTodoRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.changeTypeTodoStatus(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/detail/{typeId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getByIdTypeTodo(@PathVariable String typeId) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.getTypeTodoById(typeId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/join-type-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/join-type-todo&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; JoinTypeTodo(@RequestBody MBJoinTypeTodoRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTypeTodoService.joinTypeTodo(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

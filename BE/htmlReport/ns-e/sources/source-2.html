@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MajorFacilityServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.departmentfacility.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MajorFacilityServiceImpl (udpm.hn.server.core.admin.department.departmentfacility.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MajorFacilityServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (12/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (52/56)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MajorFacilityServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (12/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (52/56)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.departmentfacility.service.impl;
+&nbsp;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.CreateMajorFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.MajorFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.DFDepartmentFacilityExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.DFMajorExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.MajorFacilityExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.ModifyMajorFacilityResponse;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.service.MajorFacilityService;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.DepartmentFacility;
+&nbsp;import udpm.hn.server.entity.Major;
+&nbsp;import udpm.hn.server.entity.MajorFacility;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MajorFacilityServiceImpl implements MajorFacilityService {
+&nbsp;
+&nbsp;    private final MajorFacilityExtendRepository majorFacilityExtendRepository;
+&nbsp;
+&nbsp;    private final DFDepartmentFacilityExtendRepository departmentFacilityRepository;
+&nbsp;
+&nbsp;    private final DFMajorExtendRepository majorRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllMajorFacilities(MajorFacilityRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(majorFacilityExtendRepository.findAllMajorFacilities(request, pageable)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy danh sách chuyên ngành theo cơ sở thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getMajorFacilityById(String majorFacilityId) {
+<b class="fc">&nbsp;        return ResponseObject.successForward(</b>
+<b class="fc">&nbsp;                majorFacilityExtendRepository.findMajorFacilityById(majorFacilityId),</b>
+&nbsp;                &quot;Lấy thông tin chuyên ngành theo cơ sở thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createMajorFacility(@Valid CreateMajorFacilityRequest request) {
+<b class="fc">&nbsp;        Optional&lt;DepartmentFacility&gt; departmentFacilityOptional = departmentFacilityRepository</b>
+<b class="fc">&nbsp;                .findById(request.getDepartmentFacilityId());</b>
+<b class="fc">&nbsp;        if (departmentFacilityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return ResponseObject.errorForward(</b>
+&nbsp;                    &quot;Không tìm thấy bộ môn theo cơ sở&quot;,
+&nbsp;                    HttpStatus.BAD_REQUEST
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Major&gt; majorOptional = majorRepository.findById(request.getMajorId());</b>
+<b class="pc">&nbsp;        if (majorOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseObject.errorForward(</b>
+&nbsp;                    &quot;Không tìm thấy chuyên ngành&quot;,
+&nbsp;                    HttpStatus.BAD_REQUEST
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; majorFacilityOptional = majorFacilityExtendRepository</b>
+<b class="fc">&nbsp;                .findByMajor_IdAndDepartmentFacility_Id(</b>
+<b class="fc">&nbsp;                        request.getMajorId(),</b>
+<b class="fc">&nbsp;                        request.getDepartmentFacilityId()</b>
+&nbsp;                );
+<b class="fc">&nbsp;        if (majorFacilityOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            return ResponseObject.errorForward(</b>
+&nbsp;                    &quot;Chuyên ngành theo cơ sở đã tồn tại&quot;,
+&nbsp;                    HttpStatus.BAD_REQUEST
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        MajorFacility majorFacility = new MajorFacility();</b>
+<b class="fc">&nbsp;        majorFacility.setMajor(majorOptional.get());</b>
+<b class="fc">&nbsp;        majorFacility.setDepartmentFacility(departmentFacilityOptional.get());</b>
+<b class="fc">&nbsp;        majorFacility.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;        majorFacilityExtendRepository.save(majorFacility);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseObject.successForward(</b>
+&nbsp;                new ModifyMajorFacilityResponse(
+<b class="fc">&nbsp;                        majorFacility.getMajor().getName(),</b>
+<b class="fc">&nbsp;                        majorFacility.getDepartmentFacility().getFacility().getName(),</b>
+<b class="fc">&nbsp;                        majorFacility.getDepartmentFacility().getDepartment().getName()</b>
+&nbsp;                ),
+&nbsp;                &quot;Tạo chuyên ngành theo cơ sở thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateMajorFacility(String majorFacilityId,@Valid CreateMajorFacilityRequest request) {
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; majorFacilityOptional = majorFacilityExtendRepository.findById(majorFacilityId);</b>
+<b class="fc">&nbsp;        if (majorFacilityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return ResponseObject.errorForward(</b>
+&nbsp;                    &quot;Không tìm thấy chuyên ngành theo cơ sở&quot;,
+&nbsp;                    HttpStatus.NOT_FOUND
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Major&gt; majorOptional = majorRepository.findById(request.getMajorId());</b>
+<b class="pc">&nbsp;        if (majorOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseObject.errorForward(</b>
+&nbsp;                    &quot;Không tìm thấy chuyên ngành&quot;,
+&nbsp;                    HttpStatus.BAD_REQUEST
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; isDuplicateMajor = majorFacilityExtendRepository.findMajorFacilitiesByMajorId(</b>
+<b class="fc">&nbsp;                request.getMajorId()</b>
+&nbsp;        );
+<b class="pc">&nbsp;        if (isDuplicateMajor.isPresent()) {</b>
+<b class="nc">&nbsp;            return ResponseObject.errorForward(</b>
+<b class="nc">&nbsp;                    &quot;Đã tồn tại chuyên ngành &quot; + isDuplicateMajor.get().getMajor().getName() + &quot; tại cơ sở này&quot;,</b>
+&nbsp;                    HttpStatus.BAD_REQUEST
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        MajorFacility majorFacility = majorFacilityOptional.get();</b>
+<b class="fc">&nbsp;        majorFacility.setMajor(majorOptional.get());</b>
+<b class="fc">&nbsp;        majorFacilityExtendRepository.save(majorFacility);</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseObject.successForward(</b>
+&nbsp;                new ModifyMajorFacilityResponse(
+<b class="fc">&nbsp;                        majorFacility.getMajor().getName(),</b>
+<b class="fc">&nbsp;                        majorFacility.getDepartmentFacility().getFacility().getName(),</b>
+<b class="fc">&nbsp;                        majorFacility.getDepartmentFacility().getDepartment().getName()</b>
+&nbsp;                ),
+&nbsp;                &quot;Cập nhật chuyên ngành theo cơ sở thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllMajors(String departmentId) {
+<b class="fc">&nbsp;        return ResponseObject.successForward(</b>
+<b class="fc">&nbsp;                majorRepository.findAllByDepartmentId(departmentId),</b>
+&nbsp;                &quot;Lấy danh sách chuyên ngành thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; changeStatus(String id) {
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; majorFacilityOptional = majorFacilityExtendRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (majorFacilityOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            MajorFacility majorFacility = majorFacilityOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            majorFacility.setStatus(</b>
+<b class="pc">&nbsp;                    majorFacility.getStatus().name().equalsIgnoreCase(EntityStatus.ACTIVE.name())</b>
+<b class="fc">&nbsp;                            ? EntityStatus.INACTIVE : EntityStatus.ACTIVE</b>
+&nbsp;            );
+<b class="fc">&nbsp;            majorFacilityExtendRepository.save(majorFacility);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Chuyển đổi thành công chuyen nganh co so &quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Chuyen nganh co so không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

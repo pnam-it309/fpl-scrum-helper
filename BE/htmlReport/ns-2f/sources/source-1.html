@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAStageVoteServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.stage.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MAStageVoteServiceImpl (udpm.hn.server.core.manage.stage.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MAStageVoteServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (49/56)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.8%
+  </span>
+  <span class="absValue">
+    (82/83)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.stage.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.phase.repository.MAPhaseRepository;
+&nbsp;import udpm.hn.server.core.manage.stage.model.request.StageRequest;
+&nbsp;import udpm.hn.server.core.manage.stage.model.request.StageVoteRequest;
+&nbsp;import udpm.hn.server.core.manage.stage.model.response.StageResponse;
+&nbsp;import udpm.hn.server.core.manage.stage.repository.MAStageVoteRepository;
+&nbsp;import udpm.hn.server.core.manage.stage.service.MAStageVoteService;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MAStaffProjectRepository;
+&nbsp;import udpm.hn.server.entity.PhaseProject;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.StageVote;
+&nbsp;import udpm.hn.server.infrastructure.configemail.EmailSender;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.ZoneId;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MAStageVoteServiceImpl implements MAStageVoteService {
+&nbsp;
+&nbsp;    private final MAStageVoteRepository maStageVoteRepository;
+&nbsp;
+&nbsp;    private final MAPhaseRepository maPhaseRepository;
+&nbsp;
+&nbsp;    private final MAStaffProjectRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final EmailSender emailService;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createUpdate(StageRequest request) {
+<b class="fc">&nbsp;        log.info(&quot;request tạo giai đoạn bình chọn:{}&quot;,request);</b>
+&nbsp;
+&nbsp;        StageVote stageVote;
+&nbsp;
+&nbsp;        // Check phaseProject tồn tại
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; phaseProject = maPhaseRepository.findById(request.getIdPhase());</b>
+<b class="fc">&nbsp;        if (phaseProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Kiểm tra dữ liệu đầu vào
+<b class="pc">&nbsp;        if (request.getStartTime() == null || request.getEndTime() == null) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.BAD_REQUEST, &quot;Thời gian bắt đầu và kết thúc không được để trống.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        long now = System.currentTimeMillis();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (request.getStartTime() &gt;= request.getEndTime()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.BAD_REQUEST, &quot;Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Kiểm tra trùng lặp thời gian với các cuộc bầu chọn khác trong cùng project
+<b class="fc">&nbsp;        List&lt;StageVote&gt; existingVotes = maStageVoteRepository.findAllByIdProject(request.getIdProject());</b>
+<b class="fc">&nbsp;        for (StageVote vote : existingVotes) {</b>
+&nbsp;            // Bỏ qua chính nó khi đang cập nhật
+<b class="fc">&nbsp;            if (request.getIdStage() != null &amp;&amp; request.getIdStage().equals(vote.getId())) {</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            long existingStart = vote.getStartTime();</b>
+<b class="fc">&nbsp;            long existingEnd = vote.getEndTime();</b>
+&nbsp;
+<b class="pc">&nbsp;            boolean isOverlapping = request.getStartTime() &lt; existingEnd &amp;&amp; request.getEndTime() &gt; existingStart;</b>
+<b class="fc">&nbsp;            if (isOverlapping) {</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;().error(HttpStatus.BAD_REQUEST,</b>
+&nbsp;                        &quot;Thời gian bình chọn bị trùng với một cuộc bình chọn đã tồn tại.&quot;);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Tạo mới
+<b class="pc">&nbsp;        if (request.getIdStage() == null || request.getIdStage().isEmpty()) {</b>
+&nbsp;
+<b class="pc">&nbsp;            if (request.getStartTime() &lt; now || request.getEndTime() &lt; now) {</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;().error(HttpStatus.BAD_REQUEST, &quot;Không thể chọn thời gian trong quá khứ.&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            stageVote = StageVote.builder()</b>
+<b class="fc">&nbsp;                    .startTime(request.getStartTime())</b>
+<b class="fc">&nbsp;                    .endTime(request.getEndTime())</b>
+<b class="fc">&nbsp;                    .phaseProject(phaseProject.get())</b>
+<b class="fc">&nbsp;                    .build();</b>
+<b class="fc">&nbsp;            maStageVoteRepository.save(stageVote);</b>
+&nbsp;//            sendEmailToProjectMembers( request.getIdProject(),stageVote, true);
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().success(&quot;Tạo thành công&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Cập nhật
+<b class="fc">&nbsp;        Optional&lt;StageVote&gt; optionalStageVote = maStageVoteRepository.findById(request.getIdStage());</b>
+<b class="fc">&nbsp;        if (optionalStageVote.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND, &quot;Không tìm thấy stageVote&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        stageVote = optionalStageVote.get();</b>
+<b class="fc">&nbsp;        stageVote.setStartTime(request.getStartTime());</b>
+<b class="fc">&nbsp;        stageVote.setEndTime(request.getEndTime());</b>
+<b class="fc">&nbsp;        stageVote.setPhaseProject(phaseProject.get());</b>
+<b class="fc">&nbsp;        maStageVoteRepository.save(stageVote);</b>
+&nbsp;//        sendEmailToProjectMembers( request.getIdProject(),stageVote, false);
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;().success(&quot;Cập nhật thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void sendEmailToProjectMembers(String projectId, StageVote stageVote, boolean isCreated) {
+<b class="fc">&nbsp;        List&lt;StaffProject&gt; staffProjects = staffProjectRepository.getAllUserByProject(projectId);</b>
+<b class="fc">&nbsp;        List&lt;String&gt; emails = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (StaffProject sp : staffProjects) {</b>
+<b class="pc">&nbsp;            if (sp.getStudent() != null &amp;&amp; sp.getStudent().getEmail() != null) {</b>
+<b class="fc">&nbsp;                emails.add(sp.getStudent().getEmail());</b>
+<b class="pc">&nbsp;            } else if (sp.getStaff() != null) {</b>
+<b class="fc">&nbsp;                if (sp.getStaff().getEmailFpt() != null) {</b>
+<b class="fc">&nbsp;                    emails.add(sp.getStaff().getEmailFpt());</b>
+<b class="pc">&nbsp;                } else if (sp.getStaff().getEmailFe() != null) {</b>
+<b class="fc">&nbsp;                    emails.add(sp.getStaff().getEmailFe());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        for (String email : emails) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Danh sách email: &quot;+email);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (emails.isEmpty()) {</b>
+<b class="fc">&nbsp;            log.warn(&quot;Không tìm thấy email nào trong dự án {}&quot;, projectId);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Chuẩn bị nội dung email
+<b class="fc">&nbsp;        String subject = isCreated ? &quot;Thông báo tạo mới giai đoạn bình chọn&quot; : &quot;Thông báo cập nhật giai đoạn bình chọn&quot;;</b>
+<b class="fc">&nbsp;        String title = isCreated ? &quot;Bạn được mời tham gia một cuộc bình chọn mới!&quot; : &quot;Thông tin cuộc bình chọn đã được cập nhật.&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        String timeStart = Instant.ofEpochMilli(stageVote.getStartTime())</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                .format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        String timeEnd = Instant.ofEpochMilli(stageVote.getEndTime())</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                .format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        String content = String.format(&quot;&quot;&quot;</b>
+&nbsp;            &lt;p&gt;Thời gian bình chọn:&lt;/p&gt;
+&nbsp;            &lt;ul&gt;
+&nbsp;                &lt;li&gt;Bắt đầu: &lt;strong&gt;%s&lt;/strong&gt;&lt;/li&gt;
+&nbsp;                &lt;li&gt;Kết thúc: &lt;strong&gt;%s&lt;/strong&gt;&lt;/li&gt;
+&nbsp;            &lt;/ul&gt;
+&nbsp;            &lt;p&gt;Vui lòng đăng nhập để thực hiện bình chọn trong thời gian quy định.&lt;/p&gt;
+&nbsp;            &quot;&quot;&quot;, timeStart, timeEnd);
+&nbsp;
+&nbsp;        // Chia batch và gửi email
+<b class="fc">&nbsp;        int batchSize = 50;</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; emails.size(); i += batchSize) {</b>
+<b class="fc">&nbsp;            List&lt;String&gt; batch = emails.subList(i, Math.min(i + batchSize, emails.size()));</b>
+<b class="fc">&nbsp;            emailService.sendEmail(batch.toArray(new String[0]), subject, title, content);</b>
+&nbsp;
+&nbsp;            try {
+<b class="fc">&nbsp;                Thread.sleep(1000); // nghỉ 1 giây giữa các batch nếu cần thiết</b>
+&nbsp;            } catch (InterruptedException e) {
+<b class="nc">&nbsp;                Thread.currentThread().interrupt();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Đã gửi email đến {} người trong dự án {}&quot;, emails.size(), projectId);</b>
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailStageVote(String idStage) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maStageVoteRepository.findById(idStage), HttpStatus.OK,&quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteStage(String idStage) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;StageVote&gt; optionalStageVote = maStageVoteRepository.findById(idStage);</b>
+<b class="fc">&nbsp;        if(optionalStageVote.isEmpty()){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND,&quot;Không tìm thấy cuộc bình chọn&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        StageVote stageVote = optionalStageVote.get();</b>
+<b class="fc">&nbsp;        stageVote.setStatus(EntityStatus.INACTIVE);</b>
+<b class="fc">&nbsp;        maStageVoteRepository.save(stageVote);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null,HttpStatus.OK,&quot;Xóa cuộc bình chọn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; stageTakePlace(String idProject) {
+<b class="fc">&nbsp;        long currentTimeMillis = System.currentTimeMillis();</b>
+<b class="fc">&nbsp;        Optional&lt;StageResponse&gt; optionalStageVote = maStageVoteRepository.findByStageTakePlace(idProject, currentTimeMillis);</b>
+<b class="fc">&nbsp;        if (optionalStageVote.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().success(&quot;Không có cuộc bình chọn nào diễn ra&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(optionalStageVote.get(), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; findALlTodoVoteStage(String idStageVote) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maStageVoteRepository.findALlTodoVoteStage(idStageVote), HttpStatus.OK, &quot;Láy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllStage(StageVoteRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;created_date&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maStageVoteRepository.getAllStage(pageable, request.getIdProject()), HttpStatus.OK, &quot;Lấy dự liệu giai đoạn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

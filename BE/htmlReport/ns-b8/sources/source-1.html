@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MaProjectRepository (udpm.hn.server.core.manage.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$NxEfx3mS</td>
+  </tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$NxEfx3mS$auxiliary$kXTUP6wj</td>
+  </tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$NxEfx3mS$auxiliary$uNgVnqhJ</td>
+  </tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$xMsc2cGe</td>
+  </tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$xMsc2cGe$auxiliary$BIr7fxNP</td>
+  </tr>
+  <tr>
+    <td class="name">MaProjectRepository$MockitoMock$xMsc2cGe$auxiliary$i7JjBzuj</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MAProjectDetailSummaryResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaProjectResponse;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusProject;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MaProjectRepository extends ProjectRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT 
+&nbsp;                row_number() over(order by p.id desc) as orderNumber,
+&nbsp;                p.id as id,
+&nbsp;                p.name as nameProject,
+&nbsp;                p.code as codeProject,
+&nbsp;                concat(d.name, &#39; - &#39;, f.name) as nameDepartment,
+&nbsp;                p.statusProject as status,
+&nbsp;                f.id as idFacility,
+&nbsp;                p.backgroundColor as backgroundColorProject,
+&nbsp;                p.backgroundImage as backgroundImageProject,
+&nbsp;                    (
+&nbsp;                        SELECT
+&nbsp;                            CASE
+&nbsp;                                WHEN COUNT(t.id) = 0 THEN 0
+&nbsp;                                ELSE ROUND(
+&nbsp;                                    (SUM(CASE WHEN t.statusTodo &lt;&gt; 0 THEN 1 ELSE 0 END) * 100.0) / COUNT(t.id),
+&nbsp;                                    2
+&nbsp;                                )
+&nbsp;                            END
+&nbsp;                        FROM Todo t
+&nbsp;                		JOIN PhaseTodoProject ptp ON t.id = ptp.todo.id
+&nbsp;                		JOIN PhaseProject  pp ON ptp.phaseProject.id = pp.id
+&nbsp;                        WHERE pp.project.id = p.id
+&nbsp;                    ) AS progressProject,
+&nbsp;                p.startTime as startTimeProject,
+&nbsp;                p.endTime as endTimeProject,
+&nbsp;                p.createdDate as createdDateProject
+&nbsp;            FROM Project p
+&nbsp;            JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;            JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;            JOIN Department d ON df.department.id = d.id
+&nbsp;            JOIN Facility f ON df.facility.id = f.id
+&nbsp;            JOIN StaffProject sp ON p.id = sp.project.id
+&nbsp;                WHERE p.status = 0 AND 
+&nbsp;                 (:#{#request.search} IS NULL OR p.name LIKE %:#{#request.search}%
+&nbsp;                    OR p.code LIKE %:#{#request.search}%)
+&nbsp;                    AND (:#{#request.nameDepartment} IS NULL OR
+&nbsp;                    d.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    f.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    CONCAT(d.name, &#39;-&#39;, f.name) LIKE %:#{#request.nameDepartment}%)
+&nbsp;                    AND (:#{#request.status} IS NULL OR p.statusProject = :status)  
+&nbsp;                    AND (sp.staff.id = :#{#userContextHelper.currentUserId}
+&nbsp;                    OR sp.student.id = :#{#userContextHelper.currentUserId})
+&nbsp;                    And sp.status = 0 and p.statusProject = 1
+&nbsp;        &quot;&quot;&quot;,countQuery = &quot;&quot;&quot;
+&nbsp;            select count(*)
+&nbsp;                 FROM Project p
+&nbsp;                JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;                JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                JOIN Department d ON df.department.id = d.id
+&nbsp;                JOIN Facility f ON df.facility.id = f.id
+&nbsp;                JOIN StaffProject sp ON p.id = sp.project.id
+&nbsp;            WHERE  p.status = 0 AND  
+&nbsp;                (:#{#request.search} IS NULL OR p.name LIKE %:#{#request.search}%
+&nbsp;                OR p.code LIKE %:#{#request.search}%)
+&nbsp;                AND (:#{#request.nameDepartment} IS NULL OR
+&nbsp;                d.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                f.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                CONCAT(d.name, &#39;-&#39;, f.name) LIKE %:#{#request.nameDepartment}%)
+&nbsp;                AND (:#{#request.status} IS NULL OR p.statusProject = :status)
+&nbsp;                AND (sp.staff.id = :#{#userContextHelper.currentUserId}
+&nbsp;                OR sp.student.id = :#{#userContextHelper.currentUserId})
+&nbsp;                And sp.status = 0 and p.statusProject = 1
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    Page&lt;MaProjectResponse&gt; getAllProject(Pageable pageable, MaProjectSearchRequest request, @Param(&quot;status&quot;) StatusProject status, UserContextHelper userContextHelper);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT 
+&nbsp;            p.id as id,
+&nbsp;            p.code as code,
+&nbsp;            p.name as name,
+&nbsp;            concat(d.name, &#39; - &#39;, f.name) as nameDepartment,
+&nbsp;            p.category.name as category,
+&nbsp;            p.startTime as startTime,
+&nbsp;            p.endTime as endTime,
+&nbsp;            p.statusProject as status,
+&nbsp;            p.createdDate as createdDateProject,
+&nbsp;            COUNT(sp.id) as amountOfMembers,
+&nbsp;            p.actualEndDate as actualEndTime 
+&nbsp;            FROM Project p
+&nbsp;            JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;            JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;            JOIN Department d ON df.department.id = d.id
+&nbsp;            JOIN Facility f ON df.facility.id = f.id
+&nbsp;            JOIN StaffProject sp on sp.project.id = p.id
+&nbsp;            where p.id = :id
+&nbsp;            GROUP BY p.id
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;MAProjectDetailSummaryResponse&gt; getDetailSummaryProject(@Param(&quot;id&quot;) String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

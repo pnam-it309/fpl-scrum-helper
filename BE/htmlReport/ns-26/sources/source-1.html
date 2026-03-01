@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaProjectRestController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MaProjectRestController (udpm.hn.server.core.manage.project.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MaProjectRestController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import udpm.hn.server.core.admin.project.service.ADProjectService;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaProjectCreateRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaRestartProjectRequest;
+&nbsp;import udpm.hn.server.core.manage.project.service.MaProjectService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequiredArgsConstructor
+&nbsp;@RequestMapping(MappingConstants.API_MANAGE_PROJECT)
+&nbsp;public class MaProjectRestController {
+&nbsp;
+&nbsp;    private final MaProjectService maProjectService;
+&nbsp;
+&nbsp;    private final ADProjectService adProjectService;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; getAllProject(MaProjectSearchRequest request){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getAllProject(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/facility&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllFacility(){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getAllFacility());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; detailProject(@PathVariable String id){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.detailProject(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/department-facility/{idFacility}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllDepartmentFacility(@PathVariable String idFacility){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getAllDepartmentFacility(idFacility));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/summary/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getDetailSummaryProject(@PathVariable String id) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getDetailSummaryProject(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/amount-of-phase-by-status/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAmountOfPhaseByStatus(@PathVariable String id) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getAmountOfPhaseByStatus(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/amount-of-todo-by-phase/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAmountOfTodoByPhase(@PathVariable String id) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.getAmountOfTodoByPhase(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/finish-early/{id}/{emailLogin}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; finishEarlyProject(@PathVariable String id,@PathVariable String emailLogin) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.finishEarlyProject(id,emailLogin));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;?&gt; createProject( @RequestBody MaProjectCreateRequest request){
+<b class="fc">&nbsp;        return  Helper.createResponseEntity(maProjectService.createProject(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateProject(@PathVariable String id, @RequestBody MaProjectCreateRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.updateProject(id, request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/restart-project/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; restartProject(@PathVariable String id, @RequestBody MaRestartProjectRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.restartProject(id, request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteProject(@PathVariable String id){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(maProjectService.deleteProject(id));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

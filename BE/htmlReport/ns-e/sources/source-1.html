@@ -1,0 +1,282 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DepartmentFacilityServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.departmentfacility.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: DepartmentFacilityServiceImpl (udpm.hn.server.core.admin.department.departmentfacility.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DepartmentFacilityServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78.6%
+  </span>
+  <span class="absValue">
+    (22/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (48/56)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DepartmentFacilityServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78.6%
+  </span>
+  <span class="absValue">
+    (22/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (48/56)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.departmentfacility.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.CreateOrUpdateDepartmentFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.FindFacilityDetailRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.DFDepartmentExtendReposiotry;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.DFDepartmentFacilityExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.repository.DFFacilityExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.service.DepartmentFacilityService;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.Department;
+&nbsp;import udpm.hn.server.entity.DepartmentFacility;
+&nbsp;import udpm.hn.server.entity.Facility;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class DepartmentFacilityServiceImpl implements DepartmentFacilityService {
+&nbsp;
+&nbsp;    private final DFFacilityExtendRepository facilityExtendRepository;
+&nbsp;
+&nbsp;    private final DFDepartmentExtendReposiotry dfDepartmentExtendReposiotry;
+&nbsp;
+&nbsp;    private  final DFDepartmentFacilityExtendRepository dfDepartmentFacilityExtendRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllDepartmentFacility(String id, FindFacilityDetailRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(dfDepartmentFacilityExtendRepository.getDepartmentFacilitiesByValueFind(id, pageable, request)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công danh sách bộ môn theo cơ sở&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; addDepartmentFacility(CreateOrUpdateDepartmentFacilityRequest request) {
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = dfDepartmentExtendReposiotry.findById(request.getDepartmentId());</b>
+<b class="fc">&nbsp;        Optional&lt;Facility&gt; facilityOptional = facilityExtendRepository.findById(request.getFacilityId());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (dfDepartmentFacilityExtendRepository.existsByIdDepartmentAndIdFacilityAndIdAdd(request).isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Bộ môn theo cơ sở đã tồn tại!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (facilityOptional.isPresent() &amp;&amp; departmentOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            DepartmentFacility addDepartmentFacility = new DepartmentFacility();</b>
+<b class="fc">&nbsp;            addDepartmentFacility.setDepartment(departmentOptional.get());</b>
+<b class="fc">&nbsp;            addDepartmentFacility.setFacility(facilityOptional.get());</b>
+<b class="fc">&nbsp;            addDepartmentFacility.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;            dfDepartmentFacilityExtendRepository.save(addDepartmentFacility);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm thành công&quot;);</b>
+<b class="fc">&nbsp;        } else if (facilityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy cơ sở trên&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy bộ môn trên&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateDepartmentFacility(CreateOrUpdateDepartmentFacilityRequest request, String id) {
+<b class="fc">&nbsp;        Optional&lt;DepartmentFacility&gt; departmentFacilityOptional = dfDepartmentFacilityExtendRepository.findById(id);</b>
+<b class="pc">&nbsp;        if (departmentFacilityOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Optional&lt;Department&gt; departmentOptional = dfDepartmentExtendReposiotry.findById(request.getDepartmentId());</b>
+<b class="fc">&nbsp;            Optional&lt;Facility&gt; facilityOptional = facilityExtendRepository.findById(request.getFacilityId());</b>
+&nbsp;
+<b class="fc">&nbsp;            if (facilityOptional.isPresent() &amp;&amp; departmentOptional.isPresent()) {</b>
+<b class="fc">&nbsp;                DepartmentFacility updateDepartmentFacility = departmentFacilityOptional.get();</b>
+<b class="pc">&nbsp;                if (updateDepartmentFacility.getFacility().equals(facilityOptional.get())) {</b>
+<b class="fc">&nbsp;                    updateDepartmentFacility.setDepartment(departmentOptional.get());</b>
+<b class="fc">&nbsp;                    updateDepartmentFacility.setFacility(facilityOptional.get());</b>
+<b class="fc">&nbsp;                    dfDepartmentFacilityExtendRepository.save(updateDepartmentFacility);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    if (isDuplicateRecord(request).isPresent()) {</b>
+<b class="nc">&nbsp;                        return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Cập nhật trùng cơ sở hoặc để như cũ&quot;);</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    updateDepartmentFacility.setDepartment(departmentOptional.get());</b>
+<b class="nc">&nbsp;                    updateDepartmentFacility.setFacility(facilityOptional.get());</b>
+<b class="nc">&nbsp;                    dfDepartmentFacilityExtendRepository.save(updateDepartmentFacility);</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Sửa thành công !&quot;);</b>
+<b class="fc">&nbsp;            } else if (facilityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy cơ sở trên&quot;);</b>
+<b class="pc">&nbsp;            }else if (departmentOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy bộ môn trên&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Sửa thất bại&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Bộ môn theo cơ sở trên không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Optional&lt;DepartmentFacility&gt; isDuplicateRecord(CreateOrUpdateDepartmentFacilityRequest request) {
+<b class="nc">&nbsp;        return dfDepartmentFacilityExtendRepository.existsDepartmentFacilitiesByDepartmentAndFacility(request.getDepartmentId(), request.getFacilityId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getListFacility() {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(dfDepartmentFacilityExtendRepository.getListFacility(), HttpStatus.OK, &quot;Lấy thành công danh sách cơ sở&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getDepartmentName(String departmentId) {
+<b class="fc">&nbsp;        Optional&lt;Department&gt; departmentOptional = dfDepartmentExtendReposiotry.findById(departmentId);</b>
+<b class="fc">&nbsp;        if (departmentOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Tìm thấy bộ môn này!&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(departmentOptional.get().getName(), HttpStatus.OK, &quot;Tìm thấy thành công tên bộ môn&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailDepartmentFacility(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                dfDepartmentFacilityExtendRepository.getDetailDepartmentFacilityResponse(id),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công chi tiết bộ môn theo cơ sở&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; changeStatus(String id) {
+<b class="fc">&nbsp;        Optional&lt;DepartmentFacility&gt; departmentFacilityOptional = dfDepartmentFacilityExtendRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (departmentFacilityOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            DepartmentFacility departmentFacility = departmentFacilityOptional.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            departmentFacility.setStatus(</b>
+<b class="pc">&nbsp;                    departmentFacility.getStatus().name().equalsIgnoreCase(EntityStatus.ACTIVE.name())</b>
+<b class="fc">&nbsp;                            ? EntityStatus.INACTIVE : EntityStatus.ACTIVE</b>
+&nbsp;            );
+<b class="fc">&nbsp;            dfDepartmentFacilityExtendRepository.save(departmentFacility);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Chuyển đổi thành công bo mon co so &quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Bo mon co so không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

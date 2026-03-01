@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HolidayRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: HolidayRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$Lv5lTBJV</td>
+  </tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$Lv5lTBJV$auxiliary$0QBOIslm</td>
+  </tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$Lv5lTBJV$auxiliary$JMD0kTrZ</td>
+  </tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$TY5AeBvh</td>
+  </tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$TY5AeBvh$auxiliary$vK54d2TO</td>
+  </tr>
+  <tr>
+    <td class="name">HolidayRepository$MockitoMock$TY5AeBvh$auxiliary$ZJy21Uvc</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.report.model.response.MaHolidayResponse;
+&nbsp;import udpm.hn.server.core.member.report.model.response.MBReportResponse;
+&nbsp;import udpm.hn.server.entity.Holiday;
+&nbsp;import udpm.hn.server.entity.Report;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface HolidayRepository extends JpaRepository&lt;Holiday, String&gt; {
+&nbsp;    boolean existsByDateAndProject_Id(Long date, String projectId);
+&nbsp;
+&nbsp;    boolean existsByCode(String code);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT new udpm.hn.server.core.member.report.model.response.MBReportResponse(
+&nbsp;        h.date,
+&nbsp;        h.statusReport,
+&nbsp;        h.project.id,
+&nbsp;        &#39;HOLIDAY&#39;
+&nbsp;    )
+&nbsp;    FROM Holiday h
+&nbsp;    WHERE h.project.id = :projectId and h.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBReportResponse&gt; findHolidayReports(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT COUNT(h)
+&nbsp;    FROM Holiday h
+&nbsp;    WHERE h.project.id = :projectId
+&nbsp;      AND h.date BETWEEN :start AND :end
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Long countByProjectIdAndDateBetween(@Param(&quot;projectId&quot;) String projectId,
+&nbsp;                                        @Param(&quot;start&quot;) Long start,
+&nbsp;                                        @Param(&quot;end&quot;) Long end);
+&nbsp;
+&nbsp;    List&lt;Holiday&gt; findAllByProjectId(String projectId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;    h.date as date
+&nbsp;    FROM Holiday h
+&nbsp;    WHERE h.project.id = :projectId AND h.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MaHolidayResponse&gt; getAllHoliday(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT h FROM Holiday h WHERE h.date BETWEEN :startOfDay AND :endOfDay AND h.project.id = :projectId&quot;)
+&nbsp;    List&lt;Holiday&gt; findByDateInDayAndProjectId(@Param(&quot;startOfDay&quot;) Long startOfDay,
+&nbsp;                                                  @Param(&quot;endOfDay&quot;) Long endOfDay,
+&nbsp;                                                  @Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

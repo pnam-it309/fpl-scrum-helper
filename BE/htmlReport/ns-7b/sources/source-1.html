@@ -1,0 +1,310 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.config</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfig (udpm.hn.server.infrastructure.security.config)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (65/65)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (65/65)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.config;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.ProviderManager;
+&nbsp;import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+&nbsp;import org.springframework.security.config.BeanIds;
+&nbsp;import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.config.http.SessionCreationPolicy;
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+&nbsp;import org.springframework.web.cors.CorsConfiguration;
+&nbsp;import org.springframework.web.cors.CorsConfigurationSource;
+&nbsp;import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.infrastructure.constant.Role;
+&nbsp;import udpm.hn.server.infrastructure.exception.RestAuthenticationEntryPoint;
+&nbsp;import udpm.hn.server.infrastructure.security.filter.TokenAuthenticationFilter;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.CustomOAuth2UserService;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.OAuth2AuthenticationFailureHandler;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.OAuth2AuthenticationSuccessHandler;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import static udpm.hn.server.utils.Helper.appendWildcard;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+&nbsp;@EnableGlobalMethodSecurity(
+&nbsp;        securedEnabled = true,
+&nbsp;        jsr250Enabled = true,
+&nbsp;        prePostEnabled = true
+&nbsp;)
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class SecurityConfig {
+&nbsp;
+&nbsp;    private final CustomOAuth2UserService customOAuth2UserService;
+&nbsp;
+&nbsp;    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+&nbsp;
+&nbsp;    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+&nbsp;
+&nbsp;    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+&nbsp;
+&nbsp;    @Value(&quot;${frontend.url}&quot;)
+&nbsp;    private String allowedOrigin;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+<b class="fc">&nbsp;        return new TokenAuthenticationFilter();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public PasswordEncoder passwordEncoder() {
+<b class="fc">&nbsp;        return new BCryptPasswordEncoder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+&nbsp;    public AuthenticationManager authenticationManager(
+&nbsp;            PasswordEncoder passwordEncoder,
+&nbsp;            UserDetailsService userDetailsService
+&nbsp;    ) {
+<b class="fc">&nbsp;        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();</b>
+<b class="fc">&nbsp;        provider.setPasswordEncoder(passwordEncoder);</b>
+<b class="fc">&nbsp;        provider.setUserDetailsService(userDetailsService);</b>
+<b class="fc">&nbsp;        return new ProviderManager(provider);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    CorsConfigurationSource corsConfigurationSource() {
+<b class="fc">&nbsp;        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</b>
+<b class="fc">&nbsp;        CorsConfiguration config = new CorsConfiguration();</b>
+<b class="fc">&nbsp;        source.registerCorsConfiguration(&quot;/**&quot;, config.applyPermitDefaultValues());</b>
+<b class="fc">&nbsp;        config.setAllowedHeaders(List.of(&quot;Authorization&quot;, &quot;Cache-Control&quot;, &quot;Content-Type&quot;, &quot;*&quot;));</b>
+<b class="fc">&nbsp;        config.setAllowedOrigins(Collections.singletonList(allowedOrigin));</b>
+<b class="fc">&nbsp;        config.setAllowedMethods(List.of(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;PUT&quot;, &quot;OPTIONS&quot;, &quot;PATCH&quot;, &quot;DELETE&quot;));</b>
+<b class="fc">&nbsp;        config.setAllowCredentials(true);</b>
+<b class="fc">&nbsp;        config.setExposedHeaders(List.of(&quot;Authorization&quot;));</b>
+<b class="fc">&nbsp;        return source;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Đã chạy vào filterchain&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        http.csrf(AbstractHttpConfigurer::disable);</b>
+<b class="fc">&nbsp;        http.cors(c -&gt; c.configurationSource(corsConfigurationSource()));</b>
+<b class="fc">&nbsp;        http.sessionManagement(sess -&gt; sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));</b>
+<b class="fc">&nbsp;        http.formLogin(AbstractHttpConfigurer::disable);</b>
+<b class="fc">&nbsp;        http.httpBasic(AbstractHttpConfigurer::disable);</b>
+<b class="fc">&nbsp;        http.exceptionHandling(e -&gt; e.authenticationEntryPoint(new RestAuthenticationEntryPoint()));</b>
+<b class="fc">&nbsp;        http.authorizeHttpRequests(auth -&gt; auth.requestMatchers(</b>
+&nbsp;                        &quot;/&quot;,
+&nbsp;                        &quot;/error&quot;,
+&nbsp;                        &quot;/favicon.ico&quot;,
+&nbsp;                        &quot;/*/*.png&quot;,
+&nbsp;                        &quot;/*/*.gif&quot;,
+&nbsp;                        &quot;/*/*.svg&quot;,
+&nbsp;                        &quot;/*/*.jpg&quot;,
+&nbsp;                        &quot;/*/*.html&quot;,
+&nbsp;                        &quot;/*/*.css&quot;,
+&nbsp;                        &quot;/*/*.js&quot;
+&nbsp;                )
+<b class="fc">&nbsp;                .permitAll());</b>
+<b class="fc">&nbsp;        http.authorizeHttpRequests(</b>
+<b class="fc">&nbsp;                auth -&gt; auth.requestMatchers(</b>
+&nbsp;//                                &quot;/ws/**&quot;,
+&nbsp;                                &quot;/auth/**&quot;,
+<b class="fc">&nbsp;                                Helper.appendWildcard(MappingConstants.API_AUTH_PREFIX),</b>
+&nbsp;                                &quot;/oauth2/**&quot;
+&nbsp;                        )
+<b class="fc">&nbsp;                        .permitAll()</b>
+&nbsp;        );
+&nbsp;
+&nbsp;        // API public
+<b class="fc">&nbsp;        http.authorizeHttpRequests(</b>
+&nbsp;                auth -&gt; auth
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_STAFF+&quot;/facility&quot;)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_STAFF+&quot;/department&quot;)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_STAFF+&quot;/major-department&quot;)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_CATEGORY)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_PROJECT)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PERMITALL_PREFIX)).permitAll()</b>
+&nbsp;
+&nbsp;        );
+&nbsp;        // API ADMIN và Member
+<b class="fc">&nbsp;        http.authorizeHttpRequests(</b>
+&nbsp;                auth -&gt; auth
+&nbsp;// dược thêm
+&nbsp;
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_LABEL_PROJECT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MEMBER_TODO_VOTE)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_LABEL_TODO)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_MYPROJECT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_TODO)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_TODO_VOTE)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_TODO_LIST)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_PROJECT_DETAILS_MEMBER_PROJECT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+&nbsp;
+&nbsp;// vũ thêm
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_TODO)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_TODO_VOTE)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+&nbsp;//trường thêm
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_TODO_LIST)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_PHASE_PROJECT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_PROJECT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+&nbsp;                // duoc fix
+&nbsp;//                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_PROJECT_STUDENT)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_STAGE)).hasAnyAuthority(Role.QUAN_LY.name(),Role.THANH_VIEN.name())</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;        );
+&nbsp;        // API  author
+<b class="fc">&nbsp;        http.authorizeHttpRequests(</b>
+&nbsp;                auth -&gt; auth
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_ADMIN_PREFIX)).hasAnyAuthority(Role.ADMIN.name())</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MANAGE_PREFIX)).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(Helper.appendWildcard(MappingConstants.API_MEMBER_PREFIX)).hasAnyAuthority(Role.THANH_VIEN.name())</b>
+&nbsp;        );
+&nbsp;
+&nbsp;        // Chặn APIS ko định nghĩa
+<b class="fc">&nbsp;        http.authorizeHttpRequests(auth -&gt; auth.anyRequest().permitAll());</b>
+<b class="fc">&nbsp;        http.oauth2Login(</b>
+<b class="fc">&nbsp;                oauth2 -&gt; oauth2.authorizationEndpoint(a -&gt; a.baseUri(&quot;/oauth2/authorize&quot;))</b>
+<b class="fc">&nbsp;                        .redirectionEndpoint(r -&gt; r.baseUri(&quot;/oauth2/callback/**&quot;))</b>
+<b class="fc">&nbsp;                        .userInfoEndpoint(u -&gt; u.userService(customOAuth2UserService))</b>
+<b class="fc">&nbsp;                        .authorizationEndpoint(a -&gt; a.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))</b>
+<b class="fc">&nbsp;                        .successHandler(oAuth2AuthenticationSuccessHandler)</b>
+<b class="fc">&nbsp;                        .failureHandler(oAuth2AuthenticationFailureHandler));</b>
+<b class="fc">&nbsp;        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);</b>
+<b class="fc">&nbsp;        return http.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

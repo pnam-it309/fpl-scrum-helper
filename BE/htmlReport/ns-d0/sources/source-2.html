@@ -1,0 +1,122 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADProjectService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ADProjectService (udpm.hn.server.core.admin.project.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$87Hy5ja5</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$87Hy5ja5$auxiliary$9rpJ9y6q</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$87Hy5ja5$auxiliary$du6PMY56</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$stRXEl8f</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$stRXEl8f$auxiliary$kS3ptx4f</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectService$MockitoMock$stRXEl8f$auxiliary$ZS2C7CDs</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.service;
+&nbsp;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectCreateRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;
+&nbsp;public interface ADProjectService {
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllProject( ADProjectSearchRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllDepartmentFacility(String idFacility);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createProject( ADProjectCreateRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateProject( String idProject,ADProjectCreateRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; detailProject( String idProject );
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteProject( String idProject );
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllFacility();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countProjectByStatus();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getProjectParticipantCounts();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getProjectTodoCounts();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countTotalProjects();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countProjectsByFacility();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countProjectsByDepartment();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countTaskByStatusAndProject();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

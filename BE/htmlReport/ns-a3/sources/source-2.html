@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADStaffService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.staff.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ADStaffService (udpm.hn.server.core.admin.staff.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADStaffService$MockitoMock$r9hJpTTg</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffService$MockitoMock$r9hJpTTg$auxiliary$72NcQJlp</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffService$MockitoMock$r9hJpTTg$auxiliary$MDp0iwNK</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.staff.service;
+&nbsp;
+&nbsp;import org.springframework.core.io.Resource;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.ADCreateStaffFDM;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.ADCreateStaffRequest;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.ADStaffRequest;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.ADUpdateStaffFDMRequest;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.RoleStaffRequest;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;
+&nbsp;import java.io.FileNotFoundException;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;public interface ADStaffService {
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllStaff(ADStaffRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllRole( );
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createStaff(ADCreateStaffRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateStaff(String id,ADCreateStaffRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteStaff(String id,String emailLogin);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; detailStaff(String id);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; staffByDepartmentFacility(String id);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getMajorByDepartment(String idDepartment);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllDepartmentByFacility(String idFacility);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createStaffByFDM(ADCreateStaffFDM request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateStaffByFDM(ADUpdateStaffFDMRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteStaffByFDM(String id,String emailLogin);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getRoleByStaff(String idStaff);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createUpdateRoleByStaff(RoleStaffRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteRoleByStaff(RoleStaffRequest request );
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllStaffNoProject();
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getStaffRoleByStaff(String idStaff);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getLogsImportStaff(int page, int size);
+&nbsp;
+&nbsp;    Resource getAllCsv() throws IOException;
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllStaffCount();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

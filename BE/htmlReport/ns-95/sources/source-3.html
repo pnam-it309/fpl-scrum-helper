@@ -1,0 +1,115 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffAuthRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffAuthRepository (udpm.hn.server.infrastructure.security.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">StaffAuthRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.security.user.StaffFacilityResponse;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface StaffAuthRepository extends StaffRepository {
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFptAndStatus(String emailFpt, EntityStatus status);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT s 
+&nbsp;    FROM Staff s
+&nbsp;    JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;    JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;    JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;    JOIN Facility f ON df.facility.id = f.id
+&nbsp;    WHERE s.emailFpt = :emailFpt
+&nbsp;    AND f.id = :facilityId
+&nbsp;    AND s.status = :status
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Optional&lt;Staff&gt; findStaffByEmailFptAndFacility(
+&nbsp;            @Param(&quot;emailFpt&quot;) String emailFpt,
+&nbsp;            @Param(&quot;facilityId&quot;) String facilityId,
+&nbsp;            @Param(&quot;status&quot;) EntityStatus status
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            f.id AS facilityId
+&nbsp;        FROM Staff s
+&nbsp;        LEFT JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;        LEFT JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;        LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;        LEFT JOIN Facility f ON df.facility.id = f.id
+&nbsp;        WHERE s.id = :idStaff
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Optional&lt;StaffFacilityResponse&gt; findStaffWithFacilityById(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByIdOrEmailFpt(String id, String emailFpt);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,406 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CapacityEstimateServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.capacityestimate.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: CapacityEstimateServiceImpl (udpm.hn.server.core.member.capacityestimate.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CapacityEstimateServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.6%
+  </span>
+  <span class="absValue">
+    (20/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.3%
+  </span>
+  <span class="absValue">
+    (98/111)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.capacityestimate.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.capacityestimate.model.request.CapacityEstimatePageRequest;
+&nbsp;import udpm.hn.server.core.member.capacityestimate.model.request.CapacityEstimateRequest;
+&nbsp;import udpm.hn.server.core.member.capacityestimate.model.response.capacityEstimateResponse;
+&nbsp;import udpm.hn.server.core.member.capacityestimate.service.CapacityEstimateService;
+&nbsp;import udpm.hn.server.entity.CapacityEstimate;
+&nbsp;import udpm.hn.server.entity.PhaseProject;
+&nbsp;import udpm.hn.server.entity.Project;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.repository.CapacityEstimateRepository;
+&nbsp;import udpm.hn.server.repository.PhaseProjectRepository;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;import udpm.hn.server.repository.StudentRepository;
+&nbsp;import udpm.hn.server.repository.VelocityRecordRepository;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;import java.util.Comparator;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class CapacityEstimateServiceImpl implements CapacityEstimateService {
+&nbsp;
+&nbsp;    private final PhaseProjectRepository phaseProjectRepository;
+&nbsp;
+&nbsp;    private final StaffProjectRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final StaffRepository staffRepository;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final StudentRepository studentRepository;
+&nbsp;
+&nbsp;    private final CapacityEstimateRepository capacityEstimateRepository;
+&nbsp;
+&nbsp;    private final UserContextHelper userContextHelper;
+&nbsp;
+&nbsp;    private final VelocityRecordRepository velocityRecordRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAll(CapacityEstimatePageRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Request nhận vào trong get All Capacity estimate : ===&gt; {}&quot;, request.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request);</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Staff&gt; staffOpt = staffRepository.findById(request.getIdUser());</b>
+&nbsp;
+<b class="fc">&nbsp;        Project project = project(request.getIdProject());</b>
+&nbsp;
+&nbsp;        StaffProject staffProject;
+&nbsp;
+<b class="fc">&nbsp;        if (staffOpt.isEmpty()) {</b>
+<b class="fc">&nbsp;            Optional&lt;Student&gt; studentOpt = studentRepository.findById(request.getIdUser());</b>
+<b class="fc">&nbsp;            staffProject = staffProject(studentOpt.get(), project);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            staffProject = staffProject(staffOpt.get(), project);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(capacityEstimateRepository.getAll(page, request.getIdProject(), staffProject.getId()), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllSprint(String idProject) {
+&nbsp;//        Set&lt;StatusPhase&gt; validPhases = Set.of(StatusPhase.CHUA_HOAN_THANH, StatusPhase.DANG_LAM);
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Staff&gt; staffOpt = staffRepository.findById(userContextHelper.getCurrentUserId());</b>
+<b class="fc">&nbsp;        Project project = project(idProject);</b>
+&nbsp;
+&nbsp;        StaffProject staffProject;
+<b class="fc">&nbsp;        if (staffOpt.isEmpty()) {</b>
+<b class="fc">&nbsp;            Optional&lt;Student&gt; studentOpt = studentRepository.findById(userContextHelper.getCurrentUserId());</b>
+<b class="fc">&nbsp;            staffProject = staffProject(studentOpt.get(), project);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            staffProject = staffProject(staffOpt.get(), project);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;PhaseProject&gt; list = phaseProjectRepository.findAll().stream().</b>
+<b class="pc">&nbsp;                filter(a -&gt; a.getStatus() == EntityStatus.ACTIVE)</b>
+<b class="fc">&nbsp;                .filter(a -&gt; a.getProject().getId().equals(idProject))</b>
+&nbsp;//                .filter(a -&gt; validPhases.contains(a.getStatusPhase()))
+<b class="fc">&nbsp;                .sorted(Comparator.comparing(PhaseProject::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        Set&lt;PhaseProject&gt; phaseProjectsInCapacityEstimate = capacityEstimateRepository.findAll()</b>
+<b class="pc">&nbsp;                .stream().filter(capacityEstimate -&gt; capacityEstimate.getStaffProject() != null)</b>
+<b class="fc">&nbsp;                .filter(capacityEstimate -&gt; capacityEstimate.getStaffProject().equals(staffProject))</b>
+<b class="fc">&nbsp;                .map(capacityEstimate -&gt; capacityEstimate.getPhaseProject())</b>
+<b class="fc">&nbsp;                .collect(Collectors.toSet());</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;PhaseProject&gt; filteredList = list.stream().filter(phaseProject -&gt; !phaseProjectsInCapacityEstimate.contains(phaseProject)).collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(list, HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createCapacityEstimate(CapacityEstimateRequest estimate) {
+<b class="fc">&nbsp;        log.info(&quot;Request truyền vào trong capacityEstimate : =====&gt; {}&quot;, estimate.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        PhaseProject phaseProject = phaseProject(estimate.getIdSprint());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Staff&gt; staffOpt = staffRepository.findById(estimate.getIdUser());</b>
+&nbsp;
+<b class="fc">&nbsp;        Project project = project(estimate.getIdProject());</b>
+&nbsp;
+&nbsp;        StaffProject staffProject;
+&nbsp;
+&nbsp;
+<b class="pc">&nbsp;        if (staffOpt.isEmpty()) {</b>
+<b class="fc">&nbsp;            Optional&lt;Student&gt; studentOpt = studentRepository.findById(estimate.getIdUser());</b>
+<b class="fc">&nbsp;            staffProject = staffProject(studentOpt.get(), project);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            staffProject = staffProject(staffOpt.get(), project);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Set&lt;PhaseProject&gt; phaseProjectsInCapacityEstimate = capacityEstimateRepository.findAll()</b>
+<b class="pc">&nbsp;                .stream().filter(capacityEstimate -&gt; capacityEstimate.getStaffProject() != null)</b>
+<b class="fc">&nbsp;                .filter(capacityEstimate -&gt; capacityEstimate.getStaffProject().equals(staffProject))</b>
+<b class="fc">&nbsp;                .map(capacityEstimate -&gt; capacityEstimate.getPhaseProject())</b>
+<b class="fc">&nbsp;                .collect(Collectors.toSet());</b>
+&nbsp;
+<b class="fc">&nbsp;        if(phaseProjectsInCapacityEstimate.contains(phaseProject)){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NO_CONTENT,&quot;Đã ước lượng cho giai đoạn này!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CapacityEstimate capacityEstimate = CapacityEstimate.builder()</b>
+&nbsp;//                .availableHours(estimate.getAvailableHours())
+<b class="fc">&nbsp;                .workday(estimate.getWorkday()).describe(estimate.getDescriptions()).phaseProject(phaseProject).staffProject(staffProject).build();</b>
+&nbsp;
+<b class="fc">&nbsp;        capacityEstimateRepository.save(capacityEstimate);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;().success(&quot;Thêm thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateCapacityEstimate(String id, CapacityEstimateRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;request truyền vào update capacity ====&gt; {}{}&quot;, id, request.toString());</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;CapacityEstimate&gt; optionalCapacityEstimate = capacityEstimateRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalCapacityEstimate.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND, &quot;Không tìm thấy capacity estimate&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CapacityEstimate capacityEstimate = optionalCapacityEstimate.get();</b>
+&nbsp;
+<b class="pc">&nbsp;        if (request.getIdSprint() != null) {</b>
+<b class="fc">&nbsp;            PhaseProject phaseProject = phaseProject(request.getIdSprint());</b>
+&nbsp;
+<b class="fc">&nbsp;            capacityEstimate.setPhaseProject(phaseProject);</b>
+&nbsp;
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (request.getDescriptions() != null) {</b>
+<b class="fc">&nbsp;            capacityEstimate.setDescribe(request.getDescriptions());</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (request.getWorkday() != null) {</b>
+<b class="fc">&nbsp;            capacityEstimate.setWorkday(request.getWorkday());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        capacityEstimateRepository.save(capacityEstimate);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;().success(capacityEstimate, &quot;Cập nhật capacity estimate thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailCapacityEstimate(String id) {
+<b class="fc">&nbsp;        log.info(&quot;id truyền vào detail capacity =====&gt;{}&quot;, id);</b>
+<b class="fc">&nbsp;        capacityEstimateResponse estimate = capacityEstimateRepository.detailCapacityEstimate(id).orElseThrow(() -&gt; new RuntimeException(&quot;CapacityEstimate not found with id&quot; + id));</b>
+<b class="fc">&nbsp;        log.info(&quot;Duẽ liệu detail lên : ===&gt; {}&quot;, estimate);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(estimate, HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteCapacityEstimate(String id) {
+&nbsp;
+<b class="fc">&nbsp;        capacityEstimateRepository.deleteById(id);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;().success(HttpStatus.OK, &quot;Xóa thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; CapacityEstimateBySprint(String id) {
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String,capacityEstimateResponse&gt; listEstimateBySprint = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;capacityEstimateResponse&gt; estimateList = capacityEstimateRepository.capacityEstimateBySprint(id);</b>
+<b class="fc">&nbsp;        for (capacityEstimateResponse estimate : estimateList) {</b>
+<b class="fc">&nbsp;            String IdPhase = estimate.getIdPhase(); // hoặc trường tương ứng</b>
+<b class="fc">&nbsp;            listEstimateBySprint.put(IdPhase, estimate);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Dữ liệu ===&gt; {}&quot;,listEstimateBySprint.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(estimateList,HttpStatus.OK,&quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private PhaseProject phaseProject(String id) {
+<b class="fc">&nbsp;        return phaseProjectRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;PhaseProject not found with id: &quot; + id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Project project(String id) {
+<b class="fc">&nbsp;        return projectRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;project not found with id : &quot; + id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private StaffProject staffProject(Object obj, Project project) {
+&nbsp;        StaffProject staffProject;
+<b class="fc">&nbsp;        if (obj instanceof Staff) {</b>
+<b class="fc">&nbsp;            staffProject = staffProjectRepository.findByStaffAndProject((Staff) obj, project).orElseThrow(() -&gt; new RuntimeException(&quot;staff project not found with id: &quot; + ((Staff) obj).getId()));</b>
+&nbsp;            ;
+&nbsp;        } else {
+<b class="fc">&nbsp;            staffProject = staffProjectRepository.findByStudentAndProject((Student) obj, project).orElseThrow(() -&gt; new RuntimeException(&quot;staff project not found with student :&quot; + ((Student) obj).toString()));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return staffProject;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;?&gt; velocityTB(String idProject) {
+<b class="fc">&nbsp;        Set&lt;StatusPhase&gt; validPhases = Set.of(StatusPhase.CHUA_HOAN_THANH, StatusPhase.DANG_LAM);</b>
+<b class="fc">&nbsp;        Float actualPoint = velocityRecordRepository.avgActualPoint(idProject);</b>
+<b class="fc">&nbsp;        Float actualWorkingDay = velocityRecordRepository.avgActualWorkingDay(idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        Double velocity = 0.0;</b>
+<b class="pc">&nbsp;        if (actualWorkingDay != null &amp;&amp; actualWorkingDay &gt; 0) {</b>
+<b class="nc">&nbsp;            velocity = (double) actualPoint / actualWorkingDay == 0  ? 1.0 : (double) actualPoint / actualWorkingDay ;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            velocity = 1.0;</b>
+<b class="fc">&nbsp;            log.warn(&quot;Actual working day is null or zero for project ID: &quot; + idProject + &quot;. Velocity will be 0.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;PhaseProject&gt; list = phaseProjectRepository.findAll().stream().</b>
+<b class="pc">&nbsp;                filter(a -&gt; a.getStatus() == EntityStatus.ACTIVE)</b>
+<b class="fc">&nbsp;                .filter(a -&gt; a.getProject().getId().equals(idProject))</b>
+<b class="fc">&nbsp;                .filter(a -&gt; validPhases.contains(a.getStatusPhase()))</b>
+<b class="fc">&nbsp;                .sorted(Comparator.comparing(PhaseProject::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, Double&gt; estimatedPointsByPhase = new HashMap&lt;&gt;(); // Assuming PhaseProject has an ID (e.g., Long)</b>
+&nbsp;
+<b class="pc">&nbsp;        for (PhaseProject phase : list) {</b>
+<b class="nc">&nbsp;            Double totalWorkdayForPhase = capacityEstimateRepository.findAll().stream()</b>
+<b class="nc">&nbsp;                    .filter(v -&gt; v.getPhaseProject() != null &amp;&amp; v.getPhaseProject().getId().equals(phase.getId())) // Compare by ID for correctness</b>
+<b class="nc">&nbsp;                    .filter(v -&gt; v.getStatus() == EntityStatus.ACTIVE)</b>
+<b class="nc">&nbsp;                    .mapToDouble(v -&gt; v.getWorkday() != null ? v.getWorkday() : 0.0)</b>
+<b class="nc">&nbsp;                    .sum();</b>
+&nbsp;
+<b class="nc">&nbsp;            log.info(&quot;Tổng số giai ngày làm việc ước luognjw trong giai đoạn : ===&gt; {}&quot;,totalWorkdayForPhase);</b>
+&nbsp;
+<b class="nc">&nbsp;            Double estimatedPoints = velocity * totalWorkdayForPhase;</b>
+<b class="nc">&nbsp;            estimatedPointsByPhase.put(phase.getId(), estimatedPoints); // Store with phase ID</b>
+&nbsp;
+<b class="nc">&nbsp;            log.info(&quot;Dánh sáchc tổng sô: ==&gt;{}&quot;,estimatedPointsByPhase.toString());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            Map&lt;String, Object&gt; responseObjectContent = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;            responseObjectContent.put(&quot;velocity&quot;, velocity);</b>
+<b class="fc">&nbsp;            responseObjectContent.put(&quot;estimatedPointsByPhase&quot;, estimatedPointsByPhase);</b>
+&nbsp;
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(estimatedPointsByPhase, HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Lỗi khi tính toán hoặc lấy dữ liệu: &quot; + e.getMessage(), e);</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.INTERNAL_SERVER_ERROR, &quot;Có lỗi xảy ra khi xử lý dữ liệu&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

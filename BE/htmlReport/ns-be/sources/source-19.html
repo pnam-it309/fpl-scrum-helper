@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffProjectRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$7maYLNhz</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$7maYLNhz$auxiliary$7iaWk5iK</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$7maYLNhz$auxiliary$nZ7Q4j1Q</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$8kczDl4u</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$8kczDl4u$auxiliary$HgLnQhK9</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$8kczDl4u$auxiliary$U0Fpf8mZ</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$n7XzZgpI</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$n7XzZgpI$auxiliary$Fers9cUL</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$n7XzZgpI$auxiliary$zTd4wgCR</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$Oc6NEkAz</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$Oc6NEkAz$auxiliary$3CMQjVgn</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$Oc6NEkAz$auxiliary$doW80gKH</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xbuqS4IK</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xbuqS4IK$auxiliary$r8hznOmJ</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xbuqS4IK$auxiliary$zew27UGc</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xLvL4WOQ</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xLvL4WOQ$auxiliary$Qob7Phtt</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$xLvL4WOQ$auxiliary$zpcyKCYC</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$yZnCM5jA</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$yZnCM5jA$auxiliary$ieZ2AHqJ</td>
+  </tr>
+  <tr>
+    <td class="name">StaffProjectRepository$MockitoMock$yZnCM5jA$auxiliary$KKDsCAII</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import udpm.hn.server.entity.Project;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface StaffProjectRepository extends JpaRepository&lt;StaffProject,String&gt; {
+&nbsp;
+&nbsp;    Optional&lt;StaffProject&gt; findByStaffAndProject(Staff staff, Project project);
+&nbsp;
+&nbsp;    Optional&lt;StaffProject&gt; findByStaff(Staff staff);
+&nbsp;    Optional&lt;StaffProject&gt; findByStudent(Student student);
+&nbsp;    Optional&lt;StaffProject&gt; findByStudentAndProject(Student student, Project project);
+&nbsp;
+&nbsp;
+&nbsp;    List&lt;StaffProject&gt; findByProject(Project project);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    select sp from StaffProject sp
+&nbsp;    left join Staff s on sp.staff.id = s.id
+&nbsp;    left join Student st on sp.student.id = st.id
+&nbsp;    where (s.id = :#{#userContextHelper.currentUserId} OR st.id = :#{#userContextHelper.currentUserId})
+&nbsp;    order by sp.id desc limit 1
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;StaffProject&gt; getStaffProjectByStaff(UserContextHelper userContextHelper);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    select sp from StaffProject sp
+&nbsp;    left join Staff s on sp.staff.id = s.id
+&nbsp;    left join Student st on sp.student.id = st.id
+&nbsp;    left join Project p on sp.project.id = p.id
+&nbsp;    where 
+&nbsp;    (sp.staff.id = :#{#userContextHelper.currentUserId}
+&nbsp;             OR sp.student.id = :#{#userContextHelper.currentUserId})
+&nbsp;    and sp.project.id = :idProject
+&nbsp;    order by sp.id desc limit 1
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;StaffProject&gt; getStaffProjectByStaffAndProject(UserContextHelper userContextHelper, String idProject);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

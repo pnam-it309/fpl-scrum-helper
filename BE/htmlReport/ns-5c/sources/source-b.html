@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MappingConstants</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.constant</a>
+</div>
+
+<h1>Coverage Summary for Class: MappingConstants (udpm.hn.server.infrastructure.constant)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MappingConstants</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.constant;
+&nbsp;
+<b class="nc">&nbsp;public final class MappingConstants {</b>
+&nbsp;
+&nbsp;    /* API VERSION PREFIX */
+&nbsp;    public static final String API_VERSION_PREFIX = &quot;/api/v1&quot;;
+&nbsp;
+&nbsp;    /* API COMMON */
+&nbsp;    public static final String API_COMMON = API_VERSION_PREFIX + &quot;/common&quot;;
+&nbsp;
+&nbsp;    /* AUTHENTICATION */
+&nbsp;    public static final String API_AUTH_PREFIX = API_VERSION_PREFIX + &quot;/auth&quot;;
+&nbsp;
+&nbsp;    /* PERMITALL */
+&nbsp;    public static final String API_PERMITALL_PREFIX = API_VERSION_PREFIX + &quot;/permitall&quot;;
+&nbsp;
+&nbsp;    // Constants representing the base paths for various resources
+&nbsp;    public static final String ADMIN = &quot;/admin&quot;;
+&nbsp;
+&nbsp;    public static final String MANAGE = &quot;/manage&quot;;
+&nbsp;
+&nbsp;    public static final String MEMBER = &quot;/member&quot;;
+&nbsp;
+&nbsp;    public static final String PROJECT_DETAILS = &quot;/project-details&quot;;
+&nbsp;
+&nbsp;    // Constants representing the full paths for various resources
+&nbsp;    public static final String API_ADMIN_PREFIX = API_VERSION_PREFIX + ADMIN;
+&nbsp;    public static final String API_MANAGE_PREFIX = API_VERSION_PREFIX + MANAGE;
+&nbsp;    public static final String API_MEMBER_PREFIX = API_VERSION_PREFIX + MEMBER;
+&nbsp;    public static final String API_PROJECT_DETAILS_PREFIX = API_VERSION_PREFIX + PROJECT_DETAILS;
+&nbsp;    // Constants representing the full paths for various resources under admin
+&nbsp;    public static final String API_ADMIN_DEPARTMENT = API_ADMIN_PREFIX + &quot;/department&quot;;
+&nbsp;    public static final String API_ADMIN_MAJOR = API_ADMIN_PREFIX + &quot;/major&quot;;
+&nbsp;    public static final String API_ADMIN_FACILITY = API_ADMIN_PREFIX + &quot;/facility&quot;;
+&nbsp;    public static final String API_ADMIN_DEPARTMENT_FACILITY = API_ADMIN_PREFIX + &quot;/department-facility&quot;;
+&nbsp;    public static final String API_ADMIN_MAJOR_FACILITY = API_ADMIN_PREFIX + &quot;/major-facility&quot;;
+&nbsp;    public static final String API_ADMIN_STAFF = API_ADMIN_PREFIX + &quot;/staff&quot;;
+&nbsp;    public static final String API_ADMIN_CATEGORY = API_ADMIN_PREFIX + &quot;/category&quot;;
+&nbsp;    public static final String API_ADMIN_STUDENT = API_ADMIN_PREFIX + &quot;/student&quot;;
+&nbsp;    public static final String API_ADMIN_PROJECT = API_ADMIN_PREFIX + &quot;/project&quot;;
+&nbsp;    public static final String API_ADMIN_REPORT = API_ADMIN_PREFIX + &quot;/report&quot;;
+&nbsp;    public static final String API_ADMIN_ACTIVITY_LOG = API_ADMIN_PREFIX + &quot;/activity-log&quot;;
+&nbsp;
+&nbsp;    public static final String API_ADMIN_PROJECT_STUDENT = API_ADMIN_PROJECT + &quot;/student&quot;;
+&nbsp;
+&nbsp;    public static final String API_ADMIN_ROLE = API_ADMIN_PREFIX + &quot;/role&quot;;
+&nbsp;
+&nbsp;    // API MEMBER
+&nbsp;    public static final String API_MEMBER_MYPROJECT = API_MEMBER_PREFIX + &quot;/my-project&quot;;
+&nbsp;
+&nbsp;    public static final String API_MEMBER_REPORT = API_MEMBER_PREFIX + &quot;/reports&quot;;
+&nbsp;    public static final String API_MEMBER_TODO = API_MEMBER_PREFIX + &quot;/todo&quot;;
+&nbsp;    public static final String API_MEMBER_TODO_LIST = API_MEMBER_PREFIX + &quot;/todo-list&quot;;
+&nbsp;    public static final String API_MEMBER_TODO_VOTE = API_MEMBER_PREFIX + &quot;/todo-vote&quot;;
+&nbsp;    public static final String API_MEMBER_MEMBER_PROJECT = API_MEMBER_PREFIX + &quot;/member-project&quot;;
+&nbsp;    public static final String API_MEMBER_LABEL_PROJECT = API_MEMBER_PREFIX + &quot;/label&quot;;
+&nbsp;    public static final String API_MEMBER_LABEL_TODO = API_MEMBER_PREFIX + &quot;/label-todo&quot;;
+&nbsp;    public static final String API_MEMBER_PHASE_PROJECT = API_MEMBER_PREFIX + &quot;/phase-project&quot;;
+&nbsp;
+&nbsp;    // MEMBER - CapacityEstimate
+&nbsp;
+&nbsp;    public static final String API_MEMBER_CAPACITY_ESTIMATE = API_MEMBER_PREFIX + &quot;/capacity-estimate&quot;;
+&nbsp;    public static final String API_MEMBER_CHART = API_MEMBER_PREFIX + &quot;/chart&quot;;
+&nbsp;
+&nbsp;    // API PROJECT DETAILS
+&nbsp;    public static final String API_PROJECT_DETAILS_MYPROJECT = API_PROJECT_DETAILS_PREFIX + &quot;/my-project&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/todo&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_TODO_VOTE = API_PROJECT_DETAILS_PREFIX + &quot;/todo-vote&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_TODO_LIST = API_PROJECT_DETAILS_PREFIX + &quot;/todo-list&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_MEMBER_PROJECT = API_PROJECT_DETAILS_PREFIX + &quot;/member-project&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_LABEL_PROJECT = API_PROJECT_DETAILS_PREFIX + &quot;/label&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_LABEL_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/label-todo&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_COMMENT_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/comment&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_RESOURCE_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/resource&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_NOTIFICATION_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/notification&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_NOTIFICATION_MEMBER_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/notification-member&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_IMAGE = API_PROJECT_DETAILS_PREFIX + &quot;/image&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_ACTIVITY = API_PROJECT_DETAILS_PREFIX + &quot;/activity&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_TYPE_TODO = API_PROJECT_DETAILS_PREFIX + &quot;/type-todo&quot;;
+&nbsp;    public static final String API_PROJECT_DETAILS_TYPE_PROJECT = API_PROJECT_DETAILS_PREFIX + &quot;/type&quot;;
+&nbsp;
+&nbsp;    //manage
+&nbsp;    public static final String API_MANAGE_PROJECT = API_MANAGE_PREFIX + &quot;/project&quot;;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_STAGE = API_MANAGE_PREFIX + &quot;/stage&quot;;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_PROJECT_STUDENT = API_MANAGE_PROJECT + &quot;/student&quot;;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_TODO = API_MANAGE_PREFIX + &quot;/todo&quot;;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_TODO_LIST = API_MANAGE_PREFIX + &quot;/todo-list&quot;;
+&nbsp;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_TODO_VOTE = API_MANAGE_TODO + &quot;/vote&quot;;
+&nbsp;
+&nbsp;    // Manage phase project
+&nbsp;
+&nbsp;    public static final String API_MANAGE_PHASE_PROJECT = API_MANAGE_PREFIX + &quot;/phase-project&quot;;
+&nbsp;
+&nbsp;
+&nbsp;    // Manage report
+&nbsp;    public static final String API_MANAGE_REPORT = API_MANAGE_PREFIX + &quot;/report&quot;;
+&nbsp;
+&nbsp;    // Manage Capacity estimate
+&nbsp;
+&nbsp;    public static final String API_MANAGE_CAPACITY_ESTIMATE = API_MANAGE_PREFIX + &quot;/estimate&quot;;
+&nbsp;
+&nbsp;    public static final String API_MANAGE_USER = API_MANAGE_PREFIX + &quot;/user&quot;;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

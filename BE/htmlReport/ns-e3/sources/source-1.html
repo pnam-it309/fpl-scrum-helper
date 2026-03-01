@@ -1,0 +1,155 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeAssignRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeAssignRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$auBgDVrf</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$auBgDVrf$auxiliary$jXodZGdo</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$auBgDVrf$auxiliary$V2mCE5Kg</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$Bds9SaG7</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$Bds9SaG7$auxiliary$CHaW1wrI</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$Bds9SaG7$auxiliary$Ii15fRmn</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$IwvNfti1</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$IwvNfti1$auxiliary$oc3fKIyp</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeAssignRepository$MockitoMock$IwvNfti1$auxiliary$YbLXyhDd</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMemberInfoTodoResponse;
+&nbsp;import udpm.hn.server.entity.Assign;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.repository.AssignRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MBMeAssignRepository extends AssignRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        COALESCE(st.id, s.id) AS id,
+&nbsp;        COALESCE(st.name, s.name) AS name,
+&nbsp;        COALESCE(st.emailFpt, s.email) AS email,
+&nbsp;        COALESCE(st.picture, s.image) AS image
+&nbsp;    FROM Assign a
+&nbsp;    JOIN a.staffProject sp
+&nbsp;    LEFT JOIN sp.staff st
+&nbsp;    LEFT JOIN sp.student s
+&nbsp;    WHERE a.todo.id = :idTodo
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMemberInfoTodoResponse&gt; getAllMemberByIdTodo(@Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT tv
+&nbsp;    FROM Assign tv
+&nbsp;    WHERE tv.staffProject.id = :idMember AND tv.todo.id = :idTodo
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Assign findByMemberIdAndTodoId(@Param(&quot;idMember&quot;) String idMember, @Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT tv.id
+&nbsp;    FROM Assign tv
+&nbsp;    WHERE tv.todo.id = :idTodo
+&nbsp;      AND tv.staffProject.id = :idStaffProject
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;String&gt; findIdAssignByIdTodoAndIdStaffProject(@Param(&quot;idTodo&quot;) String idTodo,
+&nbsp;                                                             @Param(&quot;idStaffProject&quot;) String idStaffProject);
+&nbsp;
+&nbsp;    boolean existsByTodoAndStaffProject(Todo todo, StaffProject staffProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            SELECT tv.todo.id 
+&nbsp;            FROM TodoVote tv 
+&nbsp;             JOIN StaffProject st ON tv.staffProject.id = st.id
+&nbsp;             JOIN StageVote sv on sv.id = tv.stageVote.id
+&nbsp;            WHERE st.id = :idStaff and st.project.id = :idProject
+&nbsp;            and (:time BETWEEN sv.startTime AND sv.endTime)
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;String&gt; getIDTodoByIdStaffProject(@Param(&quot;idStaff&quot;) String idStaff,@Param(&quot;idProject&quot;) String idProject,@Param(&quot;time&quot;) Long time);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

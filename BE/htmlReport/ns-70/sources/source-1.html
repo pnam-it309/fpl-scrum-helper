@@ -1,0 +1,277 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JobStudentRestController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.student.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: JobStudentRestController (udpm.hn.server.infrastructure.job.student.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JobStudentRestController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3%
+  </span>
+  <span class="absValue">
+    (1/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.student.controller;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.core.Job;
+&nbsp;import org.springframework.batch.core.JobParameters;
+&nbsp;import org.springframework.batch.core.JobParametersBuilder;
+&nbsp;import org.springframework.batch.core.launch.JobLauncher;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.infrastructure.job.filecheck.ExcelFormatValidator;
+&nbsp;import udpm.hn.server.infrastructure.job.student.jobconfig.StudentJobLauncher;
+&nbsp;import udpm.hn.server.infrastructure.job.student.service.JobStudentService;
+&nbsp;import udpm.hn.server.infrastructure.job.student.service.impl.DowLoadFileLog;
+&nbsp;import udpm.hn.server.infrastructure.job.student.service.impl.DownloadStudentTemplate;
+&nbsp;import udpm.hn.server.infrastructure.job.student.service.impl.HistoryImportStudentService;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.io.ByteArrayInputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequiredArgsConstructor
+&nbsp;@RequestMapping(MappingConstants.API_ADMIN_STUDENT)
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class JobStudentRestController {
+&nbsp;
+&nbsp;
+&nbsp;    private final DownloadStudentTemplate downloadStudentTemplate;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired, onParam_ = @Qualifier(&quot;importStudent&quot;))
+&nbsp;    private final JobStudentService storageService;
+&nbsp;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private StudentJobLauncher excelFileStudentToDatabaseJobLauncher;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private JobLauncher jobLauncher;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private Job excelFileToDatabaseJobStudent;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private HistoryImportStudentService historyImportStudentService;
+&nbsp;
+&nbsp;
+&nbsp;    private static final String TEMPLATE_FILE_NAME = &quot;template_import_sinh_vien.xlsx&quot;;
+&nbsp;
+&nbsp;    private final DowLoadFileLog dowLoadFileLog;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/download-csv&quot;)
+&nbsp;    public ResponseEntity&lt;byte[]&gt; downloadCsv() {
+&nbsp;        try {
+<b class="nc">&nbsp;            byte[] csvContent = dowLoadFileLog.getCsvFile();</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                    .header(HttpHeaders.CONTENT_DISPOSITION, &quot;attachment; filename=import-log.csv&quot;)</b>
+<b class="nc">&nbsp;                    .contentType(MediaType.parseMediaType(&quot;text/csv&quot;))</b>
+<b class="nc">&nbsp;                    .body(csvContent);</b>
+&nbsp;
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().build(); // Trả về lỗi 404 nếu file không tồn tại</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/template&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; downloadTemplate() throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+&nbsp;
+<b class="nc">&nbsp;        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);</b>
+<b class="nc">&nbsp;        headers.setContentDispositionFormData(&quot;attachment&quot;, TEMPLATE_FILE_NAME);</b>
+&nbsp;
+<b class="nc">&nbsp;        ResponseObject&lt;?&gt; response = downloadStudentTemplate.downloadTemplate();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (response.getData() instanceof ByteArrayInputStream) {</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(</b>
+<b class="nc">&nbsp;                    ((ByteArrayInputStream) response.getData()).readAllBytes(),</b>
+&nbsp;                    headers,
+&nbsp;                    HttpStatus.OK
+&nbsp;            );
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return Helper.createResponseEntity(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @PostMapping(&quot;/file/upload&quot;)
+&nbsp;//    public ResponseEntity&lt;?&gt; uploadFileStudent(@RequestParam(&quot;filePath&quot;)MultipartFile filePath){
+&nbsp;//        String message = &quot;&quot;;
+&nbsp;//        try {
+&nbsp;//            storageService.init();
+&nbsp;//            String fileName = storageService.save(filePath);
+&nbsp;//            message = &quot;Uploaded the file successfully: &quot; + filePath.getOriginalFilename();
+&nbsp;//            excelFileStudentToDatabaseJobLauncher.setFullPathFileName(fileName);
+&nbsp;//            excelFileStudentToDatabaseJobLauncher.enable();
+&nbsp;//            JobParameters jobParameters = new JobParametersBuilder()
+&nbsp;//                    .addString(&quot;filePath&quot;, fileName).toJobParameters();
+&nbsp;//            jobLauncher.run(excelFileToDatabaseJobStudent, jobParameters);
+&nbsp;//            return ResponseEntity.status(HttpStatus.OK).body(&quot;import thành công&quot;);
+&nbsp;//        }catch (Exception e){
+&nbsp;//            message = &quot;import thất bại&quot;;
+&nbsp;//            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+&nbsp;//        }
+&nbsp;//    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/file/upload&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; uploadFileStudent(@RequestParam(&quot;filePath&quot;) MultipartFile filePath) {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (!ExcelFormatValidator.isValidFormat(filePath)) {</b>
+<b class="nc">&nbsp;                String logMessage = &quot;File không đúng định dạng - &quot; + filePath.getOriginalFilename();</b>
+<b class="nc">&nbsp;                historyImportStudentService.saveHistory(logMessage);</b>
+&nbsp;
+&nbsp;                return ResponseEntity
+<b class="nc">&nbsp;                        .badRequest()</b>
+<b class="nc">&nbsp;                        .body(&quot;File Excel không đúng định dạng. Vui lòng sử dụng file mẫu.&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            storageService.init();</b>
+<b class="nc">&nbsp;            String fileName = storageService.save(filePath);</b>
+&nbsp;
+<b class="nc">&nbsp;            excelFileStudentToDatabaseJobLauncher.setFullPathFileName(fileName);</b>
+<b class="nc">&nbsp;            excelFileStudentToDatabaseJobLauncher.enable();</b>
+&nbsp;
+<b class="nc">&nbsp;            JobParameters jobParameters = new JobParametersBuilder()</b>
+<b class="nc">&nbsp;                    .addString(&quot;filePath&quot;, fileName)</b>
+<b class="nc">&nbsp;                    .toJobParameters();</b>
+&nbsp;
+<b class="nc">&nbsp;            jobLauncher.run(excelFileToDatabaseJobStudent, jobParameters);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.OK).body(&quot;Import thành công&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return ResponseEntity</b>
+<b class="nc">&nbsp;                    .status(HttpStatus.EXPECTATION_FAILED)</b>
+<b class="nc">&nbsp;                    .body(&quot;Import thất bại: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

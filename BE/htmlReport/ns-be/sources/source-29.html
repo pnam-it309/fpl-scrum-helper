@@ -1,0 +1,118 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RoleRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: RoleRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$Ikt5rh0A</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$Ikt5rh0A$auxiliary$EDm1gu4a</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$Ikt5rh0A$auxiliary$uOInyDWx</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$QN55OsMu</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$QN55OsMu$auxiliary$0PnpG3cV</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$QN55OsMu$auxiliary$4njrCxnI</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$wLY4Mwbr</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$wLY4Mwbr$auxiliary$uPndiJSN</td>
+  </tr>
+  <tr>
+    <td class="name">RoleRepository$MockitoMock$wLY4Mwbr$auxiliary$Z9855am3</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.Role;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface RoleRepository extends JpaRepository&lt;Role, String&gt; {
+&nbsp;
+&nbsp;    Role findRolesByCode(String code);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                            select r from StaffRole st
+&nbsp;                            join Role r on r.id = st.role.id
+&nbsp;                            join Staff s on s.id = st.staff.id
+&nbsp;                            where s.id = :idStaff
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    List&lt;Role&gt; findRoleByStaff(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

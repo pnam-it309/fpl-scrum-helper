@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DocxReportUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.doc.ADReportProject.utils.docx</a>
+</div>
+
+<h1>Coverage Summary for Class: DocxReportUtil (udpm.hn.server.infrastructure.doc.ADReportProject.utils.docx)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DocxReportUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.1%
+  </span>
+  <span class="absValue">
+    (1/89)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.doc.ADReportProject.utils.docx;
+&nbsp;
+&nbsp;import org.apache.poi.xwpf.usermodel.*;
+&nbsp;import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.request.ProjectNameStartTimeProjection;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.DocADProjectMemberResponse;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.PersonalReportResponse;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.ReportProjection;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.ADReportRepository;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.DocADProjectRepository;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.time.DayOfWeek;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.ZoneId;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class DocxReportUtil {</b>
+&nbsp;
+&nbsp;
+&nbsp;    public static void createSingleDocxFile(String filePath,
+&nbsp;                                            DocADProjectMemberResponse member,
+&nbsp;                                            ADReportRepository adReportRepository,
+&nbsp;                                            DocADProjectRepository docADProjectRepository) {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;ReportProjection&gt; reports = adReportRepository.findMembersByProjectIdAndStaffProjectId(member.getProjectId(), member.getStaffProjectId());</b>
+&nbsp;
+&nbsp;        // thời gian bắt đầu
+<b class="nc">&nbsp;        ProjectNameStartTimeProjection project = docADProjectRepository.findProjectStartTimeById(member.getProjectId());</b>
+&nbsp;
+<b class="nc">&nbsp;        XWPFDocument doc = new XWPFDocument();</b>
+&nbsp;
+&nbsp;        // Ngày bắt đầu thực tế
+<b class="nc">&nbsp;        LocalDate startDate = Instant.ofEpochMilli(project.getStartTime())</b>
+<b class="nc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="nc">&nbsp;                .toLocalDate();</b>
+&nbsp;
+&nbsp;        // Điều chỉnh startDate về thứ 2 đầu tiên của tuần đó
+<b class="nc">&nbsp;        while (startDate.getDayOfWeek() != DayOfWeek.MONDAY) {</b>
+<b class="nc">&nbsp;            startDate = startDate.minusDays(1);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        LocalDate endDate = LocalDate.now();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (ReportProjection p : reports) {</b>
+<b class="nc">&nbsp;            int weekNumber = 1;</b>
+<b class="nc">&nbsp;            LocalDate currentStart = startDate;</b>
+&nbsp;
+&nbsp;            // Tiêu đề dự án
+<b class="nc">&nbsp;            XWPFParagraph title = doc.createParagraph();</b>
+<b class="nc">&nbsp;            XWPFRun runTitle = title.createRun();</b>
+<b class="nc">&nbsp;            runTitle.setBold(true);</b>
+<b class="nc">&nbsp;            runTitle.setFontSize(14);</b>
+<b class="nc">&nbsp;            runTitle.setText(&quot;Dự án: &quot; + p.getProjectName());</b>
+&nbsp;
+&nbsp;            // Tên thành viên
+<b class="nc">&nbsp;            XWPFParagraph name = doc.createParagraph();</b>
+<b class="nc">&nbsp;            XWPFRun runName = name.createRun();</b>
+<b class="nc">&nbsp;            runName.setFontSize(12);</b>
+<b class="nc">&nbsp;            runName.setText(&quot;Thành viên: &quot; + p.getStaffOrStudentName()+&quot; - &quot;+p.getStaffOrStudentEmail());</b>
+&nbsp;
+<b class="nc">&nbsp;            doc.createParagraph();</b>
+&nbsp;
+<b class="nc">&nbsp;            while (!currentStart.isAfter(endDate)) {</b>
+<b class="nc">&nbsp;                LocalDate currentEnd = currentStart.plusDays(5); // Thứ Hai đến Thứ Bảy</b>
+&nbsp;
+&nbsp;                // Tạo bảng: Tuần 1 tạo 3 hàng (có header), các tuần sau 2 hàng (không header)
+<b class="nc">&nbsp;                int numRows = (weekNumber == 1) ? 3 : 2;</b>
+<b class="nc">&nbsp;                XWPFTable table = doc.createTable(numRows, 6);</b>
+&nbsp;
+<b class="nc">&nbsp;                if (weekNumber == 1) {</b>
+&nbsp;                    // Hàng 0: Header
+<b class="nc">&nbsp;                    XWPFTableRow header = table.getRow(0);</b>
+<b class="nc">&nbsp;                    String[] headers = {&quot;THỨ HAI&quot;, &quot;THỨ BA&quot;, &quot;THỨ TƯ&quot;, &quot;THỨ NĂM&quot;, &quot;THỨ SÁU&quot;, &quot;THỨ BẢY&quot;};</b>
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; headers.length; i++) {</b>
+<b class="nc">&nbsp;                        XWPFParagraph para = header.getCell(i).getParagraphs().get(0);</b>
+<b class="nc">&nbsp;                        XWPFRun run = para.createRun();</b>
+<b class="nc">&nbsp;                        run.setBold(true);</b>
+<b class="nc">&nbsp;                        run.setText(headers[i]);</b>
+&nbsp;                    }
+&nbsp;
+&nbsp;                }
+&nbsp;
+&nbsp;                // Hàng tiêu đề công tác tuần
+&nbsp;                // Nếu là tuần đầu =&gt; nằm hàng 1, tuần sau =&gt; hàng 0
+<b class="nc">&nbsp;                XWPFTableRow weekTitleRow = table.getRow((weekNumber == 1) ? 1 : 0);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;                XWPFTableCell weekCell = weekTitleRow.getCell(0);</b>
+<b class="nc">&nbsp;                weekCell.removeParagraph(0);</b>
+<b class="nc">&nbsp;                XWPFParagraph weekPara = weekCell.addParagraph();</b>
+<b class="nc">&nbsp;                XWPFRun weekRun = weekPara.createRun();</b>
+<b class="nc">&nbsp;                weekRun.setBold(true);</b>
+<b class="nc">&nbsp;                weekRun.setText(&quot;A. CÔNG TÁC TUẦN &quot; + weekNumber +</b>
+<b class="nc">&nbsp;                        &quot; (Từ ngày &quot; + currentStart.format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy&quot;)) +</b>
+<b class="nc">&nbsp;                        &quot; đến &quot; + currentEnd.format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy&quot;)) + &quot;)&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                for (int i = 1; i &lt; 6; i++) {</b>
+<b class="nc">&nbsp;                    weekTitleRow.getCell(i).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                weekTitleRow.getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);</b>
+&nbsp;
+&nbsp;
+&nbsp;                // Nếu tuần đầu =&gt; hàng 2, tuần sau =&gt; hàng 1
+<b class="nc">&nbsp;                XWPFTableRow contentRow = table.getRow((weekNumber == 1) ? 2 : 1);</b>
+&nbsp;
+<b class="nc">&nbsp;                List&lt;PersonalReportResponse&gt; personalReports = adReportRepository.findAllReportsByStaffProjectId(member.getStaffProjectId());</b>
+&nbsp;
+&nbsp;                // Danh sách ngày trong tuần (Thứ Hai -&gt; Thứ Bảy)
+<b class="nc">&nbsp;                String[] days = {&quot;Thứ Hai&quot;, &quot;Thứ Ba&quot;, &quot;Thứ Tư&quot;, &quot;Thứ Năm&quot;, &quot;Thứ Sáu&quot;, &quot;Thứ Bảy&quot;};</b>
+&nbsp;
+&nbsp;                // Tạo map để gán dữ liệu theo ngày
+<b class="nc">&nbsp;                Map&lt;String, List&lt;String&gt;&gt; reportByDay = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;                // Duyệt từ Thứ Hai -&gt; Thứ Bảy của tuần hiện tại
+<b class="nc">&nbsp;                for (int i = 0; i &lt; days.length; i++) {</b>
+<b class="nc">&nbsp;                    LocalDate currentDate = currentStart.plusDays(i);</b>
+<b class="nc">&nbsp;                    String dayLabel = days[i];</b>
+&nbsp;
+<b class="nc">&nbsp;                    Optional&lt;PersonalReportResponse&gt; reportOpt = personalReports.stream()</b>
+<b class="nc">&nbsp;                            .filter(r -&gt; {</b>
+&nbsp;                                try {
+<b class="nc">&nbsp;                                    long timestamp = Long.parseLong(r.getReportTime());</b>
+<b class="nc">&nbsp;                                    LocalDate reportDate = Instant.ofEpochMilli(timestamp)</b>
+<b class="nc">&nbsp;                                            .atZone(ZoneId.systemDefault())</b>
+<b class="nc">&nbsp;                                            .toLocalDate();</b>
+<b class="nc">&nbsp;                                    return reportDate.equals(currentDate);</b>
+&nbsp;                                } catch (Exception e) {
+<b class="nc">&nbsp;                                    return false;</b>
+&nbsp;                                }
+&nbsp;                            })
+<b class="nc">&nbsp;                            .findFirst();</b>
+&nbsp;
+<b class="nc">&nbsp;                    List&lt;String&gt; lines = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                    if (reportOpt.isPresent()) {</b>
+<b class="nc">&nbsp;                        PersonalReportResponse r = reportOpt.get();</b>
+<b class="nc">&nbsp;                        lines.add(&quot;1. Kết quả hôm nay làm được: &quot; + r.getWorkDoneToday());</b>
+<b class="nc">&nbsp;                        lines.add(&quot;2. Những cái chưa làm được cần hỗ trợ: &quot; + r.getObstacles());</b>
+<b class="nc">&nbsp;                        lines.add(&quot;3. Kế hoạch ngày mai: &quot; + r.getWorkPlanTomorrow());</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        lines.add(&quot;Chưa báo cáo&quot;);</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    reportByDay.put(dayLabel, lines);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                // Đưa nội dung xuống dòng vào từng ô trong hàng contentRow
+<b class="nc">&nbsp;                for (int i = 0; i &lt; days.length; i++) {</b>
+<b class="nc">&nbsp;                    String day = days[i];</b>
+<b class="nc">&nbsp;                    XWPFTableCell cell = contentRow.getCell(i);</b>
+&nbsp;
+&nbsp;                    // Xóa paragraph mặc định trong cell
+<b class="nc">&nbsp;                    cell.removeParagraph(0);</b>
+&nbsp;
+<b class="nc">&nbsp;                    List&lt;String&gt; lines = reportByDay.getOrDefault(day, Collections.singletonList(&quot;&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;                    XWPFParagraph para = cell.addParagraph();</b>
+<b class="nc">&nbsp;                    XWPFRun run = para.createRun();</b>
+&nbsp;
+<b class="nc">&nbsp;                    for (int j = 0; j &lt; lines.size(); j++) {</b>
+<b class="nc">&nbsp;                        run.setText(lines.get(j));</b>
+<b class="nc">&nbsp;                        if (j &lt; lines.size() - 1) {</b>
+<b class="nc">&nbsp;                            run.addBreak();</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                doc.createParagraph();</b>
+<b class="nc">&nbsp;                doc.createParagraph();</b>
+&nbsp;
+&nbsp;                // Tăng tuần và chuyển ngày
+<b class="nc">&nbsp;                weekNumber++;</b>
+<b class="nc">&nbsp;                currentStart = currentStart.plusWeeks(1);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Ghi file
+<b class="nc">&nbsp;        try (FileOutputStream out = new FileOutputStream(filePath)) {</b>
+<b class="nc">&nbsp;            doc.write(out);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

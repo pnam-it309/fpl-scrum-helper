@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Helper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: Helper (udpm.hn.server.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Helper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    52.8%
+  </span>
+  <span class="absValue">
+    (19/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.6%
+  </span>
+  <span class="absValue">
+    (78/89)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.utils;
+&nbsp;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.domain.Sort;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import udpm.hn.server.core.common.base.PageableRequest;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.infrastructure.constant.PaginationConstant;
+&nbsp;
+&nbsp;import java.text.Normalizer;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.regex.Matcher;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+<b class="nc">&nbsp;public class Helper {</b>
+&nbsp;
+&nbsp;    public static String appendWildcard(String url) {
+<b class="fc">&nbsp;        return url + &quot;/**&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Pageable createPageable(PageableRequest request, String defaultSortBy) {
+<b class="fc">&nbsp;        return PageRequest.of(</b>
+<b class="fc">&nbsp;                request.getPage() - 1,</b>
+<b class="pc">&nbsp;                request.getSize() == 0 ? PaginationConstant.DEFAULT_SIZE : request.getSize(),</b>
+<b class="fc">&nbsp;                Sort.by(</b>
+<b class="pc">&nbsp;                        (Sort.Direction.fromString(</b>
+<b class="fc">&nbsp;                                request.getOrderBy()) == Sort.Direction.DESC ||</b>
+<b class="nc">&nbsp;                                request.getOrderBy() == null</b>
+<b class="fc">&nbsp;                        ) ? Sort.Direction.DESC : Sort.Direction.ASC,</b>
+<b class="pc">&nbsp;                        (request.getSortBy() == null</b>
+<b class="pc">&nbsp;                                || request.getSortBy().isEmpty()</b>
+<b class="fc">&nbsp;                        ) ? defaultSortBy : request.getSortBy()</b>
+&nbsp;                ));
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Pageable createPageableComment(PageableRequest request, String defaultSortBy) {
+&nbsp;        // Nếu size == -1 =&gt; lấy tất cả, không phân trang
+<b class="pc">&nbsp;        if (request.getSize() == -1) {</b>
+<b class="nc">&nbsp;            return Pageable.unpaged();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return PageRequest.of(</b>
+<b class="fc">&nbsp;                Math.max(0, request.getPage() - 1),</b>
+<b class="pc">&nbsp;                request.getSize() == 0 ? PaginationConstant.DEFAULT_SIZE : request.getSize(),</b>
+<b class="fc">&nbsp;                Sort.by(</b>
+<b class="pc">&nbsp;                        (request.getOrderBy() == null || Sort.Direction.fromString(request.getOrderBy()) == Sort.Direction.DESC)</b>
+<b class="fc">&nbsp;                                ? Sort.Direction.DESC</b>
+<b class="fc">&nbsp;                                : Sort.Direction.ASC,</b>
+<b class="pc">&nbsp;                        (request.getSortBy() == null || request.getSortBy().isEmpty())</b>
+<b class="nc">&nbsp;                                ? defaultSortBy</b>
+<b class="fc">&nbsp;                                : request.getSortBy()</b>
+&nbsp;                )
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public static Pageable createPageable(PageableRequest request, String defaultSortBy, String defaultOrderBy) {
+<b class="fc">&nbsp;        int page = request.getPage() - 1;</b>
+<b class="pc">&nbsp;        int size = request.getSize() == 0 ? PaginationConstant.DEFAULT_SIZE : request.getSize();</b>
+<b class="pc">&nbsp;        Sort.Direction direction = request.getOrderBy() == null || request.getOrderBy().isEmpty()</b>
+<b class="nc">&nbsp;                ? Sort.Direction.fromString(defaultOrderBy)</b>
+<b class="fc">&nbsp;                : Sort.Direction.fromString(request.getOrderBy());</b>
+<b class="fc">&nbsp;        String sortBy = request.getSortBy();</b>
+<b class="pc">&nbsp;        if (sortBy == null || sortBy.isEmpty()) {</b>
+<b class="nc">&nbsp;            sortBy = defaultSortBy;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return PageRequest.of(page, size, Sort.by(direction, sortBy));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Pageable createPageable(PageableRequest request) {
+<b class="fc">&nbsp;        return createPageable(request, &quot;created_date&quot;, &quot;DESC&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static ResponseEntity&lt;?&gt; createResponseEntity(ResponseObject&lt;?&gt; responseObject) {
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(responseObject, responseObject.getStatus());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean isValidPhoneNumber(String phoneNumber) {
+<b class="nc">&nbsp;        String regex = &quot;^0[0-9]{9,10}$&quot;;</b>
+<b class="nc">&nbsp;        Pattern pattern = Pattern.compile(regex);</b>
+<b class="nc">&nbsp;        Matcher matcher = pattern.matcher(phoneNumber);</b>
+<b class="nc">&nbsp;        return !matcher.matches();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String replaceManySpaceToOneSpace(String name) {
+&nbsp;        // Thay thế tất cả khoảng trắng liên tiếp bằng dấu gạch dưới
+<b class="fc">&nbsp;        return name.replaceAll(&quot;\\s+&quot;, &quot; &quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String replaceSpaceToEmpty(String name) {
+&nbsp;        // Thay thế tất cả khoảng trắng liên tiếp bằng dấu gạch dưới
+<b class="nc">&nbsp;        return name.replaceAll(&quot;\\s+&quot;, &quot;&quot;);</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    private static final Map&lt;Character, Character&gt; SPECIAL_CHAR_MAP = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;    static {
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;đ&#39;, &#39;d&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;Đ&#39;, &#39;D&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ơ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;Ơ&#39;, &#39;O&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ớ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ờ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ở&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ỡ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ợ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ố&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ồ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ổ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ỗ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ộ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ớ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ờ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ở&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ỡ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ợ&#39;, &#39;o&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ă&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ắ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ằ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ẵ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ặ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;â&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ấ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ầ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ẩ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ẫ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ậ&#39;, &#39;a&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ư&#39;, &#39;u&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ứ&#39;, &#39;u&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ừ&#39;, &#39;u&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ử&#39;, &#39;u&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ữ&#39;, &#39;u&#39;);</b>
+<b class="fc">&nbsp;        SPECIAL_CHAR_MAP.put(&#39;ự&#39;, &#39;u&#39;);</b>
+&nbsp;        // Thêm các ký tự khác nếu cần
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String generateCodeFromName(String name) {
+&nbsp;        // Chuyển role name chuỗi thành chữ hoa
+<b class="fc">&nbsp;        String upperCaseString = name.toUpperCase();</b>
+&nbsp;
+&nbsp;        // Thay thế các ký tự đặc biệt
+<b class="fc">&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="fc">&nbsp;        for (char c : upperCaseString.toCharArray()) {</b>
+<b class="fc">&nbsp;            if (SPECIAL_CHAR_MAP.containsKey(c)) {</b>
+<b class="fc">&nbsp;                stringBuilder.append(SPECIAL_CHAR_MAP.get(c));</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                stringBuilder.append(c);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        String replacedString = stringBuilder.toString();</b>
+&nbsp;
+&nbsp;        // Loại bỏ dấu
+<b class="fc">&nbsp;        String normalizedString = Normalizer.normalize(replacedString, Normalizer.Form.NFD);</b>
+<b class="fc">&nbsp;        String withoutAccentString = normalizedString.replaceAll(&quot;\\p{M}&quot;, &quot;&quot;);</b>
+&nbsp;
+&nbsp;        // Thay thế tất cả khoảng trắng liên tiếp bằng dấu gạch dưới
+<b class="fc">&nbsp;        return withoutAccentString.replaceAll(&quot;\\s+&quot;, &quot;_&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

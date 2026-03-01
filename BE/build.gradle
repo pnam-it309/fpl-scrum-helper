@@ -1,0 +1,101 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.10" // hoặc bản mới hơn
+}
+
+tasks.jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation  'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation  'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.apache.commons:commons-csv:1.9.0'
+    implementation 'org.apache.poi:poi:3.17'
+    implementation 'org.apache.poi:poi-ooxml:3.17'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.3'
+
+    implementation 'org.springframework.batch:spring-batch-core:5.0.3'
+    implementation 'com.github.kumarpankaj18:spring-batch-excel:1.0.6'
+    implementation 'org.modelmapper:modelmapper:3.1.0'
+    implementation 'com.cloudinary:cloudinary-http44:1.34.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    testImplementation 'org.mockito:mockito-inline:4.8.0'
+//    testImplementation 'org.springframework.boot:spring-boot-test:3.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+
+
+    // cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
+}
+
+
+
+//tasks.named('test') {
+//    forkEvery = 0
+//    maxParallelForks = 1
+//}
+
+
+tasks.named('test') {
+    useJUnitPlatform()
+
+    forkEvery =1
+    maxParallelForks = 1
+
+    jvmArgs '-Xms512m', '-Xmx2048m', '-XX:+HeapDumpOnOutOfMemoryError'
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+

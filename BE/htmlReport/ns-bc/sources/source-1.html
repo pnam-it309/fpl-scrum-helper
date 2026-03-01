@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMyProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.myproject.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMyProjectRepository (udpm.hn.server.core.member.myproject.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMyProjectRepository$MockitoMock$G4e66el8</td>
+  </tr>
+  <tr>
+    <td class="name">MBMyProjectRepository$MockitoMock$G4e66el8$auxiliary$hQtohkMl</td>
+  </tr>
+  <tr>
+    <td class="name">MBMyProjectRepository$MockitoMock$G4e66el8$auxiliary$RqeS3lfb</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.myproject.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.member.myproject.model.request.MBMyProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.member.myproject.model.response.MBMyProjectResponse;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusProject;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MBMyProjectRepository extends StaffProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;   SELECT 
+&nbsp;                row_number() over(order by p.id desc) as orderNumber,
+&nbsp;                p.id as id,
+&nbsp;                p.name as nameProject,
+&nbsp;                p.code as codeProject,
+&nbsp;                concat(d.name, &#39; - &#39;, f.name) as nameDepartment,
+&nbsp;                p.statusProject as status,
+&nbsp;                f.id as idFacility,
+&nbsp;                p.backgroundColor as backgroundColorProject,
+&nbsp;                p.backgroundImage as backgroundImageProject,
+&nbsp;                p.progress as progressProject,
+&nbsp;                p.startTime as startTimeProject,
+&nbsp;                p.endTime as endTimeProject,
+&nbsp;                p.createdDate as createdDateProject
+&nbsp;            FROM Project p
+&nbsp;            JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;            JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;            JOIN Department d ON df.department.id = d.id
+&nbsp;            JOIN Facility f ON df.facility.id = f.id
+&nbsp;                WHERE p.status = 0 AND 
+&nbsp;                 (:#{#request.search} IS NULL OR p.name LIKE %:#{#request.search}%
+&nbsp;                    OR p.code LIKE %:#{#request.search}%)
+&nbsp;                    AND (:#{#request.nameDepartment} IS NULL OR
+&nbsp;                    d.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    f.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    CONCAT(d.name, &#39;-&#39;, f.name) LIKE %:#{#request.nameDepartment}%)
+&nbsp;                    AND (:#{#request.status} IS NULL OR p.statusProject = :status)  
+&nbsp;
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Page&lt;MBMyProjectResponse&gt; getAllMyProject(MaProjectSearchRequest request, Pageable pageable,@Param(&quot;status&quot;) StatusProject status);
+&nbsp;
+&nbsp;}
+&nbsp;//
+&nbsp;//WHERE (sp.staff.id = :#{#request.idUser}
+&nbsp;//OR sp.student.id = :#{#request.idUser})
+&nbsp;//AND (:#{#request.projectName} IS NULL OR p.name LIKE CONCAT(&#39;%&#39;, :#{#request.projectName}, &#39;%&#39;))
+&nbsp;//AND (:#{#request.projectStatus} IS NULL OR p.statusProject = :#{#request.projectStatus})
+&nbsp;//ORDER BY p.createdDate DESC
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

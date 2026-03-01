@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeNotificationMemberController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeNotificationMemberController (udpm.hn.server.core.member.projectdetails.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeNotificationMemberController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.handler.annotation.DestinationVariable;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeFindNotificationMemberRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMessageNotificationMemberRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeMemberNotificationService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(MappingConstants.API_PROJECT_DETAILS_NOTIFICATION_MEMBER_TODO)
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeNotificationMemberController {
+&nbsp;
+&nbsp;    private final MBMeMemberNotificationService mbMeMemberNotificationService;
+&nbsp;
+&nbsp;    @GetMapping()
+&nbsp;    public ResponseObject&lt;?&gt; getNotifAllicationMember(final MBMeFindNotificationMemberRequest request) {
+<b class="fc">&nbsp;        return mbMeMemberNotificationService.getAllNotificationMember(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/count&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; countNotificationMember(@RequestParam(&quot;memberId&quot;) String memberId) {
+<b class="fc">&nbsp;        return mbMeMemberNotificationService.countNotificationMember(memberId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/update-status&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateStatus(@RequestParam(&quot;idNotificationMember&quot;) String idNotificationMember) {
+<b class="fc">&nbsp;        return mbMeMemberNotificationService.updateStatus(idNotificationMember);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/update-all-status&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateAllStatus(@RequestParam(&quot;memberId&quot;) String memberId) {
+<b class="fc">&nbsp;        return mbMeMemberNotificationService.updateAllStatus(memberId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/message-notification-member&quot;)
+&nbsp;    @SendTo(&quot;/topic/subscribe-notification-member&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sendNotificationMember(MBMessageNotificationMemberRequest request) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(true, HttpStatus.OK,&quot;gửi thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

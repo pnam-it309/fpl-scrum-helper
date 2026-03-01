@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffJobConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.staff.jobconfig</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffJobConfig (udpm.hn.server.infrastructure.job.staff.jobconfig)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaffJobConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (5/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45.8%
+  </span>
+  <span class="absValue">
+    (11/24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StaffJobConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">StaffJobConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">StaffJobConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (5/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45.8%
+  </span>
+  <span class="absValue">
+    (11/24)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.staff.jobconfig;
+&nbsp;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.core.*;
+&nbsp;import org.springframework.batch.core.configuration.annotation.StepScope;
+&nbsp;import org.springframework.batch.core.job.builder.JobBuilder;
+&nbsp;import org.springframework.batch.core.launch.support.RunIdIncrementer;
+&nbsp;import org.springframework.batch.core.repository.JobRepository;
+&nbsp;import org.springframework.batch.core.step.builder.StepBuilder;
+&nbsp;import org.springframework.batch.item.ExecutionContext;
+&nbsp;import org.springframework.batch.item.ItemProcessor;
+&nbsp;import org.springframework.batch.item.ItemReader;
+&nbsp;import org.springframework.batch.item.ItemWriter;
+&nbsp;import org.springframework.batch.item.excel.RowMapper;
+&nbsp;import org.springframework.batch.item.excel.poi.PoiItemReader;
+&nbsp;import org.springframework.batch.item.validator.ValidationException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.core.io.FileSystemResource;
+&nbsp;import org.springframework.core.io.Resource;
+&nbsp;import org.springframework.transaction.PlatformTransactionManager;
+&nbsp;import org.springframework.transaction.annotation.EnableTransactionManagement;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffMajorFacility;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.commonio.StaffProcessor;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.commonio.StaffRowMapper;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.commonio.StaffTasklet;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.commonio.StaffWriter;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.dto.TransferStaffRole;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.request.StaffExcelRequest;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigStaffCustomRepository;
+&nbsp;import udpm.hn.server.infrastructure.job.student.commonio.StudentProcessor;
+&nbsp;import udpm.hn.server.infrastructure.job.student.commonio.StudentRowMapper;
+&nbsp;import udpm.hn.server.infrastructure.job.student.commonio.StudentTasklet;
+&nbsp;import udpm.hn.server.infrastructure.job.student.commonio.StudentWriter;
+&nbsp;import udpm.hn.server.infrastructure.job.student.model.request.StudentExcelRequest;
+&nbsp;import udpm.hn.server.infrastructure.job.student.repository.StudentExcelRepository;
+&nbsp;import udpm.hn.server.repository.StaffMajorFacilityRepository;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;
+&nbsp;@Configuration
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@EnableTransactionManagement
+<b class="fc">&nbsp;public class StaffJobConfig {</b>
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired}, onParam_ = {@Qualifier(&quot;transactionManager&quot;)})
+&nbsp;    private PlatformTransactionManager transactionManager;
+&nbsp;
+&nbsp;    @Value(&quot;${file.upload.staff.path}&quot;)
+&nbsp;    private String fullPath;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    @StepScope
+&nbsp;    public ItemReader&lt;StaffExcelRequest&gt; excelStaffReader(@Value(&quot;#{jobParameters[&#39;staffExcelFileName&#39;]}&quot;) String path) {
+<b class="nc">&nbsp;        log.info(&quot;Đọc file staff từ: {}&quot;, fullPath + &quot;/&quot; + path);</b>
+<b class="nc">&nbsp;        PoiItemReader&lt;StaffExcelRequest&gt; reader = new PoiItemReader&lt;&gt;();</b>
+<b class="nc">&nbsp;        reader.setResource(new FileSystemResource(new File(fullPath + &quot;/&quot; + path)));</b>
+<b class="nc">&nbsp;        reader.setLinesToSkip(1);</b>
+<b class="nc">&nbsp;        reader.open(new ExecutionContext());</b>
+<b class="nc">&nbsp;        reader.setRowMapper(excelStaffRowMapper());</b>
+<b class="nc">&nbsp;        reader.setLinesToSkip(1);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            reader.afterPropertiesSet();  // 👈 QUAN TRỌNG</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Lỗi khi init reader&quot;, e);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return reader;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @StepScope
+&nbsp;    private RowMapper&lt;StaffExcelRequest&gt; excelStaffRowMapper() {
+<b class="nc">&nbsp;        return new StaffRowMapper();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    @StepScope
+&nbsp;    @Qualifier(&quot;staffExcelProcessor&quot;)
+&nbsp;    ItemProcessor&lt;StaffExcelRequest, TransferStaffRole&gt; staffExcelProcessor() {
+<b class="nc">&nbsp;        return new StaffProcessor();</b>
+&nbsp;    }
+&nbsp;    @Bean
+&nbsp;    @StepScope
+&nbsp;    ItemWriter&lt;Staff&gt; exStaffItemWriter() {
+<b class="nc">&nbsp;        return new StaffWriter();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    StaffTasklet excelStaffTasklet(ConfigStaffCustomRepository configStaffCustomRepository,
+&nbsp;                                   ItemReader&lt;StaffExcelRequest&gt; reader,
+&nbsp;                                   StaffMajorFacilityRepository staffMajorFacilityRepository,
+&nbsp;                                   @Qualifier(&quot;staffExcelProcessor&quot;) ItemProcessor&lt;StaffExcelRequest, TransferStaffRole&gt; processor) {
+<b class="fc">&nbsp;        return new StaffTasklet(configStaffCustomRepository,staffMajorFacilityRepository, reader, processor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Bean(name = &quot;staffStep3&quot;)
+&nbsp;    Step staffstep3(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+&nbsp;               StaffTasklet staffTasklet) {  // Inject bean StudentTasklet
+<b class="fc">&nbsp;        return new StepBuilder(&quot;staff-step3&quot;, jobRepository)</b>
+<b class="fc">&nbsp;                .tasklet(staffTasklet, transactionManager)  // Sử dụng tasklet từ bean</b>
+<b class="fc">&nbsp;                .allowStartIfComplete(false)</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    Job saveStaffDataToDatabaseJob(@Qualifier(&quot;staffStep3&quot;) Step staffStep3, JobRepository jobRepository) {
+<b class="fc">&nbsp;        return new JobBuilder(&quot;Excel-File-To-Database-Job&quot;, jobRepository)</b>
+<b class="fc">&nbsp;                .incrementer(new RunIdIncrementer())</b>
+<b class="fc">&nbsp;                .start(staffStep3)</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

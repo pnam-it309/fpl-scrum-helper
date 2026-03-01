@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADCategoryRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.category.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADCategoryRepository (udpm.hn.server.core.admin.category.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADCategoryRepository$MockitoMock$z2zE2f1t</td>
+  </tr>
+  <tr>
+    <td class="name">ADCategoryRepository$MockitoMock$z2zE2f1t$auxiliary$H0RG6rTM</td>
+  </tr>
+  <tr>
+    <td class="name">ADCategoryRepository$MockitoMock$z2zE2f1t$auxiliary$XIOsPXwV</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.category.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import udpm.hn.server.core.admin.category.modal.request.ADCategoryRequest;
+&nbsp;import udpm.hn.server.core.admin.category.modal.response.ADCategoryResponse;
+&nbsp;import udpm.hn.server.entity.Category;
+&nbsp;import udpm.hn.server.repository.CategoryRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface ADCategoryRepository extends CategoryRepository {
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;        SELECT c.id AS id,
+&nbsp;               c.name AS categoryName,
+&nbsp;               c.code AS categoryCode,
+&nbsp;               c.status AS categoryStatus,
+&nbsp;               c.createdDate AS createdDate
+&nbsp;        FROM Category c
+&nbsp;        WHERE
+&nbsp;            (:#{#request.categoryName} IS NULL OR c.name LIKE CONCAT(&#39;%&#39;, :#{#request.categoryName}, &#39;%&#39;)
+&nbsp;            OR c.code LIKE CONCAT(&#39;%&#39;, :#{#request.categoryName}, &#39;%&#39;))
+&nbsp;            AND (:#{#request.categoryStatus} IS NULL OR c.status = :#{#request.categoryStatus})
+&nbsp;            order by c.createdDate desc 
+&nbsp;        &quot;&quot;&quot;,
+&nbsp;            countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT COUNT(c.id)
+&nbsp;        FROM Category c
+&nbsp;        WHERE
+&nbsp;            (:#{#request.categoryName} IS NULL OR c.name LIKE CONCAT(&#39;%&#39;, :#{#request.categoryName}, &#39;%&#39;))
+&nbsp;            AND (:#{#request.categoryStatus} IS NULL OR c.status = :#{#request.categoryStatus})
+&nbsp;        &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;ADCategoryResponse&gt; getAllCategories(Pageable pageable,ADCategoryRequest request);
+&nbsp;
+&nbsp;    List&lt;Category&gt; findAllByName(String name);
+&nbsp;
+&nbsp;    boolean existsByNameAndIdNot(String name, String id);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                SELECT 
+&nbsp;                    c.id AS id, 
+&nbsp;                    c.code AS categoryCode, 
+&nbsp;                    c.name AS categoryName, 
+&nbsp;                    c.createdDate AS createdDate
+&nbsp;                FROM Category c 
+&nbsp;                WHERE c.id = :categoryId
+&nbsp;                &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Optional&lt;ADCategoryResponse&gt; getDetailCategoryById(String categoryId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADProjectRepository (udpm.hn.server.core.admin.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADProjectRepository$MockitoMock$v9djAnrB</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectRepository$MockitoMock$v9djAnrB$auxiliary$pwjmoDUb</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectRepository$MockitoMock$v9djAnrB$auxiliary$qjDNmmUj</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.*;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusProject;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ADProjectRepository extends ProjectRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT 
+&nbsp;                row_number() over(order by p.id desc) as orderNumber,
+&nbsp;                p.id as id,
+&nbsp;                p.name as nameProject,
+&nbsp;                p.code as codeProject,
+&nbsp;                concat(d.name, &#39; - &#39;, f.name) as nameDepartment,
+&nbsp;                p.statusProject as status,
+&nbsp;                f.id as idFacility,
+&nbsp;                p.startTime as startTime,
+&nbsp;                p.endTime as endTime
+&nbsp;            FROM Project p
+&nbsp;            JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;            JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;            JOIN Department d ON df.department.id = d.id
+&nbsp;            JOIN Facility f ON df.facility.id = f.id
+&nbsp;                WHERE p.status = 0 AND 
+&nbsp;                 (:#{#request.search} IS NULL OR p.name LIKE %:#{#request.search}%
+&nbsp;                    OR p.code LIKE %:#{#request.search}%)
+&nbsp;                    AND (:#{#request.nameDepartment} IS NULL OR
+&nbsp;                    d.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    f.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                    CONCAT(d.name, &#39;-&#39;, f.name) LIKE %:#{#request.nameDepartment}%)
+&nbsp;                    AND (:#{#request.status} IS NULL OR p.statusProject = :status)
+&nbsp;    
+&nbsp;        &quot;&quot;&quot;,countQuery = &quot;&quot;&quot;
+&nbsp;            select count(p.id)
+&nbsp;                 FROM Project p
+&nbsp;                JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;                JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                JOIN Department d ON df.department.id = d.id
+&nbsp;                JOIN Facility f ON df.facility.id = f.id
+&nbsp;            WHERE  p.status = 0 AND  
+&nbsp;                (:#{#request.search} IS NULL OR p.name LIKE %:#{#request.search}%
+&nbsp;                OR p.code LIKE %:#{#request.search}%)
+&nbsp;                AND (:#{#request.nameDepartment} IS NULL OR
+&nbsp;                d.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                f.name LIKE %:#{#request.nameDepartment}% OR
+&nbsp;                CONCAT(d.name, &#39;-&#39;, f.name) LIKE %:#{#request.nameDepartment}%)
+&nbsp;                AND (:#{#request.status} IS NULL OR p.statusProject = :status)
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;        Page&lt;ADProjectResponse&gt; getAllProject(Pageable pageable, ADProjectSearchRequest request,@Param(&quot;status&quot;) StatusProject status);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT c.name AS projectName, COUNT(1) AS totalTodo
+&nbsp;                FROM todo a
+&nbsp;                        JOIN todo_list b on a.id_todo_list = b.id
+&nbsp;                        JOIN project c ON b.id_project = c.id
+&nbsp;                        WHERE  c.status = 0
+&nbsp;                        GROUP BY c.name
+&nbsp;                &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;ADProjectTodoCountResponse&gt; countTodoByProjectName();
+&nbsp;
+&nbsp;    //Đếm tổng số dự án còn active (status = 0)
+&nbsp;    @Query(value = &quot;SELECT COUNT(*) FROM project WHERE status = 0&quot;, nativeQuery = true)
+&nbsp;    Long countTotalProjects();
+&nbsp;
+&nbsp;    // Đếm số dự án theo từng trạng thái cụ thể
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    SELECT project_status AS status, COUNT(*) AS count
+&nbsp;    FROM project
+&nbsp;    WHERE status = 0
+&nbsp;    GROUP BY project_status
+&nbsp;&quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;Object[]&gt; countProjectsGroupedByStatus();
+&nbsp;
+&nbsp;    // Đếm số dự án trễ hạn
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    SELECT COUNT(*)
+&nbsp;    FROM project
+&nbsp;    WHERE status = 0 AND project_status &lt;&gt; :doneStatus AND project_status &lt;&gt; 0 AND end_time &lt; CURRENT_TIMESTAMP
+&nbsp;&quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Long countOverdueProjects(@Param(&quot;doneStatus&quot;) Integer doneStatus);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        f.name AS facilityName,
+&nbsp;        COUNT(p) AS total
+&nbsp;    FROM Project p
+&nbsp;    JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;    JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;    JOIN Facility f ON df.facility.id = f.id
+&nbsp;    WHERE p.status = 0
+&nbsp;    GROUP BY f.name
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;FacilityProjectCountResponse&gt; countProjectsByFacility();
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        d.name AS departmentName,
+&nbsp;        COUNT(p) AS total
+&nbsp;    FROM Project p
+&nbsp;    JOIN MajorFacility mf ON p.majorFacility.id = mf.id
+&nbsp;    JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;    JOIN Department d ON df.department.id = d.id
+&nbsp;    WHERE p.status = 0
+&nbsp;    GROUP BY d.name
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;DepartmentProjectCountResponse&gt; countProjectsByDepartment();
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            p.name AS projectName,
+&nbsp;            t.status AS projectStatus,
+&nbsp;            COUNT(*) AS totalTodo
+&nbsp;        FROM todo t
+&nbsp;        JOIN todo_list tl ON t.id_todo_list = tl.id
+&nbsp;        JOIN project p ON tl.id_project = p.id
+&nbsp;        WHERE p.status = 0
+&nbsp;        GROUP BY p.name, t.status
+&nbsp;        ORDER BY p.name, t.status
+&nbsp;    &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;TodoStatusByProject&gt; countTaskByStatusAndProject();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

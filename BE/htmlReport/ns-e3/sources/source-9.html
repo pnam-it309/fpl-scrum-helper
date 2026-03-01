@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeProjectRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$B9ouNx9H</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$B9ouNx9H$auxiliary$NFxInpiR</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$B9ouNx9H$auxiliary$V7GhLrgR</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$FajRBTEQ</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$FajRBTEQ$auxiliary$Hv9Qpb0w</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$FajRBTEQ$auxiliary$XGM8NHHo</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$H5YOQ13F</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$H5YOQ13F$auxiliary$pNuh3AHs</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$H5YOQ13F$auxiliary$QoGmpU0S</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$N0hKcimI</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$N0hKcimI$auxiliary$fawzLRPq</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$N0hKcimI$auxiliary$RPjFTCpB</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$rC8PVwkW</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$rC8PVwkW$auxiliary$VISHD4UD</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeProjectRepository$MockitoMock$rC8PVwkW$auxiliary$wkVQcFXj</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.ProjectView;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;@Repository
+&nbsp;public interface MBMeProjectRepository extends ProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            p.id AS id,
+&nbsp;            p.code AS code,
+&nbsp;            p.name AS name,
+&nbsp;            p.startTime AS startTime,
+&nbsp;            p.endTime AS endTime,
+&nbsp;            p.actualEndDate AS actualEndDate,
+&nbsp;            p.descriptions AS descriptions,
+&nbsp;            p.progress AS progress,
+&nbsp;            p.backgroundColor AS backgroundColor,
+&nbsp;            p.backgroundImage AS backgroundImage,
+&nbsp;            p.statusProject AS statusProject,
+&nbsp;            pp.name AS phaseProjectName
+&nbsp;        FROM PhaseProject pp
+&nbsp;        JOIN pp.project p
+&nbsp;        WHERE pp.id = :phaseProjectId
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Optional&lt;ProjectView&gt; findProjectViewByPhaseProjectId(@Param(&quot;phaseProjectId&quot;) String phaseProjectId);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

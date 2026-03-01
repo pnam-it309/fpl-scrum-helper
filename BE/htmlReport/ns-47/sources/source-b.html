@@ -1,0 +1,885 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoServiceImpl (udpm.hn.server.core.member.projectdetails.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeTodoServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    92%
+  </span>
+  <span class="absValue">
+    (23/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.4%
+  </span>
+  <span class="absValue">
+    (85/148)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.7%
+  </span>
+  <span class="absValue">
+    (233/404)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MBMeTodoServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    92%
+  </span>
+  <span class="absValue">
+    (23/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.4%
+  </span>
+  <span class="absValue">
+    (85/148)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.7%
+  </span>
+  <span class="absValue">
+    (233/404)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.common.base.TodoObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeTodoService;
+&nbsp;import udpm.hn.server.entity.Activity;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.entity.TodoChild;
+&nbsp;import udpm.hn.server.entity.TodoList;
+&nbsp;import udpm.hn.server.infrastructure.constant.*;
+&nbsp;import udpm.hn.server.utils.DateConverter;
+&nbsp;
+&nbsp;import java.text.ParseException;
+&nbsp;import java.text.SimpleDateFormat;
+&nbsp;import java.util.*;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeTodoServiceImpl implements MBMeTodoService {
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;    private final MBMeTodoRepository mbMeTodoRepository;
+&nbsp;
+&nbsp;    private final MBMeTodoListRepository mbMeTodoListRepository;
+&nbsp;
+&nbsp;    private final MBMeTodoChildRepository mbMeTodoChildRepository;
+&nbsp;
+&nbsp;    private final MBMeAssignRepository mbMeAssignRepository;
+&nbsp;
+&nbsp;    private final MBMeLabelRepository meLabelRepository;
+&nbsp;
+&nbsp;    private final MBMeImageRepository mbMeImageRepository;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    private final MBMePhaseProjectRepository mbMePhaseProjectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllBoard(MBMeFilterTodoRequest request) {
+<b class="fc">&nbsp;        List&lt;TodoList&gt; listTodoList = mbMeTodoRepository.findAllByProjectIdAndPhaseIdOrderByIndexTodoList(request.getProjectId(),request.getIdPhase());</b>
+<b class="fc">&nbsp;        List&lt;MBMeBoardResponse&gt; listBoard = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        for (TodoList td : listTodoList) {</b>
+<b class="nc">&nbsp;            MBMeBoardResponse meBoardResponse = new MBMeBoardResponse();</b>
+<b class="nc">&nbsp;            meBoardResponse.setId(td.getId());</b>
+<b class="nc">&nbsp;            meBoardResponse.setCode(td.getCode());</b>
+<b class="nc">&nbsp;            meBoardResponse.setIndexTodoList(td.getIndexTodoList());</b>
+<b class="nc">&nbsp;            meBoardResponse.setName(td.getName());</b>
+<b class="nc">&nbsp;            if (request.getIdPhase() != null &amp;&amp; request.getIdPhase().equals(&quot;undefined&quot;)) {</b>
+<b class="nc">&nbsp;                meBoardResponse.setTasks(new ArrayList&lt;&gt;());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                request.setIdTodoList(td.getId());</b>
+<b class="nc">&nbsp;                List&lt;MBMeTodoResponse&gt; listMeTodoResponse = mbMeTodoRepository.getToDoByPeriodAndIdTodoList(request);</b>
+<b class="nc">&nbsp;                meBoardResponse.setTasks(convertTodoResponses(listMeTodoResponse));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            listBoard.add(meBoardResponse);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(listBoard, HttpStatus.OK,&quot;lấy bảng thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;MBMeConvertTodoResponse&gt; convertTodoResponses(List&lt;MBMeTodoResponse&gt; listMeTodoResponse) {
+<b class="fc">&nbsp;        List&lt;MBMeConvertTodoResponse&gt; listMeConvertTodoResponse = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        for (MBMeTodoResponse td : listMeTodoResponse) {</b>
+<b class="nc">&nbsp;            MBMeConvertTodoResponse meConvertTodoResponse = new MBMeConvertTodoResponse();</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setId(td.getId());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setCode(td.getCode());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setName(td.getName());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setPriorityLevel(td.getPriorityLevel());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setDeadline(td.getDeadline());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setCompletionTime(td.getCompletionTime());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setIndexTodo(td.getIndexTodo());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setProgress(td.getProgress());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setImageId(td.getImageId());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setUrlImage(td.getUrlImage());</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setTypeTodo(td.getTypeTodo());</b>
+&nbsp;            // công việc con todoChild ( đã hoàn thành và chưa )
+<b class="nc">&nbsp;            meConvertTodoResponse.setNumberTodoComplete(mbMeTodoRepository.countCompletedByTodoChildId(td.getId()));</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setNumberTodo(mbMeTodoRepository.countByTodoChildId(td.getId()));</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setTodoListId(td.getTodoListId());</b>
+&nbsp;//            if (td.getNumberTodo() != 0) {
+&nbsp;//                //tiến độ (%) = (số công việc con hoàn thành / tổng số công việc con) * 100
+&nbsp;//                meConvertTodoResponse.setProgressOfTodo(
+&nbsp;//                        (int) Math.ceil(((double) td.getNumberTodoComplete() / (double) td.getNumberTodo()) * 100)
+&nbsp;//                );
+&nbsp;//            } else {
+&nbsp;//                //
+&nbsp;//                meConvertTodoResponse.setProgressOfTodo((int) td.getProgress());
+&nbsp;//            }
+&nbsp;
+<b class="nc">&nbsp;            if (td.getDeadline() != null) {</b>
+<b class="nc">&nbsp;                meConvertTodoResponse.setDeadlineString(DateConverter.convertDateToStringTodo(td.getDeadline()));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            List&lt;MBMeLabelResponse&gt; listLabel = meLabelRepository.getAllLabelByIdTodo(td.getId());</b>
+<b class="nc">&nbsp;            List&lt;MBMeConvertLabelResponse&gt; listMeConvertLabelResponse = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for (MBMeLabelResponse lb : listLabel) {</b>
+<b class="nc">&nbsp;                MBMeConvertLabelResponse meConvertLabelResponse = new MBMeConvertLabelResponse();</b>
+<b class="nc">&nbsp;                meConvertLabelResponse.setId(lb.getId());</b>
+<b class="nc">&nbsp;                meConvertLabelResponse.setCode(lb.getCode());</b>
+<b class="nc">&nbsp;                meConvertLabelResponse.setName(lb.getName());</b>
+<b class="nc">&nbsp;                meConvertLabelResponse.setColorLabel(lb.getColorLabel());</b>
+<b class="nc">&nbsp;                listMeConvertLabelResponse.add(meConvertLabelResponse);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            meConvertTodoResponse.setLabels(listMeConvertLabelResponse);</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setMemberTodo( mbMeAssignRepository.getAllMemberByIdTodo(td.getId()));</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setNumberCommnets(mbMeTodoRepository.countCommentByIdTodo(td.getId()));</b>
+<b class="nc">&nbsp;            meConvertTodoResponse.setNumberAttachments(mbMeTodoRepository.countResourceByIdTodo(td.getId()));</b>
+<b class="nc">&nbsp;            listMeConvertTodoResponse.add(meConvertTodoResponse);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return listMeConvertTodoResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; updateIndexTodoViewTable(MBMeUpdateIndexTodoRequest request) {
+&nbsp;
+&nbsp;        //Nếu thẻ không di chuyển (cùng cột và cùng vị trí), thì không cần làm gì → ném lỗi luôn.
+<b class="nc">&nbsp;        if (request.getIdTodoListOld().equals(request.getIdTodoListNew()) &amp;&amp; request.getIndexBefore() == request.getIndexAfter()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT, &quot;Không xác định&quot;);</b>
+&nbsp;        }
+&nbsp;        // Kiểm tra Todo có tồn tại trong db  không
+<b class="nc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="nc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT, &quot;Todo không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;        //Nếu người dùng kéo thẻ trong cùng 1 cột
+<b class="nc">&nbsp;        if (request.getIdTodoListOld().equals(request.getIdTodoListNew())) {</b>
+&nbsp;            //Nếu kéo xuống dưới
+<b class="nc">&nbsp;            if (request.getIndexBefore() &lt;= request.getIndexAfter()) {</b>
+<b class="nc">&nbsp;                mbMeTodoRepository.updateIndexTodoDecs(request.getIndexBefore(), request.getIndexAfter(), request.getPhaseId(), request.getIdTodoListOld());</b>
+&nbsp;            } else {
+&nbsp;                // Nếu kéo lên trên
+<b class="nc">&nbsp;                mbMeTodoRepository.updateIndexTodoAsc(request.getIndexBefore(), request.getIndexAfter(), request.getPhaseId(), request.getIdTodoListOld());</b>
+&nbsp;            }
+&nbsp;            //Cuối cùng trả về TodoAndTodoListObject chứa todo đã update và info index mới.
+<b class="nc">&nbsp;            todoFind.get().setIndexTodo(request.getIndexAfter());</b>
+&nbsp;            MBTodoAndTodoListObject todoAndTodoListObject =
+<b class="nc">&nbsp;                    MBTodoAndTodoListObject.builder()</b>
+<b class="nc">&nbsp;                            .data(mbMeTodoRepository.save(todoFind.get())).</b>
+<b class="nc">&nbsp;                            idTodoListOld(request.getIdTodoListOld()).</b>
+<b class="nc">&nbsp;                            indexBefore((int) request.getIndexBefore()).</b>
+<b class="nc">&nbsp;                            indexAfter(Integer.valueOf(request.getIndexAfter()))</b>
+<b class="nc">&nbsp;                            .sessionId(request.getSessionId())</b>
+<b class="nc">&nbsp;                            .build();</b>
+&nbsp;
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(todoAndTodoListObject, HttpStatus.OK, &quot;Update index todo success&quot;);</b>
+&nbsp;        } else // Nếu kéo sang cột khác
+&nbsp;        {
+&nbsp;            //Cập nhật lại todoListId và indexTodo mới cho thẻ.
+&nbsp;            //Ghi lại Activity lịch sử kéo thẻ để log.
+<b class="nc">&nbsp;            Activity activity = new Activity();</b>
+&nbsp;
+<b class="nc">&nbsp;            activity.setTodoId(request.getIdTodo());</b>
+<b class="nc">&nbsp;            activity.setTodoListId(request.getIdTodoListNew());</b>
+<b class="nc">&nbsp;            activity.setProjectId(request.getProjectId());</b>
+<b class="nc">&nbsp;            activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="nc">&nbsp;            activity.setUrl(request.getUrlPath());</b>
+<b class="nc">&nbsp;            activity.setContentAction(&quot;đã kéo thẻ này từ &quot; + request.getNameTodoListOld() + &quot; tới &quot; + request.getNameTodoListNew());</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(&quot;đã di chuyển thẻ &quot;+todoFind.get().getName()+&quot; từ danh sách &quot;+request.getNameTodoListOld()+&quot; tới danh sách &quot;+request.getNameTodoListNew());</b>
+&nbsp;            //Đếm số thẻ trong cột đích (countTodo) để xử lý index:
+<b class="nc">&nbsp;            Short countTodo = mbMeTodoRepository.countTodoInTodoList(request.getIdTodoListNew(), request.getPhaseId());</b>
+<b class="nc">&nbsp;            todoFind.get().setIndexTodo(request.getIndexAfter());</b>
+<b class="nc">&nbsp;            todoFind.get().setTodoList(mbMeTodoListRepository.findById(request.getIdTodoListNew()).get());</b>
+<b class="nc">&nbsp;            if (countTodo == 0) {</b>
+<b class="nc">&nbsp;                log.info(&quot;vào đay nè1 getIndexAfter:&quot;+request.getIndexAfter());</b>
+&nbsp;                //Dù countTodo == 0 hay không thì bạn đều gọi:(=0 l chưa có thẻ nào cả trong cột)
+&nbsp;                // dịch lại index của các thẻ ở cột cũ sau khi thẻ bị kéo đi.
+<b class="nc">&nbsp;                mbMeTodoRepository.updateIndexTodoInTodoListOld(request.getIdTodoListOld(), request.getPhaseId(), request.getIndexBefore());</b>
+&nbsp;            } else {
+&nbsp;                // dịch lại index của các thẻ ở cột cũ sau khi thẻ bị kéo đi.
+<b class="nc">&nbsp;                mbMeTodoRepository.updateIndexTodoInTodoListOld(request.getIdTodoListOld(), request.getPhaseId(), request.getIndexBefore());</b>
+&nbsp;                // Và nếu cột mới có thẻ sẵn, cũng cần dịch index ở cột mới:
+&nbsp;
+<b class="nc">&nbsp;                mbMeTodoRepository.updateIndexTodoInTodoListNew(</b>
+<b class="nc">&nbsp;                        request.getIdTodoListNew(),</b>
+<b class="nc">&nbsp;                        request.getPhaseId(),</b>
+<b class="nc">&nbsp;                        request.getIndexAfter(),</b>
+<b class="nc">&nbsp;                        request.getIdTodo()</b>
+&nbsp;                );
+&nbsp;
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Todo newTodo = mbMeTodoRepository.save(todoFind.get());</b>
+<b class="nc">&nbsp;            MBTodoAndTodoListObject mbTodoAndTodoListObject =MBTodoAndTodoListObject.builder().data(newTodo)</b>
+<b class="nc">&nbsp;                    .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="nc">&nbsp;                    .idTodoListOld(request.getIdTodoListOld())</b>
+<b class="nc">&nbsp;                    .indexBefore((int) request.getIndexBefore())</b>
+<b class="nc">&nbsp;                    .indexAfter((int) request.getIndexAfter())</b>
+<b class="nc">&nbsp;                    .sessionId(request.getSessionId())</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Cập nhat thanh cong index todo&quot;);</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(mbTodoAndTodoListObject, HttpStatus.OK, &quot;Update index todo success&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; createTodo(MBMeCreateTodoRequest request) {
+<b class="fc">&nbsp;        TodoList todoList = mbMeTodoListRepository.findById(request.getIdTodoList())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.CONFLICT, &quot;Danh sách công việc không tồn tại&quot;));</b>
+&nbsp;
+&nbsp;        // Tạo Todo entity
+<b class="fc">&nbsp;        Todo newTodo = Todo.builder()</b>
+<b class="fc">&nbsp;                .name(request.getName())</b>
+<b class="fc">&nbsp;                .todoList(todoList)</b>
+<b class="fc">&nbsp;                .indexTodo(request.getIndexTodo())</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;
+&nbsp;        // Lưu vào DB
+<b class="fc">&nbsp;        Todo savedTodo = mbMeTodoRepository.save(newTodo);</b>
+&nbsp;
+&nbsp;        // Chuyển đổi sang DTO để trả về
+<b class="fc">&nbsp;        MBMeCreateTodoResponse response = MBMeCreateTodoResponse.builder()</b>
+<b class="fc">&nbsp;                .idTodo(savedTodo.getId())</b>
+<b class="fc">&nbsp;                .name(savedTodo.getName())</b>
+<b class="fc">&nbsp;                .indexTodo(savedTodo.getIndexTodo())</b>
+<b class="fc">&nbsp;                .idTodoList(savedTodo.getTodoList().getId())</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(response, HttpStatus.OK, &quot;Tạo mới Todo thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;?&gt; findTodoById(MBFilterTodoModalRequest request) {
+<b class="fc">&nbsp;        MBMeTodoResponse meTodoDetails =mbMeTodoRepository.findTodoDetailById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(meTodoDetails, HttpStatus.OK, &quot;lấy details Todo thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllDetailTodo(MBFilterTodoModalRequest request) {
+<b class="fc">&nbsp;        MBMeAllDetailTodo meAllDetailTodo = new MBMeAllDetailTodo();</b>
+<b class="fc">&nbsp;        log.info(&quot;IDTODO:&quot;,request.getIdTodo());</b>
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; existTodo = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(existTodo.isPresent()) {</b>
+<b class="nc">&nbsp;            Todo todoFind = existTodo.get();</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setId(todoFind.getId());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setCode(todoFind.getCode());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setName(todoFind.getName());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setDescriptions(todoFind.getDescriptions());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setDeadline(todoFind.getDeadline());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setReminderTime(todoFind.getDeliveryDate());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setStatusReminder(todoFind.getStatusReminder());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setCompletionTime(todoFind.getCompletionTime());</b>
+&nbsp;
+<b class="nc">&nbsp;            meAllDetailTodo.setPriorityLevel(todoFind.getPriorityLevel() != null ? todoFind.getPriorityLevel().ordinal() : null);</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setProgress(</b>
+<b class="nc">&nbsp;                    todoFind.getProgress() != null ? (float) Math.round(todoFind.getProgress()) : null</b>
+&nbsp;            );
+<b class="nc">&nbsp;            if (todoFind.getTypeTodo() != null &amp;&amp; todoFind.getTypeTodo().getType() != null) {</b>
+<b class="nc">&nbsp;                meAllDetailTodo.setType(todoFind.getTypeTodo().getType());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                meAllDetailTodo.setType(null);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            meAllDetailTodo.setImageId(todoFind.getImageId());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setUrlImage(todoFind.getUrlImage());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setIndexTodo(todoFind.getIndexTodo());</b>
+<b class="nc">&nbsp;            if (todoFind.getTypeTodo() != null) {</b>
+<b class="nc">&nbsp;                meAllDetailTodo.setIdType(todoFind.getTypeTodo().getId());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                meAllDetailTodo.setIdType(null);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            meAllDetailTodo.setTodoListId(todoFind.getTodoList().getId());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setTodoListName(mbMeTodoListRepository.findById(todoFind.getTodoList().getId()).get().getName());</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setStatusTodo(todoFind.getStatusTodo() != null ? todoFind.getStatusTodo().ordinal() : null);</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setMembers(mbMeAssignRepository.getAllMemberByIdTodo(todoFind.getId()));</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setLabels(meLabelRepository.getAllLabelByIdTodo(todoFind.getId()));</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setImages(mbMeImageRepository.getAllByIdTodo(todoFind.getId()));</b>
+<b class="nc">&nbsp;            meAllDetailTodo.setListTodoChild(mbMeTodoRepository.getAllCheckTodoChild(todoFind.getId()));</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy todo&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(meAllDetailTodo, HttpStatus.OK, &quot;lấy tất cả details Todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllCheckTodoChild(MBCheckTodoChildRequest request) {
+<b class="nc">&nbsp;        List&lt;MBMeTodoChildResponse&gt; meTodoChildDetails =mbMeTodoRepository.getAllCheckTodoChild(request.getIdTodo());</b>
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(meTodoChildDetails, HttpStatus.OK, &quot;lấy details Todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createTodoChildChecklist(MBMeCreateDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todo = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(todo.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy todo&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        TodoChild todoChild = new TodoChild();</b>
+<b class="fc">&nbsp;        todoChild.setName(request.getName());</b>
+<b class="fc">&nbsp;        todoChild.setStatusTodoChild(StatusTodoChild.UNCOMPLETE);</b>
+<b class="fc">&nbsp;        todoChild.setTodo(todo.get());</b>
+<b class="fc">&nbsp;        mbMeTodoChildRepository.save(todoChild);</b>
+&nbsp;
+<b class="fc">&nbsp;        Short numberTodoChildComplete = mbMeTodoRepository.countCompletedByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Short countTodoChild = mbMeTodoRepository.countByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind  = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;Todo không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (countTodoChild != 0) {</b>
+&nbsp;            //tiến độ (%) = (số công việc con hoàn thành / tổng số công việc con) * 100
+<b class="fc">&nbsp;            todoFind.get().setProgress(((float) numberTodoChildComplete / countTodoChild) * 100);</b>
+&nbsp;        } else {
+&nbsp;            //
+<b class="nc">&nbsp;            todoFind.get().setProgress((float) 0);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        mbMeTodoRepository.save(todoFind.get());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;( null, HttpStatus.OK, &quot;Thêm todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; editTodoChildChecklist(MBMeEditDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        Optional&lt;TodoChild&gt; todoChild = mbMeTodoChildRepository.findById(request.getIdTodoChild());</b>
+<b class="pc">&nbsp;        if(todoChild.isEmpty()){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy todochild&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        todoChild.get().setName(request.getName());</b>
+&nbsp;//        messagingTemplate.convertAndSend(&quot;/topic/update-status-todochild-checklist&quot;,&quot;Xóa Thành công cv&quot;);
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;( mbMeTodoChildRepository.save(todoChild.get()), HttpStatus.OK, &quot;Edit todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteDetailTodoChild(MBMeDeleteDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        Optional&lt;TodoChild&gt; todoChild = mbMeTodoChildRepository.findById(request.getIdTodoChild());</b>
+<b class="fc">&nbsp;        if(todoChild.isEmpty()){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy todochild&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        todoChild.get().setStatus(EntityStatus.INACTIVE);</b>
+<b class="fc">&nbsp;        mbMeTodoChildRepository.save(todoChild.get());</b>
+<b class="fc">&nbsp;        Short numberTodoChildComplete = mbMeTodoRepository.countCompletedByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Short countTodoChild = mbMeTodoRepository.countByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind  = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;Todo không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (countTodoChild != 0) {</b>
+&nbsp;            //tiến độ (%) = (số công việc con hoàn thành / tổng số công việc con) * 100
+<b class="fc">&nbsp;            todoFind.get().setProgress(((float) numberTodoChildComplete / countTodoChild) * 100);</b>
+&nbsp;        } else {
+&nbsp;            //
+<b class="nc">&nbsp;            todoFind.get().setProgress(null);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        mbMeTodoRepository.save(todoFind.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Xóa todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; handleStatusTodoChildChange(MBHandleStatusTodoChildRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;TodoChild&gt; todoChild = mbMeTodoChildRepository.findById(request.getIdTodoChild());</b>
+&nbsp;
+<b class="pc">&nbsp;        if(todoChild.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy todochild&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        todoChild.get().setStatusTodoChild(request.getStatusTodoChild());</b>
+&nbsp;
+<b class="fc">&nbsp;        mbMeTodoChildRepository.save(todoChild.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        Short numberTodoChildComplete = mbMeTodoRepository.countCompletedByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Short countTodoChild = mbMeTodoRepository.countByTodoChildId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind  = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;Todo không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (countTodoChild != 0) {</b>
+&nbsp;            //tiến độ (%) = (số công việc con hoàn thành / tổng số công việc con) * 100
+<b class="fc">&nbsp;            todoFind.get().setProgress(((float) numberTodoChildComplete / countTodoChild) * 100);</b>
+&nbsp;        } else {
+&nbsp;            //
+<b class="nc">&nbsp;            todoFind.get().setProgress((float) 0);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        mbMeTodoRepository.save(todoFind.get());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;update status todo child thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateDescriptionsTodo(MBMeUpdateDescriptionsTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;khong tìm thấy todo &quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        todoFind.get().setDescriptions(request.getDescriptions());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (request.getDescriptions().equals(&quot;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&quot;)) {</b>
+<b class="nc">&nbsp;            todoFind.get().setDescriptions(null);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeTodoRepository.save(todoFind.get()), HttpStatus.OK, &quot;update descriptions todo thành công&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateNameTodo(MBMeUpdateNameTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;khong tìm thấy todo &quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        todoFind.get().setName(request.getNameTodo());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeTodoRepository.save(todoFind.get()), HttpStatus.OK, &quot;update ten todo thành công&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; updateDeadlineTodo(MBMeUpdateDeadlineTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        SimpleDateFormat sdf = new SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        Date deadline = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            deadline = sdf.parse(request.getDeadline());</b>
+&nbsp;        } catch (ParseException e) {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Ngày không hợp lệ&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo không tồn tại&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if( todoFind.get().getCompletionTime() == null){</b>
+<b class="nc">&nbsp;            todoFind.get().setStatusTodo(StatusTodo.CHUA_HOAN_THANH);</b>
+<b class="nc">&nbsp;            todoFind.get().setDeadline(deadline.getTime());</b>
+&nbsp;
+&nbsp;        }else {
+<b class="nc">&nbsp;            todoFind.get().setDeadline(deadline.getTime());</b>
+<b class="nc">&nbsp;            if (new Date().getTime() &gt; todoFind.get().getDeadline()) {</b>
+<b class="nc">&nbsp;                todoFind.get().setStatusTodo(StatusTodo.QUA_HAN);</b>
+&nbsp;
+&nbsp;            } else {
+<b class="nc">&nbsp;                todoFind.get().setStatusTodo(StatusTodo.HOAN_THANH_SOM);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (request.getReminder() == null) {</b>
+<b class="nc">&nbsp;            todoFind.get().setDeliveryDate(null);</b>
+<b class="nc">&nbsp;            todoFind.get().setStatusReminder(null);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            todoFind.get().setDeliveryDate(request.getReminder());</b>
+<b class="nc">&nbsp;            todoFind.get().setStatusReminder(StatusReminder.CHUA_GUI);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Activity activity = new Activity();</b>
+<b class="nc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="nc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="nc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="nc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="nc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="nc">&nbsp;        activity.setContentAction(&quot;đã cập nhật ngày hạn của thẻ này thành &quot; + DateConverter.convertDateToString(deadline.getTime()));</b>
+<b class="nc">&nbsp;        activity.setContentActionProject(&quot;đã cập nhật ngày hạn của thẻ &quot;+todoFind.get().getName()+&quot; thành &quot; + DateConverter.convertDateToString(deadline.getTime()));</b>
+<b class="nc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(mbMeTodoRepository.save(todoFind.get()))</b>
+<b class="nc">&nbsp;                .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="nc">&nbsp;                .idTodoList(request.getIdTodoList()).idTodo(request.getIdTodo()).build();</b>
+<b class="nc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Cập nhat thanh cong ngay het han&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;( todoObject, HttpStatus.OK, &quot;Cập nhật thành công Ngày hết hạn&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; deleteDeadlineTodo(MBMeDeleteDeadlineTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo không ton tai&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        todoFind.get().setDeadline(null);</b>
+<b class="fc">&nbsp;        todoFind.get().setCompletionTime(null);</b>
+<b class="fc">&nbsp;        todoFind.get().setStatusTodo(null);</b>
+<b class="fc">&nbsp;        todoFind.get().setStatusReminder(null);</b>
+<b class="fc">&nbsp;        todoFind.get().setDeliveryDate(null);</b>
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="fc">&nbsp;        activity.setContentAction(&quot;đã xóa ngày hạn của thẻ này&quot;);</b>
+<b class="fc">&nbsp;        activity.setContentActionProject(&quot;đã xóa ngày hạn của thẻ &quot;+todoFind.get().getName());</b>
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(mbMeTodoRepository.save(todoFind.get())).</b>
+<b class="fc">&nbsp;                dataActivity(mbMeActivityRepository.save(activity)).</b>
+<b class="fc">&nbsp;                idTodoList(request.getIdTodoList()).idTodo(request.getIdTodo()).build();</b>
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Xoa thanh cong ngay het han&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(  todoObject, HttpStatus.OK, &quot;Xóa thành công Ngày hết hạn&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; updateCompleteTodo(MBMeUpdateCompleteTodoRequest request) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getId());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo không ton tai&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="fc">&nbsp;        Short countTodo = mbMeTodoRepository.countTodoInCheckList(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (request.getStatus() == 0) {</b>
+<b class="fc">&nbsp;            todoFind.get().setCompletionTime(new Date().getTime());</b>
+<b class="fc">&nbsp;            activity.setContentAction(&quot;đã đánh dấu hoàn thành công việc này&quot;);</b>
+<b class="fc">&nbsp;            activity.setContentActionProject(&quot;đã đánh dấu thẻ &quot;+todoFind.get().getName()+&quot; là hoàn thành&quot;);</b>
+<b class="pc">&nbsp;            if (new Date().getTime() &gt; todoFind.get().getDeadline()) {</b>
+<b class="nc">&nbsp;                todoFind.get().setStatusTodo(StatusTodo.QUA_HAN);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                todoFind.get().setStatusTodo(StatusTodo.HOAN_THANH_SOM);</b>
+&nbsp;            }
+&nbsp;//            if (countTodo == 0) {
+&nbsp;//                todoFind.get().setProgress((short) 100);
+&nbsp;//                updateProgressPeriod(request.getPeriodId());
+&nbsp;//            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            todoFind.get().setCompletionTime(null);</b>
+<b class="nc">&nbsp;            activity.setContentAction(&quot;đã đánh dấu chưa hoàn thành công việc&quot;);</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(&quot;đã đánh dấu thẻ &quot;+todoFind.get().getName()+&quot; là chưa hoàn thành&quot;);</b>
+<b class="nc">&nbsp;            todoFind.get().setStatusTodo(StatusTodo.CHUA_HOAN_THANH);</b>
+&nbsp;//            if (countTodo == 0) {
+&nbsp;//                todoFind.get().setProgress((short) 0);
+&nbsp;//                updateProgressPeriod(request.getPeriodId());
+&nbsp;//            }
+&nbsp;        }
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(mbMeTodoRepository.save(todoFind.get()))</b>
+<b class="fc">&nbsp;                .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="fc">&nbsp;                .idTodoList(request.getIdTodoList()).idTodo(request.getIdTodo()).build();</b>
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Cap nhat con gviec da hoan thanh&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(todoObject,</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Update công việc đã hoàn thành&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updatePriorityLevel(MBMeUpdateTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFindById = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if (!todoFindById.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo không ton tai&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        PriorityLevel[] priorityLevels = PriorityLevel.values();</b>
+<b class="fc">&nbsp;        todoFindById.get().setPriorityLevel(priorityLevels[request.getPriorityLevel()]);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeTodoRepository.save(todoFindById.get()),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Update mức độ ưu tiên cv&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateProgress(MBMeUpdateProgressTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFindById = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if (!todoFindById.isPresent()) {</b>
+<b class="fc">&nbsp;           return  new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        todoFindById.get().setProgress(request.getProgress());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (request.getProgress() == 100 &amp;&amp; todoFindById.get().getDeadline() == null) {</b>
+<b class="nc">&nbsp;            todoFindById.get().setStatusTodo(StatusTodo.HOAN_THANH_SOM);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        mbMeTodoRepository.save(todoFindById.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="fc">&nbsp;        activity.setContentAction(&quot;đã cập nhật phần trăm tiến độ của đầu việc thành &quot; + request.getProgress() + &quot;%&quot;);</b>
+<b class="fc">&nbsp;        activity.setContentActionProject(&quot;đã cập nhật phần trăm tiến độ của đầu việc thành &quot;+ request.getProgress() + &quot;%&quot;+&quot; &quot;+&quot;cho thẻ &quot;+todoFindById.get().getName());</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        mbMeActivityRepository.save(activity);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null,HttpStatus.OK,&quot;Update progress success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoPriority(MBMeSortTodoRequest request) {
+<b class="fc">&nbsp;        if (request.getType() == 0) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoPriorityASC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (request.getType() == 1) {</b>
+<b class="nc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="nc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="nc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoPriorityDESC(todoList,request.getIdPhase());</b>
+<b class="nc">&nbsp;                short index = 0;</b>
+<b class="nc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="nc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(request.getIdPhase(), HttpStatus.OK, &quot;Sort todo priority success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoDeadline(MBMeSortTodoRequest request) {
+<b class="fc">&nbsp;        if (request.getType() == 0) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoDeadlineASC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (request.getType() == 1) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoDeadlineDESC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(request.getIdPhase(), HttpStatus.OK, &quot;Sort todo deadline success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoCreatedDate(MBMeSortTodoRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 0) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoCreateDateASC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 1) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoCreateDateDESC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(request.getIdPhase(), HttpStatus.OK, &quot;Sort todo createdate success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoName(MBMeSortTodoRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 0) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoNameASC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 1) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoNameDESC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(request.getIdPhase(), HttpStatus.OK, &quot;Sort todo name success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoProgress(MBMeSortTodoRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 0) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoProgressASC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (request.getType() == 1) {</b>
+<b class="fc">&nbsp;            List&lt;TodoList&gt; allTodoLists = mbMeTodoListRepository.findAll();</b>
+<b class="fc">&nbsp;            for (TodoList todoList : allTodoLists) {</b>
+<b class="fc">&nbsp;                List&lt;Todo&gt; todos = mbMeTodoRepository.findTodoSortTodoProgressDESC(todoList,request.getIdPhase());</b>
+<b class="fc">&nbsp;                short index = 0;</b>
+<b class="fc">&nbsp;                for (Todo todo : todos) {</b>
+<b class="fc">&nbsp;                    todo.setIndexTodo(index++);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                mbMeTodoRepository.saveAll(todos);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(request.getIdPhase(), HttpStatus.OK, &quot;Sort todo name success&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getStatusByIdPhase(String idPhase) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMePhaseProjectRepository.findStatusPhaseById(idPhase).get()</b>
+&nbsp;        , HttpStatus.OK,
+&nbsp;                &quot;Sort todo name success&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

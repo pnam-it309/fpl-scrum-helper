@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADFacilityServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.facility.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ADFacilityServiceImpl (udpm.hn.server.core.admin.facility.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ADFacilityServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ADFacilityServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.facility.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.admin.facility.model.request.ADCreateUpdateFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.facility.model.request.ADFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.facility.repository.FacilityExtendRepository;
+&nbsp;import udpm.hn.server.core.admin.facility.service.ADFacilityService;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.Facility;
+&nbsp;import udpm.hn.server.infrastructure.config.database.RoleGenerator;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class ADFacilityServiceImpl implements ADFacilityService {
+&nbsp;
+&nbsp;    private final RoleGenerator roleGenerator;
+&nbsp;
+&nbsp;    private final FacilityExtendRepository facilityExtendRepository;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllFacility(ADFacilityRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(facilityExtendRepository.getAllFacility(pageable, request)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Get all facility successfully&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createFacility(ADCreateUpdateFacilityRequest request) {
+<b class="fc">&nbsp;        List&lt;Facility&gt; facilityOptional = facilityExtendRepository.findAllByName(request.getFacilityName().trim());</b>
+<b class="fc">&nbsp;        if (!facilityOptional.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Cơ sở đã tồn tại&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String code = Helper.generateCodeFromName(request.getFacilityName());</b>
+<b class="fc">&nbsp;        Facility facility = new Facility();</b>
+<b class="fc">&nbsp;        facility.setCode(code);</b>
+<b class="fc">&nbsp;        facility.setName(Helper.replaceManySpaceToOneSpace(request.getFacilityName()));</b>
+<b class="fc">&nbsp;        facility.setCreatedDate(System.currentTimeMillis());</b>
+<b class="fc">&nbsp;        facility.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;        facilityExtendRepository.save(facility);</b>
+&nbsp;
+<b class="fc">&nbsp;        roleGenerator.generate();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm cơ sở thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateFacility(String facilityId, ADCreateUpdateFacilityRequest request) {
+<b class="fc">&nbsp;        if (facilityExtendRepository.existsByNameAndIdNot(request.getFacilityName(), facilityId)) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Cơ sở đã tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Facility&gt; facilityOptional = facilityExtendRepository.findById(facilityId);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        facilityOptional.map(facility -&gt; {</b>
+<b class="fc">&nbsp;            facility.setCode(Helper.generateCodeFromName(request.getFacilityName().trim()));</b>
+<b class="fc">&nbsp;            facility.setName(Helper.replaceManySpaceToOneSpace(  request.getFacilityName().trim()));</b>
+<b class="fc">&nbsp;            facility.setCreatedDate(facility.getCreatedDate());</b>
+<b class="fc">&nbsp;            facility.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;            return facilityExtendRepository.save(facility);</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        return facilityOptional</b>
+<b class="fc">&nbsp;                .map(subject -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật cơ sở thành công&quot;))</b>
+<b class="fc">&nbsp;                .orElseGet(() -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy cơ sở&quot;));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; changeFacilityStatus(String facilityId) {
+<b class="fc">&nbsp;        Optional&lt;Facility&gt; facilityOptional = facilityExtendRepository.findById(facilityId);</b>
+&nbsp;
+<b class="fc">&nbsp;        facilityOptional.map(facility -&gt; {</b>
+<b class="fc">&nbsp;            facility.setName(facility.getName());</b>
+<b class="fc">&nbsp;            facility.setCreatedDate(facility.getCreatedDate());</b>
+<b class="pc">&nbsp;            facility.setStatus(facility.getStatus() != EntityStatus.ACTIVE ? EntityStatus.ACTIVE : EntityStatus.INACTIVE);</b>
+<b class="fc">&nbsp;            return facilityExtendRepository.save(facility);</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        return facilityOptional</b>
+<b class="fc">&nbsp;                .map(subject -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Đổi trạng thái cơ sở thành công&quot;))</b>
+<b class="fc">&nbsp;                .orElseGet(() -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy cơ sở&quot;));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getFacilityById(String facilityId) {
+<b class="fc">&nbsp;        return facilityExtendRepository.getDetailFacilityById(facilityId)</b>
+<b class="fc">&nbsp;                .map(subject -&gt; new ResponseObject&lt;&gt;(subject, HttpStatus.OK, &quot;Get facility successfully&quot;))</b>
+<b class="fc">&nbsp;                .orElseGet(() -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Facility not found&quot;));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

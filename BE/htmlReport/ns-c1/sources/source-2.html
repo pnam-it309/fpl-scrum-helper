@@ -1,0 +1,108 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaTodoService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.service</a>
+</div>
+
+<h1>Coverage Summary for Class: MaTodoService (udpm.hn.server.core.manage.project.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MaTodoService$MockitoMock$EGOvAQtB</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoService$MockitoMock$EGOvAQtB$auxiliary$32fBrIct</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoService$MockitoMock$EGOvAQtB$auxiliary$5ntx91zz</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.service;
+&nbsp;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaTodoSummaryResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardLabelResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardTodoListResponse;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MaTodoService {
+&nbsp;
+&nbsp;    List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListAllProject(String projectId);
+&nbsp;
+&nbsp;    Integer countTodoByDueDateAllProject(String projectId, Integer statusTodo);
+&nbsp;
+&nbsp;    Integer countTodoByNoDueDateAllProject(String projectTodo);
+&nbsp;
+&nbsp;    List&lt;MeDataDashboardLabelResponse&gt; countTodoByLabelAllProject(String projectId);
+&nbsp;
+&nbsp;    Integer countTodoByNoLabelAllProject(String projectId);
+&nbsp;
+&nbsp;    List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListPhase(String projectId, String phaseId);
+&nbsp;
+&nbsp;    Integer countTodoByDueDatePhase(String projectId, String phaseId, Integer statusTodo);
+&nbsp;
+&nbsp;    Integer countTodoByNoDueDatePhase(String projectId, String phaseId);
+&nbsp;
+&nbsp;    Integer countTodoByPriorityLevel(String projectId, Integer priorityLevel);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; countTodoByTodoStatus(String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

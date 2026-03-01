@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaTodoProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MaTodoProjectRepository (udpm.hn.server.core.manage.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$5wvnHluK</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$5wvnHluK$auxiliary$eeWgEGEC</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$5wvnHluK$auxiliary$r3Mo5xvW</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$a5R0g1Qd</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$a5R0g1Qd$auxiliary$2okw4jCy</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$a5R0g1Qd$auxiliary$bf6LPymI</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$cQ4H6DVH</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$cQ4H6DVH$auxiliary$AMM7p6fR</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$cQ4H6DVH$auxiliary$p2Hdpfsr</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$rwnNTaO7</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$rwnNTaO7$auxiliary$4RwF0JeN</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoProjectRepository$MockitoMock$rwnNTaO7$auxiliary$aKGpgjaa</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaTodoByPhaseSummaryResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaTodoSummaryResponse;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MaTodoProjectRepository extends ToDoRepository {
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        select 
+&nbsp;            count(1) as amount
+&nbsp;            ,t.statusTodo as todoStatus
+&nbsp;        from Todo t
+&nbsp;        join TodoList tl on t.todoList.id = tl.id
+&nbsp;        where tl.project.id = :id and t.status = 0
+&nbsp;        group by t.statusTodo
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;MaTodoSummaryResponse&gt; countTodoByTodoStatus(@Param(&quot;id&quot;) String id);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        select count(1) as amount
+&nbsp;            , pp.name as namePhase 
+&nbsp;            from PhaseProject pp
+&nbsp;        join TodoList tl on tl.phaseProject.id = pp.id
+&nbsp;        join Todo t on t.todoList.id = tl.id
+&nbsp;        where pp.project.id = :idProject and tl.status = 0
+&nbsp;        group by pp.id, pp.createdDate
+&nbsp;        ORDER BY pp.createdDate ASC
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;MaTodoByPhaseSummaryResponse&gt; getAmountOfTodoByPhase(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

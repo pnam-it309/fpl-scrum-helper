@@ -1,0 +1,440 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BaseReportDay</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.report</a>
+</div>
+
+<h1>Coverage Summary for Class: BaseReportDay (udpm.hn.server.infrastructure.job.report)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BaseReportDay</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54.5%
+  </span>
+  <span class="absValue">
+    (6/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13%
+  </span>
+  <span class="absValue">
+    (6/46)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25.2%
+  </span>
+  <span class="absValue">
+    (38/151)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.report;
+&nbsp;
+&nbsp;import jakarta.servlet.ServletOutputStream;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.poi.ss.usermodel.BorderStyle;
+&nbsp;import org.apache.poi.ss.usermodel.Cell;
+&nbsp;import org.apache.poi.ss.usermodel.CellStyle;
+&nbsp;import org.apache.poi.ss.usermodel.FillPatternType;
+&nbsp;import org.apache.poi.ss.usermodel.HorizontalAlignment;
+&nbsp;import org.apache.poi.ss.usermodel.IndexedColors;
+&nbsp;import org.apache.poi.ss.usermodel.Row;
+&nbsp;import org.apache.poi.ss.usermodel.VerticalAlignment;
+&nbsp;import org.apache.poi.ss.util.CellRangeAddress;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFFont;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFSheet;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+&nbsp;import udpm.hn.server.core.manage.report.model.response.MAReportResponse;
+&nbsp;import udpm.hn.server.core.manage.report.repository.MAReportRepository;
+&nbsp;import udpm.hn.server.core.manage.user.model.response.MAUserProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.user.repository.MAUserProject;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.DocADProjectRepository;
+&nbsp;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.lang.reflect.Field;
+&nbsp;import java.time.DayOfWeek;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.ZoneId;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Base64;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class BaseReportDay&lt;T&gt; {
+&nbsp;
+&nbsp;    private XSSFWorkbook workbook;
+&nbsp;    private XSSFSheet sheet;
+&nbsp;
+&nbsp;    private final MAUserProject maUserProject;
+&nbsp;    private String idProject;
+&nbsp;
+<b class="fc">&nbsp;    List&lt;LocalDate&gt; listDay = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    private final DocADProjectRepository docADProjectRepository;
+&nbsp;
+&nbsp;    private final MAReportRepository maReportRepository;
+&nbsp;
+<b class="fc">&nbsp;    public BaseReportDay(MAUserProject maUserProject, String idProject, DocADProjectRepository docADProjectRepository, MAReportRepository maReportRepository) {</b>
+<b class="fc">&nbsp;        this.docADProjectRepository = docADProjectRepository;</b>
+<b class="fc">&nbsp;        this.maUserProject = maUserProject;</b>
+<b class="fc">&nbsp;        this.idProject = idProject;</b>
+<b class="fc">&nbsp;        this.maReportRepository = maReportRepository;</b>
+<b class="fc">&nbsp;        workbook = new XSSFWorkbook();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public BaseReportDay&lt;T&gt; writeHeaderLine(String[] headers) {
+<b class="fc">&nbsp;        log.debug(&quot;Đã vào trong baseReportDay&quot;);</b>
+<b class="fc">&nbsp;        sheet = workbook.createSheet(&quot;data export&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        CellStyle style = getHeaderStyle();  // style cho header</b>
+<b class="fc">&nbsp;        CellStyle dateStyle = getHeaderStyle(); // nếu có style cho ngày</b>
+&nbsp;
+&nbsp;        // Dòng tiêu đề tuần (dòng 0)
+<b class="fc">&nbsp;        Row weekRow = sheet.createRow(0);</b>
+&nbsp;
+&nbsp;        // Dòng các ngày trong tuần (dòng 1)
+<b class="fc">&nbsp;        Row dayRow = sheet.createRow(1);</b>
+&nbsp;
+&nbsp;        // Tạo tiêu đề các cột cố định
+<b class="fc">&nbsp;        for (int i = 0; i &lt; headers.length; i++) {</b>
+<b class="fc">&nbsp;            createCell(weekRow, i, headers[i], style);</b>
+<b class="fc">&nbsp;            sheet.addMergedRegion(new CellRangeAddress(0, 1, i, i)); // gộp 2 dòng cho cột cố định</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;List&lt;LocalDate&gt;&gt; weeks = time(idProject);</b>
+<b class="nc">&nbsp;        listDay = weeks.stream().flatMap(List::stream)   // dàn phẳng từng List&lt;LocalDate&gt;</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;List date project:{}&quot;, listDay.stream().toList());</b>
+&nbsp;
+<b class="nc">&nbsp;        int colIndex = headers.length;</b>
+<b class="nc">&nbsp;        int weekCount = 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        for (List&lt;LocalDate&gt; week : weeks) {</b>
+<b class="nc">&nbsp;            int daysCount = week.size();</b>
+&nbsp;
+<b class="nc">&nbsp;            LocalDate startDay = week.get(0);</b>
+<b class="nc">&nbsp;            LocalDate endDay = week.get(daysCount - 1);</b>
+&nbsp;
+&nbsp;            // Ghi tiêu đề tuần
+<b class="nc">&nbsp;            String weekTitle = String.format(&quot;Tuần %d (%s - %s)&quot;, weekCount, startDay.format(DateTimeFormatter.ofPattern(&quot;dd/MM&quot;)), endDay.format(DateTimeFormatter.ofPattern(&quot;dd/MM&quot;)));</b>
+&nbsp;
+<b class="nc">&nbsp;            Cell weekCell = weekRow.createCell(colIndex);</b>
+<b class="nc">&nbsp;            weekCell.setCellValue(weekTitle);</b>
+<b class="nc">&nbsp;            weekCell.setCellStyle(style);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (daysCount &gt; 1) {</b>
+<b class="nc">&nbsp;                sheet.addMergedRegion(new CellRangeAddress(0, 0, colIndex, colIndex + daysCount - 1));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;            // Ghi từng ngày của tuần
+<b class="nc">&nbsp;            for (int i = 0; i &lt; week.size(); i++) {</b>
+<b class="nc">&nbsp;                Cell dayCell = dayRow.createCell(colIndex + i);</b>
+<b class="nc">&nbsp;                dayCell.setCellValue(String.valueOf(week.get(i).format(DateTimeFormatter.ofPattern(&quot;dd-MM&quot;))));</b>
+<b class="nc">&nbsp;                dayCell.setCellStyle(dateStyle);  // nếu có style ngày</b>
+&nbsp;            }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            colIndex += daysCount;</b>
+<b class="nc">&nbsp;            weekCount++;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private void createCell(Row row, int columnCount, Object value, CellStyle style) {
+<b class="fc">&nbsp;        Cell cell = row.createCell(columnCount);</b>
+<b class="pc">&nbsp;        if (value instanceof Integer) {</b>
+<b class="nc">&nbsp;            cell.setCellValue((Integer) value);</b>
+<b class="pc">&nbsp;        } else if (value instanceof Boolean) {</b>
+<b class="nc">&nbsp;            cell.setCellValue((Boolean) value);</b>
+<b class="pc">&nbsp;        } else if (value instanceof Double) {</b>
+<b class="nc">&nbsp;            cell.setCellValue((Double) value);</b>
+&nbsp;        } else {
+<b class="pc">&nbsp;            cell.setCellValue(value != null ? value.toString() : &quot;&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        cell.setCellStyle(style);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private CellStyle getHeaderStyle() {
+<b class="fc">&nbsp;        CellStyle style = workbook.createCellStyle();</b>
+<b class="fc">&nbsp;        XSSFFont font = workbook.createFont();</b>
+&nbsp;
+<b class="fc">&nbsp;        font.setBold(true);</b>
+<b class="fc">&nbsp;        font.setFontHeight(12);</b>
+<b class="fc">&nbsp;        font.setFontName(&quot;Times New Roman&quot;);</b>
+<b class="fc">&nbsp;        style.setFont(font);</b>
+<b class="fc">&nbsp;        style.setBorderBottom(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;        style.setBorderTop(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;        style.setBorderLeft(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;        style.setBorderRight(BorderStyle.THIN);</b>
+<b class="fc">&nbsp;        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());</b>
+<b class="fc">&nbsp;        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);</b>
+<b class="fc">&nbsp;        return style;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BaseReportDay&lt;T&gt; writeDataLines(List&lt;MAUserProjectResponse&gt; listUser) {
+<b class="nc">&nbsp;        int rowCount = 2; // Bắt đầu từ dòng 3</b>
+<b class="nc">&nbsp;        CellStyle style = workbook.createCellStyle();</b>
+<b class="nc">&nbsp;        XSSFFont font = workbook.createFont();</b>
+<b class="nc">&nbsp;        font.setFontHeight(12);</b>
+<b class="nc">&nbsp;        font.setFontName(&quot;Times New Roman&quot;);</b>
+<b class="nc">&nbsp;        style.setFont(font);</b>
+<b class="nc">&nbsp;        style.setAlignment(HorizontalAlignment.LEFT);</b>
+<b class="nc">&nbsp;        style.setVerticalAlignment(VerticalAlignment.CENTER);</b>
+<b class="nc">&nbsp;        style.setWrapText(true); // Cho phép xuống dòng trong ô</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Integer&gt; projectStartRowMap = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        Map&lt;String, Integer&gt; projectEndRowMap = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        for (MAUserProjectResponse response : listUser) {</b>
+<b class="nc">&nbsp;            Row row = sheet.createRow(rowCount);</b>
+<b class="nc">&nbsp;            row.setHeightInPoints(80); // Tăng chiều cao để chứa nội dung nhiều dòng</b>
+&nbsp;
+<b class="nc">&nbsp;            int colCount = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;            String name = response.getNameStudent() != null ? response.getNameStudent() : response.getNameStaff();</b>
+<b class="nc">&nbsp;            String code = response.getCodeStudent() != null ? response.getCodeStudent() : response.getCodeStaff();</b>
+&nbsp;
+&nbsp;            // STT
+<b class="nc">&nbsp;            createCell(row, colCount++, rowCount - 1, style);</b>
+<b class="nc">&nbsp;            createCell(row, colCount++, code, style);</b>
+<b class="nc">&nbsp;            createCell(row, colCount++, name, style);</b>
+&nbsp;
+&nbsp;            // Tạm thời ghi project
+<b class="nc">&nbsp;            createCell(row, colCount, response.getCodeProject(), style);</b>
+<b class="nc">&nbsp;            createCell(row, colCount + 1, response.getNameProject(), style);</b>
+&nbsp;
+<b class="nc">&nbsp;            String projectKey = response.getCodeProject() + &quot;-&quot; + response.getNameProject();</b>
+<b class="nc">&nbsp;            projectStartRowMap.putIfAbsent(projectKey, rowCount);</b>
+<b class="nc">&nbsp;            projectEndRowMap.put(projectKey, rowCount);</b>
+&nbsp;
+<b class="nc">&nbsp;            colCount += 2;</b>
+&nbsp;
+&nbsp;            // Lấy báo cáo
+<b class="nc">&nbsp;            List&lt;MAReportResponse&gt; listReportUser = maReportRepository.findReportByProjectAndMember(idProject, response.getIdStaffProject());</b>
+<b class="nc">&nbsp;            Map&lt;String, MAReportResponse&gt; listReportMap = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;            for (MAReportResponse reportResponse : listReportUser) {</b>
+<b class="nc">&nbsp;                LocalDate date = Instant.ofEpochMilli(Long.parseLong(reportResponse.getReportTime())).atZone(ZoneId.systemDefault()).toLocalDate();</b>
+&nbsp;
+<b class="nc">&nbsp;                listReportMap.put(date.format(formatter), reportResponse);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for (LocalDate date : listDay) {</b>
+<b class="nc">&nbsp;                Cell cell = row.createCell(colCount++);</b>
+<b class="nc">&nbsp;                String dateKey = date.format(formatter);</b>
+&nbsp;
+<b class="nc">&nbsp;                if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {</b>
+<b class="nc">&nbsp;                    cell.setCellValue(&quot;Nghỉ&quot;);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    MAReportResponse report = listReportMap.get(dateKey);</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (report != null) {</b>
+<b class="nc">&nbsp;                        String content = &quot;Hôm nay làm: &quot; + report.getWorkDoneToday() + &quot;\nKhó khăn: &quot; + report.getObstacles() + &quot;\nNgày mai làm gì: &quot; + report.getWorkPlanTomorrow();</b>
+<b class="nc">&nbsp;                        cell.setCellValue(content);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        cell.setCellValue(&quot;Chưa báo cáo&quot;);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                cell.setCellStyle(style);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            rowCount++;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Gộp các ô project giống nhau
+<b class="nc">&nbsp;        for (String key : projectStartRowMap.keySet()) {</b>
+<b class="nc">&nbsp;            int startRow = projectStartRowMap.get(key);</b>
+<b class="nc">&nbsp;            int endRow = projectEndRowMap.get(key);</b>
+<b class="nc">&nbsp;            if (startRow != endRow) {</b>
+<b class="nc">&nbsp;                sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 3, 3)); // CodeProject</b>
+<b class="nc">&nbsp;                sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 4, 4)); // NameProject</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Thiết lập độ rộng cột
+<b class="nc">&nbsp;        int totalColumns = listDay.size() + 5; // STT, Code, Name, CodeProject, NameProject + ngày</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; totalColumns; i++) {</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(i, 25 * 256); // 25 ký tự độ rộng</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public XSSFWorkbook getWorkbook() {
+<b class="nc">&nbsp;        return workbook;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void export(HttpServletResponse response) throws Exception {
+&nbsp;
+<b class="nc">&nbsp;        ServletOutputStream out = response.getOutputStream();</b>
+<b class="nc">&nbsp;        workbook.write(out);</b>
+<b class="nc">&nbsp;        workbook.close();</b>
+&nbsp;        out.close();
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private List&lt;List&lt;LocalDate&gt;&gt; time(String idProject) {
+<b class="fc">&nbsp;        Long startTime = docADProjectRepository.findProjectStartTimeById(idProject).getStartTime();</b>
+<b class="nc">&nbsp;        log.debug(&quot;start time export:{}&quot;, startTime);</b>
+<b class="nc">&nbsp;        LocalDate startDate = Instant.ofEpochMilli(startTime).atZone(ZoneId.systemDefault()).toLocalDate();</b>
+&nbsp;
+<b class="nc">&nbsp;        LocalDate today = LocalDate.now();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;List&lt;LocalDate&gt;&gt; weeks = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;LocalDate&gt; currentWeek = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (LocalDate date = startDate; !date.isAfter(today); date = date.plusDays(1)) {</b>
+<b class="nc">&nbsp;            if (currentWeek.isEmpty()) {</b>
+<b class="nc">&nbsp;                currentWeek.add(date);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                if (date.getDayOfWeek() == DayOfWeek.MONDAY) {</b>
+<b class="nc">&nbsp;                    weeks.add(currentWeek);         // kết thúc tuần trước</b>
+<b class="nc">&nbsp;                    currentWeek = new ArrayList&lt;&gt;(); // bắt đầu tuần mới</b>
+&nbsp;                }
+<b class="nc">&nbsp;                currentWeek.add(date);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!currentWeek.isEmpty()) {</b>
+<b class="nc">&nbsp;            weeks.add(currentWeek);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        log.info(&quot;số tuần import:{}&quot;, weeks);</b>
+&nbsp;
+<b class="nc">&nbsp;        return weeks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Map&lt;LocalDate, String&gt; getReportMap(T data) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Field reportField = data.getClass().getDeclaredField(&quot;workDoneToday&quot;);</b>
+<b class="nc">&nbsp;            reportField.setAccessible(true);</b>
+<b class="nc">&nbsp;            Object value = reportField.get(data);</b>
+<b class="nc">&nbsp;            if (value instanceof Map&lt;?, ?&gt; map) {</b>
+<b class="nc">&nbsp;                return (Map&lt;LocalDate, String&gt;) map;</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new HashMap&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void exprortBase64(HttpServletResponse response) throws Exception {
+<b class="nc">&nbsp;        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();</b>
+<b class="nc">&nbsp;        workbook.write(byteArrayOutputStream);</b>
+<b class="nc">&nbsp;        workbook.close();</b>
+&nbsp;
+<b class="nc">&nbsp;        byte[] byteArray = byteArrayOutputStream.toByteArray();</b>
+&nbsp;
+&nbsp;        byteArrayOutputStream.close();
+<b class="nc">&nbsp;        String base64EncodedString = Base64.getEncoder().encodeToString(byteArray);</b>
+<b class="nc">&nbsp;        ServletOutputStream out = response.getOutputStream();</b>
+<b class="nc">&nbsp;        out.write(base64EncodedString.getBytes());</b>
+&nbsp;        out.close();
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

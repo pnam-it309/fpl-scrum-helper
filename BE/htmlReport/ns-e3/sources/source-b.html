@@ -1,0 +1,165 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeLabelRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeLabelRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$9Sf2bm4E</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$9Sf2bm4E$auxiliary$7Lvq1Od0</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$9Sf2bm4E$auxiliary$RRXYu1Iv</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$AkVcZJh4</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$AkVcZJh4$auxiliary$BX9mtPQ6</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$AkVcZJh4$auxiliary$Com0sgT1</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$LMQAKmuj</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$LMQAKmuj$auxiliary$ACm9xeSq</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$LMQAKmuj$auxiliary$XQnQLoex</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$MvwK4f73</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$MvwK4f73$auxiliary$obJqb2MD</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$MvwK4f73$auxiliary$VQ6YcZ4U</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$TBqRHWGe</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$TBqRHWGe$auxiliary$TcorH3Fr</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeLabelRepository$MockitoMock$TBqRHWGe$auxiliary$u53ibOcp</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeLabelResponse;
+&nbsp;import udpm.hn.server.repository.LabelProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MBMeLabelRepository extends LabelProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT c.id AS id, c.code AS code, c.name AS name, c.color AS colorLabel
+&nbsp;    FROM LabelProjectTodo b
+&nbsp;    JOIN b.todo a
+&nbsp;    JOIN b.labelProject c
+&nbsp;    WHERE a.id = :idTodo
+&nbsp;    AND b.status = 0
+&nbsp;    AND c.status= 0
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeLabelResponse&gt; getAllLabelByIdTodo(@Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        a.id AS id, 
+&nbsp;        a.code AS code, 
+&nbsp;        a.name AS name, 
+&nbsp;        a.color AS colorLabel,
+&nbsp;        CASE WHEN lpt.id IS NOT NULL THEN true ELSE false END AS isChecked
+&nbsp;    FROM LabelProject a
+&nbsp;    LEFT JOIN LabelProjectTodo lpt 
+&nbsp;        ON lpt.labelProject.id = a.id AND lpt.todo.id = :idTodo
+&nbsp;    WHERE a.project.id = :idProject
+&nbsp;      AND a.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeLabelResponse&gt; getAllByIdProject(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;    String id(String id);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        a.id AS id, 
+&nbsp;        a.code AS code, 
+&nbsp;        a.name AS name, 
+&nbsp;        a.color AS colorLabel
+&nbsp;    FROM LabelProject a
+&nbsp;    WHERE a.project.id = :idProject
+&nbsp;      AND a.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeLabelResponse&gt; getAllLabelSearchByIdProject(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

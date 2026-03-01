@@ -1,0 +1,281 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoController (udpm.hn.server.core.member.projectdetails.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeTodoController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeTodoService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(MappingConstants.API_PROJECT_DETAILS_TODO)
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeTodoController {
+&nbsp;
+&nbsp;    private final MBMeTodoService mbMeTodoService;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/board&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getTodoBoard(MBMeFilterTodoRequest request) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTodoService.getAllBoard(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/find-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; findTodoById(MBFilterTodoModalRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.findTodoById(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/get-all-detail&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; getAllDetailTodo(MBFilterTodoModalRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.getAllDetailTodo(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/check-todochild&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; getAllCheckTodoChild(MBCheckTodoChildRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.getAllCheckTodoChild(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-index-todo/{projectId}/{periodId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-index-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateIndexTodo(MBMeUpdateIndexTodoRequest request,
+&nbsp;                                             @ModelAttribute MBDesVarProjectIdAndPeriodIdRequest des
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateIndexTodoViewTable(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-todo/{projectId}/{periodId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; createTodo(MBMeCreateTodoRequest request,
+&nbsp;                                        @ModelAttribute MBDesVarProjectIdAndPeriodIdRequest des) {
+<b class="fc">&nbsp;        return mbMeTodoService.createTodo(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-todochild-checklist&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-todochild-checklist&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; createTodoChildChecklist( MBMeCreateDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.createTodoChildChecklist(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/edit-todochild-checklist&quot;)
+&nbsp;    @SendTo(&quot;/topic/edit-todochild-checklist&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; editTodoChildChecklist( MBMeEditDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.editTodoChildChecklist(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-todo-checklist&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-todo-checklist&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; deleteTodoChecklist( MBMeDeleteDetailTodoChildRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.deleteDetailTodoChild(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-status-todochild-checklist&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-status-todochild-checklist&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateStatusTodoChild( MBHandleStatusTodoChildRequest request) {
+<b class="fc">&nbsp;        return mbMeTodoService.handleStatusTodoChildChange(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-descriptions-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-descriptions-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateDescriptionsTodo( MBMeUpdateDescriptionsTodoRequest request,
+&nbsp;                                                 StompHeaderAccessor headerAccessor
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateDescriptionsTodo(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-name-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-name-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateNameTodo( MBMeUpdateNameTodoRequest request,
+&nbsp;                                                     StompHeaderAccessor headerAccessor
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateNameTodo(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-deadline-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-deadline-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateDeadlineTodo(MBMeUpdateDeadlineTodoRequest request,
+&nbsp;                                             StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateDeadlineTodo(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-deadline-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-deadline-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; deleteDeadlineTodo(MBMeDeleteDeadlineTodoRequest request,
+&nbsp;                                             StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        return mbMeTodoService.deleteDeadlineTodo(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-complete-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-complete-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateCompleteTodo(MBMeUpdateCompleteTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateCompleteTodo(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-priority-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updatePriorityLevel( MBMeUpdateTodoRequest request,
+&nbsp;                                              StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        return mbMeTodoService.updatePriorityLevel(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-progress-todo&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-progress-todo&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateProgress( MBMeUpdateProgressTodoRequest request,
+&nbsp;                                             StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        return mbMeTodoService.updateProgress(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/sort-todo-priority&quot;)
+&nbsp;    @SendTo(&quot;/topic/sort-todo-priority&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoPriority(MBMeSortTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.sortTodoPriority(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/sort-todo-deadline&quot;)
+&nbsp;    @SendTo(&quot;/topic/sort-todo-deadline&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoDeadline(MBMeSortTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.sortTodoDeadline(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/sort-todo-created-date&quot;)
+&nbsp;    @SendTo(&quot;/topic/sort-todo-created-date&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoCreatedDate(MBMeSortTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.sortTodoCreatedDate(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/sort-todo-progress&quot;)
+&nbsp;    @SendTo(&quot;/topic/sort-todo-progress&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoProgress(MBMeSortTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.sortTodoProgress(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/sort-todo-name&quot;)
+&nbsp;    @SendTo(&quot;/topic/sort-todo-name&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; sortTodoName(MBMeSortTodoRequest request
+&nbsp;    ) {
+<b class="fc">&nbsp;        return mbMeTodoService.sortTodoName(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/status-phase/{idPhase}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getStatusByIdPhase(@PathVariable(&quot;idPhase&quot;) String idPhase) {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(mbMeTodoService.getStatusByIdPhase(idPhase));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

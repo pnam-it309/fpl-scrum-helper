@@ -1,0 +1,255 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MATodoRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MATodoRepository (udpm.hn.server.core.manage.todo.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BCga43jW</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BCga43jW$auxiliary$Il4WQSbC</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BCga43jW$auxiliary$ZIHyzula</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BxEW8gru</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BxEW8gru$auxiliary$mI6AybDk</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$BxEW8gru$auxiliary$wtZYq5CZ</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$whLoAAZ8</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$whLoAAZ8$auxiliary$bL0aUakR</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoRepository$MockitoMock$whLoAAZ8$auxiliary$Dg16yyJ7</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoResponse;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoStatistics;
+&nbsp;import udpm.hn.server.infrastructure.constant.PriorityLevel;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MATodoRepository extends ToDoRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            select 
+&nbsp;                td.name as name,
+&nbsp;                td.code as code,
+&nbsp;                td.createdDate as date,
+&nbsp;                td.priorityLevel as priorityLevel,
+&nbsp;                td.id as id,
+&nbsp;                sf.id as idStaffProject,
+&nbsp;                s.id as idStaff,
+&nbsp;                s.name as nameStaff,
+&nbsp;                s.picture as imageStaff,
+&nbsp;                st.id as idStudent,
+&nbsp;                st.name as nameStudent,
+&nbsp;                st.image as imageStudent,
+&nbsp;                td.progress as progress,
+&nbsp;                tt.id as idType,
+&nbsp;                tt.type as type,
+&nbsp;                td.storyPoint as point
+&nbsp;            from Todo td
+&nbsp;                 left join TodoList tl on td.todoList.id = tl.id
+&nbsp;                 left join Project p on tl.project.id = p.id
+&nbsp;                 left join TodoVote tv on td.id = tv.todo.id
+&nbsp;                 left join StaffProject sf on tv.staffProject.id = sf.id
+&nbsp;                 left join TypeTodo tt on td.typeTodo.id = tt.id
+&nbsp;                 left join  Staff s on s.id = sf.staff.id
+&nbsp;                 left join PhaseTodoProject ptp on td.id = ptp.todo.id
+&nbsp;                 left join Student st on st.id = sf.student.id
+&nbsp;                 where 
+&nbsp;                 td.status = 0
+&nbsp;                 and ptp.todo.id is null
+&nbsp;                 and p.id = :idProject
+&nbsp;                 and (:level IS NULL OR td.priorityLevel = :level)
+&nbsp;                 and (:search IS NULL OR td.name LIKE CONCAT(&#39;%&#39;, TRIM(:search), &#39;%&#39;) OR td.code LIKE CONCAT(&#39;%&#39;, TRIM(:search), &#39;%&#39;))
+&nbsp;                 order by td.createdDate DESC 
+&nbsp;
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MATodoResponse&gt; getAllTodo(Pageable pageable, @Param(&quot;idProject&quot;) String idProject, @Param(&quot;level&quot;) PriorityLevel level, @Param(&quot;search&quot;) String search);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            select 
+&nbsp;                td.name as name,
+&nbsp;                td.code as code,
+&nbsp;                td.createdDate as date,
+&nbsp;                td.priorityLevel as priorityLevel,
+&nbsp;                td.id as id,
+&nbsp;                td.statusTodo as statusTodo,
+&nbsp;                sf.id as idStaffProject,
+&nbsp;                s.id as idStaff,
+&nbsp;                s.name as nameStaff,
+&nbsp;                s.picture as imageStaff,
+&nbsp;                st.id as idStudent,
+&nbsp;                st.name as nameStudent,
+&nbsp;                st.image as imageStudent,
+&nbsp;                td.progress as progress,
+&nbsp;                ptp.id as idPhaseTodo
+&nbsp;            from Todo td
+&nbsp;                 left join TodoList tl on td.todoList.id = tl.id
+&nbsp;                 left join Project p on tl.project.id = p.id
+&nbsp;                 left join TodoVote tv on td.id = tv.todo.id
+&nbsp;                 left join StaffProject sf on tv.staffProject.id = sf.id
+&nbsp;                 left join  Staff s on s.id = sf.staff.id
+&nbsp;                 left join PhaseTodoProject ptp on td.id = ptp.todo.id
+&nbsp;                 left join Student st on st.id = sf.student.id
+&nbsp;                 where 
+&nbsp;                 td.status = 0
+&nbsp;                 and p.id = :idProject
+&nbsp;               
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MATodoResponse&gt; findAllTodoByProject(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select td.name as name,
+&nbsp;                    td.code as code,
+&nbsp;                    td.createdDate as date,
+&nbsp;                    td.priorityLevel as priorityLevel,
+&nbsp;                    td.id as id,
+&nbsp;                    sf.id as idStaffProject,
+&nbsp;                    s.id as idStaff,
+&nbsp;                    s.name as nameStaff,
+&nbsp;                    s.picture as imageStaff,
+&nbsp;                    st.id as idStudent,
+&nbsp;                    st.name as nameStudent,
+&nbsp;                    st.image as imageStudent
+&nbsp;                 from Todo td
+&nbsp;                 join TodoVote tv on td.id = tv.todo.id
+&nbsp;                 left join StaffProject sf on tv.staffProject.id = sf.id
+&nbsp;                 left join  Staff s on s.id = sf.staff.id
+&nbsp;                 left join Student st on st.id = sf.student.id
+&nbsp;                 left join StageVote sv on tv.stageVote.id = sv.id
+&nbsp;                 where td.status = 0   and sv.status  = 0  and td.id = :idTodo and 
+&nbsp;                 (:currentTime between sv.startTime and sv.endTime)
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MATodoResponse&gt; getAllStaffByTodo(Pageable pageable, @Param(&quot;idTodo&quot;) String idTodo, @Param(&quot;currentTime&quot;) long currentTime);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select td.name as name,
+&nbsp;                    td.code as code,
+&nbsp;                    td.createdDate as date,
+&nbsp;                    td.priorityLevel as priorityLevel,
+&nbsp;                    td.id as id,
+&nbsp;                    sf.id as idStaffProject,
+&nbsp;                    s.id as idStaff,
+&nbsp;                    s.name as nameStaff,
+&nbsp;                    s.picture as imageStaff,
+&nbsp;                    st.id as idStudent,
+&nbsp;                    td.deadline as deadline,
+&nbsp;                    st.name as nameStudent,
+&nbsp;                    st.image as imageStudent,
+&nbsp;                    td.statusTodo as statusTodo,
+&nbsp;                    tt.type as type,
+&nbsp;                    td.storyPoint as point,
+&nbsp;                    round(td.progress,0) as progress
+&nbsp;                 from Todo td
+&nbsp;                 left join TodoVote tv on td.id = tv.todo.id
+&nbsp;                 left join StaffProject sf on tv.staffProject.id = sf.id
+&nbsp;                 left join  Staff s on s.id = sf.staff.id
+&nbsp;                 left join Student st on st.id = sf.student.id
+&nbsp;                 left join TypeTodo tt on td.typeTodo.id = tt.id
+&nbsp;                 join PhaseTodoProject ptp on td.id = ptp.todo.id
+&nbsp;                 join PhaseProject pp on ptp.phaseProject.id = pp.id
+&nbsp;                 where td.status = 0 and pp.id = :idPhase 
+&nbsp;                    AND (:search IS NULL OR td.name LIKE CONCAT(&#39;%&#39;, :search, &#39;%&#39;) OR td.code LIKE CONCAT(&#39;%&#39;, :search, &#39;%&#39;)) 
+&nbsp;                 
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MATodoResponse&gt; getAllTodoByPhaseProject(Pageable pageable, @Param(&quot;idPhase&quot;) String idPhase, @Param(&quot;search&quot;) String search);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    SELECT 
+&nbsp;                        t.name as name,
+&nbsp;                        t.code as code,
+&nbsp;                        t.statusTodo as status,
+&nbsp;                        t.priorityLevel as level
+&nbsp;                    from Todo t 
+&nbsp;                    left join TodoList tl on t.todoList.id = tl.id
+&nbsp;                    left join Project p on tl.project.id = p.id 
+&nbsp;                    left join PhaseProject pp on tl.phaseProject.id = pp.id
+&nbsp;                    where t.status = 0 and p.id = :idProject 
+&nbsp;                    and (:idPhase IS NULL OR pp.id = :idPhase)
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MATodoStatistics&gt; AllTodoStatistics(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

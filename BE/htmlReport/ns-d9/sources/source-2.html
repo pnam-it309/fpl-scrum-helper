@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffStudentVoteRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.vote.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffStudentVoteRepository (udpm.hn.server.core.member.vote.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">StaffStudentVoteRepository$MockitoMock$khr9AOEE</td>
+  </tr>
+  <tr>
+    <td class="name">StaffStudentVoteRepository$MockitoMock$khr9AOEE$auxiliary$EdRQHUsq</td>
+  </tr>
+  <tr>
+    <td class="name">StaffStudentVoteRepository$MockitoMock$khr9AOEE$auxiliary$RjoWXOeb</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.vote.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.member.vote.model.response.StaffStudentVoteResponse;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface StaffStudentVoteRepository extends StaffProjectRepository {
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT
+&nbsp;            ROW_NUMBER() OVER(ORDER BY sp.id DESC) AS orderNumber,
+&nbsp;            sp.id AS staffProjectId,
+&nbsp;            COALESCE(s.name, st.name) AS nameStaff,
+&nbsp;            sp.role AS role,
+&nbsp;            CASE
+&nbsp;                WHEN EXISTS (
+&nbsp;                    SELECT 1
+&nbsp;                    FROM TodoVote tv2
+&nbsp;                    JOIN StageVote sv2 ON sv2.id = tv2.stageVote.id
+&nbsp;                    WHERE tv2.staffProject.id = sp.id AND tv2.statusVote = 0
+&nbsp;                    AND :currentTime BETWEEN sv2.startTime AND sv2.endTime
+&nbsp;                ) THEN TRUE
+&nbsp;                ELSE FALSE
+&nbsp;            END AS voteStatus
+&nbsp;        FROM StaffProject sp
+&nbsp;        LEFT JOIN Staff s ON sp.staff.id = s.id
+&nbsp;        LEFT JOIN Student st ON sp.student.id = st.id
+&nbsp;        LEFT JOIN TodoVote tv ON tv.staffProject.id = sp.id AND tv.statusVote = 0
+&nbsp;         LEFT JOIN StageVote sv ON sv.id = tv.stageVote.id AND :currentTime BETWEEN sv.startTime AND sv.endTime
+&nbsp;        WHERE sp.project.id = :idProject
+&nbsp;        GROUP BY sp.id
+&nbsp;        &quot;&quot;&quot;,
+&nbsp;            countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT COUNT(sp.id)
+&nbsp;        FROM StaffProject sp
+&nbsp;        LEFT JOIN Student st ON sp.student.id = st.id
+&nbsp;         LEFT JOIN TodoVote tv ON tv.staffProject.id = sp.id AND tv.statusVote = 0
+&nbsp;         LEFT JOIN StageVote sv ON sv.id = tv.stageVote.id AND :currentTime BETWEEN sv.startTime AND sv.endTime
+&nbsp;        WHERE sp.project.id = :idProject
+&nbsp;        &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;StaffStudentVoteResponse&gt; getStaffStudentVote(Pageable pageable, String idProject, @Param(&quot;currentTime&quot;) Long currentTime);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

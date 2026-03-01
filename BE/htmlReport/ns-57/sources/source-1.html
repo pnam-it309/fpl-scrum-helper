@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DBGenerator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.config.database</a>
+</div>
+
+<h1>Coverage Summary for Class: DBGenerator (udpm.hn.server.infrastructure.config.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBGenerator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.9%
+  </span>
+  <span class="absValue">
+    (1/34)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.config.database;
+&nbsp;
+&nbsp;import jakarta.annotation.PostConstruct;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffRole;
+&nbsp;
+&nbsp;import udpm.hn.server.entity.TypeTodo;
+&nbsp;import udpm.hn.server.infrastructure.constant.Role;
+&nbsp;
+&nbsp;import udpm.hn.server.infrastructure.config.database.repository.DBGRoleRepository;
+&nbsp;import udpm.hn.server.infrastructure.config.database.repository.DBGStaffRepository;
+&nbsp;import udpm.hn.server.infrastructure.config.database.repository.DBGStaffRoleRepository;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.repository.TypeTodoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Component
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class DBGenerator {
+&nbsp;    @Value(&quot;${db.generator.is-generated}&quot;)
+&nbsp;    private String isGenerated;
+&nbsp;
+&nbsp;    @Value(&quot;${db.generator.user-email}&quot;)
+&nbsp;    private String userEmail;
+&nbsp;
+&nbsp;    @Value(&quot;${db.generator.user-code}&quot;)
+&nbsp;    private String userCode;
+&nbsp;
+&nbsp;    @Value(&quot;${db.generator.user-name}&quot;)
+&nbsp;    private String userName;
+&nbsp;
+&nbsp;    private final DBGStaffRepository staffRepository;
+&nbsp;
+&nbsp;    private final DBGRoleRepository roleRepository;
+&nbsp;
+&nbsp;    private final DBGStaffRoleRepository staffRoleRepository;
+&nbsp;
+&nbsp;    private final TypeTodoRepository typeTodoRepository;
+&nbsp;
+&nbsp;    @PostConstruct
+&nbsp;    public void init() {
+<b class="pc">&nbsp;        if (&quot;true&quot;.equals(isGenerated)) {</b>
+&nbsp;
+<b class="nc">&nbsp;            generateRole();</b>
+<b class="nc">&nbsp;            generateData();</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void generateData() {
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; staffOptional = staffRepository.findByEmailFpt(userEmail);</b>
+&nbsp;        Staff staff;
+<b class="nc">&nbsp;        if (staffOptional.isEmpty()) {</b>
+<b class="nc">&nbsp;            staff = new Staff();</b>
+<b class="nc">&nbsp;            staff.setEmailFpt(userEmail);</b>
+<b class="nc">&nbsp;            staff.setEmailFe(userEmail);</b>
+<b class="nc">&nbsp;            staff.setCode(userCode);</b>
+<b class="nc">&nbsp;            staff.setName(userName);</b>
+<b class="nc">&nbsp;            staff.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;            staffRepository.save(staff);</b>
+&nbsp;        }else {
+<b class="nc">&nbsp;            staff = staffOptional.get();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        addRoleToUser(staff, Role.ADMIN.name());</b>
+&nbsp;
+&nbsp;
+&nbsp;//        addRoleToUser(staff, &quot;MANAGE&quot;);
+&nbsp;//        addRoleToUser(staff, &quot;MEMBER&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    private void generateRole() {
+<b class="nc">&nbsp;        createRoleIfNotExist(Role.ADMIN.name(), Role.getVietnameseNameByRole(Role.ADMIN.name()));</b>
+<b class="nc">&nbsp;        createRoleIfNotExist(Role.QUAN_LY.name(), Role.getVietnameseNameByRole(Role.QUAN_LY.name()));</b>
+<b class="nc">&nbsp;        createRoleIfNotExist(Role.THANH_VIEN.name(), Role.getVietnameseNameByRole(Role.THANH_VIEN.name()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void createRoleIfNotExist(String roleCode,String roleName) {
+<b class="nc">&nbsp;        if (roleRepository.findByCode(roleCode).isEmpty()) {</b>
+<b class="nc">&nbsp;            udpm.hn.server.entity.Role role = new udpm.hn.server.entity.Role();</b>
+<b class="nc">&nbsp;            role.setCode(roleCode);</b>
+<b class="nc">&nbsp;            role.setName(roleName);</b>
+<b class="nc">&nbsp;            role.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;            roleRepository.save(role);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void addRoleToUser(Staff staff, String roleName) {
+<b class="nc">&nbsp;        Optional&lt;udpm.hn.server.entity.Role&gt; roleOptional = roleRepository.findByCode(roleName);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (roleOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            udpm.hn.server.entity.Role role = roleOptional.get();</b>
+&nbsp;            // Kiểm tra xem user đã có role này chưa
+<b class="nc">&nbsp;            if (!staffRoleRepository.existsByStaffAndRole(staff, role)) {</b>
+<b class="nc">&nbsp;                StaffRole roleUser = new StaffRole();</b>
+<b class="nc">&nbsp;                roleUser.setStaff(staff);</b>
+<b class="nc">&nbsp;                roleUser.setRole(role);</b>
+<b class="nc">&nbsp;                roleUser.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;                staffRoleRepository.save(roleUser);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void genTypeTodo(){
+<b class="nc">&nbsp;        List&lt;TypeTodo&gt; types = List.of(</b>
+&nbsp;                new TypeTodo(&quot;TASK&quot;),
+&nbsp;                new TypeTodo(&quot;BUG&quot;),
+&nbsp;                new TypeTodo(&quot;IMPROVEMENT&quot;),
+&nbsp;                new TypeTodo(&quot;KHÁC&quot;)
+&nbsp;        );
+<b class="nc">&nbsp;        typeTodoRepository.saveAll(types);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

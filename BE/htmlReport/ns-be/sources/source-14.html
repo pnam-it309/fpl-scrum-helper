@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$b6nJaCAK</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$b6nJaCAK$auxiliary$48jjYiyP</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$b6nJaCAK$auxiliary$SVWknRZF</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$E3VMDGgZ</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$E3VMDGgZ$auxiliary$iafuJU4d</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$E3VMDGgZ$auxiliary$V9yK4f1F</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$o1ZnCr2L</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$o1ZnCr2L$auxiliary$wpS87xJe</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$o1ZnCr2L$auxiliary$Y2cnCI3w</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$S2FYOBQd</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$S2FYOBQd$auxiliary$evB6lfh3</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$S2FYOBQd$auxiliary$f3XxvHf7</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$vjkZ2XBk</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$vjkZ2XBk$auxiliary$7YQam2FA</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$vjkZ2XBk$auxiliary$U9EyQfP3</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$wx084w2L</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$wx084w2L$auxiliary$aV0WMAI9</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$wx084w2L$auxiliary$zCwaKU2I</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$XjP84oFg</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$XjP84oFg$auxiliary$OXeWjn0R</td>
+  </tr>
+  <tr>
+    <td class="name">StaffRepository$MockitoMock$XjP84oFg$auxiliary$uJwgEqv8</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface StaffRepository extends JpaRepository&lt;Staff, String&gt; {
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFe(String email);
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFpt(String emailFpt);
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFeOrEmailFpt(String emailFe, String emailFpt);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                            select s.emailFpt from Staff s 
+&nbsp;                            where s.id = :idStaff
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    String getEmailFpt(@Param(&quot;idStaff&quot;) String idStaff);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT s FROM Staff s WHERE s.emailFe = :email OR s.emailFpt = :email&quot;)
+&nbsp;    Optional&lt;Staff&gt; findByAnyEmail(@Param(&quot;email&quot;) String email);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

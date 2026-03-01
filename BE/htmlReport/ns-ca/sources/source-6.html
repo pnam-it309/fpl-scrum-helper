@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADStudentExtendRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.student.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADStudentExtendRepository (udpm.hn.server.core.admin.student.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADStudentExtendRepository$MockitoMock$hK9Z5KKV</td>
+  </tr>
+  <tr>
+    <td class="name">ADStudentExtendRepository$MockitoMock$hK9Z5KKV$auxiliary$mVTWKi8S</td>
+  </tr>
+  <tr>
+    <td class="name">ADStudentExtendRepository$MockitoMock$hK9Z5KKV$auxiliary$Wqh5P2kH</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.student.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.response.DetailDepartmentResponse;
+&nbsp;import udpm.hn.server.core.admin.student.model.request.StudentRequest;
+&nbsp;import udpm.hn.server.core.admin.student.model.response.StudentResponse;
+&nbsp;import udpm.hn.server.repository.StudentRepository;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ADStudentExtendRepository extends StudentRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            ROW_NUMBER() OVER (ORDER BY s.createdDate desc, s.id DESC ) AS orderNumber,
+&nbsp;            s.id AS id,
+&nbsp;            s.name AS name,
+&nbsp;            s.code AS code,
+&nbsp;            s.email AS email,
+&nbsp;            s.image AS image,
+&nbsp;            s.status AS status,
+&nbsp;            CONCAT(m.name, &#39; - &#39;, d.name, &#39; - &#39;, f.name) AS majorFacility,
+&nbsp;            s.createdDate AS createdDate
+&nbsp;        FROM 
+&nbsp;            Student s
+&nbsp;        LEFT JOIN s.majorFacility mf
+&nbsp;        LEFT JOIN mf.departmentFacility df
+&nbsp;        LEFT JOIN df.facility f
+&nbsp;        LEFT JOIN df.department d
+&nbsp;        LEFT JOIN mf.major m
+&nbsp;        WHERE 
+&nbsp;            (:#{#req.search} IS NULL OR 
+&nbsp;            LOWER(s.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)) OR 
+&nbsp;            LOWER(s.code) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)))
+&nbsp;            AND
+&nbsp;            (:#{#req.searchDF} IS NULL OR 
+&nbsp;            LOWER(f.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.searchDF}, &#39;%&#39;)) OR 
+&nbsp;            LOWER(m.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.searchDF}, &#39;%&#39;)) OR 
+&nbsp;            LOWER(d.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.searchDF}, &#39;%&#39;)))
+&nbsp;            AND s.status = 0
+&nbsp;            order by s.createdDate desc 
+&nbsp;        &quot;&quot;&quot;,
+&nbsp;            countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT COUNT(s.id)
+&nbsp;        FROM Student s
+&nbsp;        LEFT JOIN s.majorFacility mf
+&nbsp;        LEFT JOIN mf.departmentFacility df
+&nbsp;        LEFT JOIN df.facility f
+&nbsp;        LEFT JOIN df.department d
+&nbsp;        WHERE
+&nbsp;            (:#{#req.search} IS NULL OR
+&nbsp;            LOWER(s.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)) OR
+&nbsp;            LOWER(s.code) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)))
+&nbsp;            AND
+&nbsp;            (:#{#req.searchDF} IS NULL OR
+&nbsp;            LOWER(f.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.searchDF}, &#39;%&#39;)) OR
+&nbsp;            LOWER(d.name) LIKE LOWER(CONCAT(&#39;%&#39;, :#{#req.searchDF}, &#39;%&#39;)))
+&nbsp;            AND s.status = 0
+&nbsp;        &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;StudentResponse&gt; getAllStudent(Pageable pageable, @Param(&quot;req&quot;) StudentRequest req);
+&nbsp;
+&nbsp;//    Boolean existsByCode(String code);
+&nbsp;//
+&nbsp;//    Boolean existsByEmail(String email);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(s) &gt; 0 FROM Student s WHERE s.code = :code AND s.status = 0&quot;)
+&nbsp;    Boolean existsByCode(@Param(&quot;code&quot;) String code);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(s) &gt; 0 FROM Student s WHERE s.email = :email AND s.status = 0&quot;)
+&nbsp;    Boolean existsByEmail(@Param(&quot;email&quot;) String email);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;            	s.id AS id,
+&nbsp;            	s.code AS code,
+&nbsp;            	s.name AS name,
+&nbsp;            	s.email AS email,
+&nbsp;            	s.status AS status,
+&nbsp;            	s.createdDate AS createdDate
+&nbsp;            FROM
+&nbsp;            	Student s
+&nbsp;            WHERE
+&nbsp;                s.id = :id
+&nbsp;            &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;                COUNT(s.id)
+&nbsp;            FROM
+&nbsp;                Student s
+&nbsp;            WHERE
+&nbsp;                 s.id = :id
+&nbsp;            &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    StudentResponse getDetailStudent(String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

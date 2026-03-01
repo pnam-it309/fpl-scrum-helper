@@ -1,0 +1,101 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PrimaryEntityProject</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.entity.base</a>
+</div>
+
+<h1>Coverage Summary for Class: PrimaryEntityProject (udpm.hn.server.entity.base)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PrimaryEntityProject</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.entity.base;
+&nbsp;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.EntityListeners;
+&nbsp;import jakarta.persistence.EnumType;
+&nbsp;import jakarta.persistence.Enumerated;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.MappedSuperclass;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityProperties;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.listener.CreatePrimaryEntityListener;
+&nbsp;
+&nbsp;
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;@MappedSuperclass
+&nbsp;@EntityListeners(CreatePrimaryEntityListener.class)
+&nbsp;public abstract class PrimaryEntityProject extends AuditEntity implements IsIdentified {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @Column(length = EntityProperties.LENGTH_ID, updatable = false)
+&nbsp;    private String id;
+&nbsp;
+&nbsp;    @Column(name = &quot;status&quot;)
+&nbsp;    @Enumerated(EnumType.ORDINAL)
+&nbsp;    private EntityStatus status;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

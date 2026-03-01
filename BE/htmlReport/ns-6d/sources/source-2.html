@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffJobLauncher</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.staff.jobconfig</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffJobLauncher (udpm.hn.server.infrastructure.job.staff.jobconfig)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaffJobLauncher</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.6%
+  </span>
+  <span class="absValue">
+    (1/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.staff.jobconfig;
+&nbsp;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.core.*;
+&nbsp;import org.springframework.batch.core.launch.JobLauncher;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.scheduling.annotation.Async;
+&nbsp;import org.springframework.scheduling.annotation.Scheduled;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.service.UploadStaffService;
+&nbsp;import udpm.hn.server.infrastructure.job.student.service.JobStudentService;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.concurrent.Executors;
+&nbsp;import java.util.concurrent.ScheduledExecutorService;
+&nbsp;import java.util.concurrent.ScheduledFuture;
+&nbsp;import java.util.concurrent.TimeUnit;
+&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@NoArgsConstructor
+&nbsp;public class StaffJobLauncher {
+&nbsp;
+&nbsp;    private final AtomicBoolean enabled = new AtomicBoolean(false);
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    @Qualifier(&quot;saveStaffDataToDatabaseJob&quot;)
+&nbsp;    private Job job;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private JobLauncher jobLauncher;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private UploadStaffService uploadStaffService;
+&nbsp;
+&nbsp;    @Setter
+&nbsp;    private String fullPathFileName;
+&nbsp;
+&nbsp;    @Scheduled(cron = &quot;${excel.file.to.database.job.cron}&quot;)
+&nbsp;    void launchExcelToDatabaseJobStaff() {
+<b class="nc">&nbsp;        if (enabled.get() &amp;&amp; fullPathFileName != null) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                JobExecution jobExecution = jobLauncher.run(job, newExecutionStudent());</b>
+<b class="nc">&nbsp;                ExitStatus exitStatus = jobExecution.getExitStatus();</b>
+<b class="nc">&nbsp;                if (exitStatus.getExitCode().equals(ExitStatus.COMPLETED.getExitCode())) {</b>
+<b class="nc">&nbsp;                    uploadStaffService.deleteAll();</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (exitStatus.getExitCode().equals(ExitStatus.FAILED.getExitCode())) {</b>
+<b class="nc">&nbsp;                    uploadStaffService.deleteAll();</b>
+&nbsp;                }
+&nbsp;            } catch (Exception e) {
+<b class="nc">&nbsp;                log.error(&quot;Error launching excel to database job&quot;, e);</b>
+&nbsp;            } finally {
+<b class="nc">&nbsp;                disable();</b>
+<b class="nc">&nbsp;                log.info(&quot;ĐÃ DISABLE&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    private JobParameters newExecutionStudent() {
+<b class="nc">&nbsp;        log.info(&quot;fullPathFileName: {}&quot;, fullPathFileName);</b>
+<b class="nc">&nbsp;        Map&lt;String, JobParameter&lt;?&gt;&gt; parameters = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        parameters.put(&quot;time&quot;, new JobParameter&lt;&gt;(new Date(), Date.class));</b>
+<b class="nc">&nbsp;        parameters.put(&quot;staffExcelFileName&quot;, new JobParameter&lt;&gt;(fullPathFileName, String.class));</b>
+<b class="nc">&nbsp;        return new JobParameters(parameters);</b>
+&nbsp;    }
+&nbsp;    public void enable() {
+<b class="nc">&nbsp;        enabled.set(true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void disable() {
+<b class="nc">&nbsp;        enabled.set(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

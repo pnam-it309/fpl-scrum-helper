@@ -1,0 +1,207 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ResponseObject</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.common.base</a>
+</div>
+
+<h1>Coverage Summary for Class: ResponseObject (udpm.hn.server.core.common.base)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ResponseObject</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.4%
+  </span>
+  <span class="absValue">
+    (37/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.common.base;
+&nbsp;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import udpm.hn.server.core.manage.phase.model.response.MAPhaseResponse;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;@NoArgsConstructor
+&nbsp;public class ResponseObject&lt;T&gt;  {
+&nbsp;
+<b class="fc">&nbsp;    private boolean isSuccess = false;</b>
+&nbsp;
+&nbsp;    private HttpStatus status;
+&nbsp;
+&nbsp;    private T data;
+&nbsp;
+&nbsp;    private String message;
+&nbsp;
+<b class="fc">&nbsp;    private Instant timestamp = Instant.now();</b>
+&nbsp;
+<b class="fc">&nbsp;    public ResponseObject(T obj, HttpStatus status, String message) {</b>
+<b class="fc">&nbsp;        processResponseObject(obj);</b>
+<b class="fc">&nbsp;        this.status = status;</b>
+<b class="fc">&nbsp;        this.message = message;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public ResponseObject(List&lt;MAPhaseResponse&gt; allPhaseByProjectId) {</b>
+<b class="fc">&nbsp;        this.data = (T) allPhaseByProjectId;</b>
+<b class="fc">&nbsp;        this.status = allPhaseByProjectId.isEmpty() ? HttpStatus.NOT_FOUND : HttpStatus.OK;</b>
+<b class="fc">&nbsp;        this.message = allPhaseByProjectId.isEmpty() ? &quot;Không tìm thấy dữ liệu&quot; : &quot;Lấy dữ liệu thành công&quot;;</b>
+<b class="fc">&nbsp;        this.isSuccess = !allPhaseByProjectId.isEmpty();</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public ResponseObject(Integer integer) {</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public ResponseObject(boolean b, String s, Object message) {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void processResponseObject(T obj) {
+<b class="fc">&nbsp;        if (obj != null) {</b>
+<b class="fc">&nbsp;            this.isSuccess = true;</b>
+<b class="fc">&nbsp;            this.data = obj;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;T&gt; success(T obj, String message) {
+<b class="fc">&nbsp;        processResponseObject(obj);</b>
+<b class="fc">&nbsp;        this.status = HttpStatus.OK;</b>
+<b class="fc">&nbsp;        this.message = message;</b>
+<b class="fc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;T&gt; success(String message) {
+<b class="fc">&nbsp;        this.isSuccess = true;</b>
+<b class="fc">&nbsp;        this.status = HttpStatus.OK;</b>
+<b class="fc">&nbsp;        this.message = message;</b>
+<b class="fc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;T&gt; error(HttpStatus status, String message) {
+<b class="fc">&nbsp;        this.status = status;</b>
+<b class="fc">&nbsp;        this.message = message;</b>
+<b class="fc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; ResponseObject&lt;T&gt; successForward(T obj, String message) {
+<b class="fc">&nbsp;        ResponseObject&lt;T&gt; responseObject = new ResponseObject&lt;&gt;();</b>
+<b class="fc">&nbsp;        responseObject.setSuccess(true);</b>
+<b class="fc">&nbsp;        responseObject.setStatus(HttpStatus.OK);</b>
+<b class="fc">&nbsp;        responseObject.setData(obj);</b>
+<b class="fc">&nbsp;        responseObject.setMessage(message);</b>
+<b class="fc">&nbsp;        return responseObject;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static &lt;T&gt; ResponseObject&lt;T&gt; errorForward(String message, HttpStatus status) {
+<b class="fc">&nbsp;        ResponseObject&lt;T&gt; responseObject = new ResponseObject&lt;&gt;();</b>
+<b class="fc">&nbsp;        responseObject.setSuccess(false);</b>
+<b class="fc">&nbsp;        responseObject.setStatus(status);</b>
+<b class="fc">&nbsp;        responseObject.setMessage(message);</b>
+<b class="fc">&nbsp;        return responseObject;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

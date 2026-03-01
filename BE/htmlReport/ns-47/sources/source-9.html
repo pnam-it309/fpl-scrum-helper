@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeResourceServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeResourceServiceImpl (udpm.hn.server.core.member.projectdetails.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeResourceServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65%
+  </span>
+  <span class="absValue">
+    (13/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.7%
+  </span>
+  <span class="absValue">
+    (52/58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MBMeResourceServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65%
+  </span>
+  <span class="absValue">
+    (13/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.7%
+  </span>
+  <span class="absValue">
+    (52/58)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.common.base.TodoObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeCreateResourceRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeDeleteResourceRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeUpdateResourceRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeResourceService;
+&nbsp;import udpm.hn.server.entity.Activity;
+&nbsp;import udpm.hn.server.entity.Resource;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.utils.TodoListHelper;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeResourceServiceImpl implements MBMeResourceService {
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;    private final MBMeTodoRepository mbMeTodoRepository;
+&nbsp;
+&nbsp;    private final MBMeTodoListRepository mbMeTodoListRepository;
+&nbsp;
+&nbsp;    private final MBMeLabelRepository meLabelRepository;
+&nbsp;
+&nbsp;    private final MBMeProjectRepository mbMeProjectRepository;
+&nbsp;
+&nbsp;    private final MBMePhaseProjectRepository mbMePhaseProjectRepository;
+&nbsp;
+&nbsp;    private final TodoListHelper todoListHelper;
+&nbsp;
+&nbsp;    private final MBMeResourceRepository mbMeResourceRepository;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAll(String idTodo) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeResourceRepository.getAll(idTodo),HttpStatus.OK,&quot;Lay tất cả đính kèm thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; create(MBMeCreateResourceRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Resource resource = new Resource();</b>
+<b class="fc">&nbsp;        resource.setName(request.getName());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo &quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (request.getName().isEmpty() || request.getName() == null) {</b>
+<b class="nc">&nbsp;            resource.setName(null);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        resource.setName(request.getName());</b>
+<b class="pc">&nbsp;        if (!request.getUrl().contains(&quot;http&quot;)) {</b>
+<b class="fc">&nbsp;            resource.setUrl(&quot;http://&quot; + request.getUrl());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            resource.setUrl(request.getUrl());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        resource.setTodo(todoFind.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="pc">&nbsp;        if (request.getName() != null &amp;&amp; !request.getName().isEmpty()) {</b>
+<b class="fc">&nbsp;            activity.setContentAction(&quot;đã đính kèm &quot; + request.getName() + &quot; vào thẻ này&quot;);</b>
+<b class="fc">&nbsp;            activity.setContentActionProject(&quot;đã đính kèm &quot;+request.getName()+&quot; vào thẻ &quot;+todoFind.get().getName());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            activity.setContentAction(&quot;đã đính kèm &quot; + &quot;http://&quot; + request.getUrl() + &quot; vào thẻ này&quot;);</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(&quot;đã đính kèm &quot;+request.getUrl()+&quot; vào thẻ &quot;+todoFind.get().getName());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(mbMeResourceRepository.save(resource))</b>
+<b class="fc">&nbsp;                .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="fc">&nbsp;                .idTodo(request.getIdTodo()).idTodoList(request.getIdTodoList()).build();</b>
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Thêm thành công dk&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(todoObject, HttpStatus.OK,&quot;thêm thành công đính kèm&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; update(MBMeUpdateResourceRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Resource&gt; resourceFind = mbMeResourceRepository.findById(request.getId());</b>
+<b class="fc">&nbsp;        if (!resourceFind.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;đính kèm không tồn tại&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        resourceFind.get().setName(request.getName());</b>
+<b class="fc">&nbsp;        resourceFind.get().setUrl(request.getUrl());</b>
+&nbsp;
+<b class="fc">&nbsp;        mbMeResourceRepository.save(resourceFind.get());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null,HttpStatus.OK,&quot;Cập nhật đính kèm thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; delete(MBMeDeleteResourceRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="fc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo &quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="pc">&nbsp;        if (!request.getName().isEmpty() &amp;&amp; request.getName() != null) {</b>
+<b class="fc">&nbsp;            activity.setContentAction(&quot;đã xóa link đính kèm &quot; + request.getName() + &quot; khỏi thẻ này&quot;);</b>
+<b class="fc">&nbsp;            activity.setContentActionProject(&quot;đã xóa link đính kèm &quot;+request.getName()+&quot; khỏi thẻ &quot;+todoFind.get().getName());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            activity.setContentAction(&quot;đã xóa link đính kèm &quot; + request.getUrl() + &quot; khỏi thẻ này&quot;);</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(&quot;đã xóa link đính kèm &quot;+request.getName()+&quot; khỏi thẻ &quot;+todoFind.get().getName());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        mbMeResourceRepository.deleteById(request.getId());</b>
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(request.getId())</b>
+<b class="fc">&nbsp;                .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="fc">&nbsp;                .idTodo(request.getIdTodo())</b>
+<b class="fc">&nbsp;                .idTodoList(request.getIdTodoList()).build();</b>
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Xóa thành công dk&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(todoObject,HttpStatus.OK,&quot;Xóa thành công đính kèm &quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

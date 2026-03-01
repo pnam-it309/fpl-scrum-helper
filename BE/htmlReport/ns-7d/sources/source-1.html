@@ -1,0 +1,397 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CustomOAuth2UserService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.oauth2</a>
+</div>
+
+<h1>Coverage Summary for Class: CustomOAuth2UserService (udpm.hn.server.infrastructure.security.oauth2)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CustomOAuth2UserService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0.9%
+  </span>
+  <span class="absValue">
+    (1/112)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.oauth2;
+&nbsp;
+&nbsp;import jakarta.servlet.http.Cookie;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.security.authentication.InternalAuthenticationServiceException;
+&nbsp;import org.springframework.security.core.AuthenticationException;
+&nbsp;import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+&nbsp;import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+&nbsp;import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+&nbsp;import org.springframework.security.oauth2.core.user.OAuth2User;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.infrastructure.constant.CookieConstant;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.OAuth2Constant;
+&nbsp;import udpm.hn.server.infrastructure.constant.Role;
+&nbsp;import udpm.hn.server.infrastructure.exception.OAuth2AuthenticationProcessingException;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.RoleAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StaffAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.user.OAuth2UserInfo;
+&nbsp;import udpm.hn.server.infrastructure.security.oauth2.user.OAuth2UserInfoFactory;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StaffProjectAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StudentAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.user.UserPrincipal;
+&nbsp;import udpm.hn.server.utils.CookieUtils;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+&nbsp;
+&nbsp;    private final HttpServletRequest httpServletRequest;
+&nbsp;
+&nbsp;    private final HttpServletResponse httpServletResponse;
+&nbsp;
+&nbsp;    private final StaffAuthRepository staffAuthRepository;
+&nbsp;
+&nbsp;    private final RoleAuthRepository roleAuthRepository;
+&nbsp;
+&nbsp;    private final StaffProjectAuthRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final StudentAuthRepository studentRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
+<b class="nc">&nbsp;        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;oauth2 loadUser:{}&quot;, oAuth2User.toString());</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            return processOAuth2User(oAuth2UserRequest, oAuth2User);</b>
+&nbsp;        } catch (AuthenticationException ex) {
+&nbsp;            throw ex;
+&nbsp;        } catch (Exception ex) {
+<b class="nc">&nbsp;            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
+<b class="nc">&nbsp;        log.info(&quot;processOAuth2User ==&gt; START&quot;);</b>
+<b class="nc">&nbsp;        log.info(&quot;Client Name: {}&quot;, oAuth2UserRequest.getClientRegistration().getClientName());</b>
+<b class="nc">&nbsp;        log.info(&quot;OAuth2User attributes: {}&quot;, oAuth2User.getAttributes());</b>
+&nbsp;
+<b class="nc">&nbsp;        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory</b>
+<b class="nc">&nbsp;                .getOAuth2UserInfo(</b>
+<b class="nc">&nbsp;                        oAuth2UserRequest.getClientRegistration().getRegistrationId(),</b>
+<b class="nc">&nbsp;                        oAuth2User.getAttributes()</b>
+&nbsp;                );
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;Extracted user email from OAuth2UserInfo: {}&quot;, oAuth2UserInfo.getEmail());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (oAuth2UserInfo.getEmail() == null || oAuth2UserInfo.getEmail().isBlank()) {</b>
+<b class="nc">&nbsp;            log.warn(&quot;Email is null or blank, adding failure cookie and throwing exception.&quot;);</b>
+<b class="nc">&nbsp;            CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;            throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Cookie&gt; cookieOpRole = CookieUtils.getCookie(httpServletRequest, OAuth2Constant.SCREEN_FOR_ROLE_COOKIE_NAME);</b>
+<b class="nc">&nbsp;        Optional&lt;Cookie&gt; cookieOpFaclity = CookieUtils.getCookie(httpServletRequest, OAuth2Constant.SCREEN_FOR_FACILITY_COOKIE_NAME);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (cookieOpRole.isPresent()) {</b>
+<b class="nc">&nbsp;            String roleValue = cookieOpRole.get().getValue();</b>
+<b class="nc">&nbsp;            log.info(&quot;Role cookie found: {}&quot;, roleValue);</b>
+&nbsp;
+<b class="nc">&nbsp;            switch (roleValue) {</b>
+&nbsp;                case OAuth2Constant.ROLE_ADMIN:
+<b class="nc">&nbsp;                    log.info(&quot;Processing as ADMIN&quot;);</b>
+<b class="nc">&nbsp;                    return this.processAdmin(oAuth2UserInfo, OAuth2Constant.ROLE_ADMIN);</b>
+&nbsp;
+&nbsp;                case OAuth2Constant.ROLE_MANAGE:
+<b class="nc">&nbsp;                    if (cookieOpFaclity.isPresent()) {</b>
+<b class="nc">&nbsp;                        String facilityId = cookieOpFaclity.get().getValue();</b>
+<b class="nc">&nbsp;                        log.info(&quot;Processing as MANAGE for facility: {}&quot;, facilityId);</b>
+<b class="nc">&nbsp;                        return this.processManage(oAuth2UserInfo, OAuth2Constant.ROLE_MANAGE, facilityId);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        log.warn(&quot;Facility cookie not found for MANAGE role.&quot;);</b>
+&nbsp;                    }
+&nbsp;                    break;
+&nbsp;
+&nbsp;                case OAuth2Constant.ROLE_MEMBER:
+<b class="nc">&nbsp;                    if (cookieOpFaclity.isPresent()) {</b>
+<b class="nc">&nbsp;                        String facilityId = cookieOpFaclity.get().getValue();</b>
+<b class="nc">&nbsp;                        log.info(&quot;Processing as MEMBER for facility: {}&quot;, facilityId);</b>
+<b class="nc">&nbsp;                        return this.processMemberAndStudent(oAuth2UserInfo, OAuth2Constant.ROLE_MEMBER, facilityId);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        log.warn(&quot;Facility cookie not found for MEMBER role.&quot;);</b>
+&nbsp;                    }
+&nbsp;                    break;
+&nbsp;
+&nbsp;                default:
+<b class="nc">&nbsp;                    log.warn(&quot;Unknown role: {}&quot;, roleValue);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            log.warn(&quot;Role cookie not found.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        log.warn(&quot;Invalid login attempt, adding failure cookie and throwing exception.&quot;);</b>
+<b class="nc">&nbsp;        CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;        throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private OAuth2User processAdmin(OAuth2UserInfo oAuth2UserInfo, String role) {
+<b class="nc">&nbsp;        log.info(&quot;Đã chạy vào process ADmin&quot;);</b>
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; staffOptionalFPT = staffAuthRepository.findByEmailFptAndStatus(oAuth2UserInfo.getEmail(), EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;        log.info(&quot;process Admin:{} &quot;, oAuth2UserInfo.toString());</b>
+<b class="nc">&nbsp;        if (</b>
+<b class="nc">&nbsp;                staffOptionalFPT.isPresent()</b>
+&nbsp;        ) {
+<b class="nc">&nbsp;            List&lt;String&gt; roleUser = roleAuthRepository.findRoleByStaffId(staffOptionalFPT.get().getId());</b>
+<b class="nc">&nbsp;            if(  roleUser.contains(role)){</b>
+<b class="nc">&nbsp;                String email = oAuth2UserInfo.getEmail();</b>
+<b class="nc">&nbsp;                Staff staffExist = staffOptionalFPT.get();</b>
+<b class="nc">&nbsp;                staffExist.setCode(email.substring(0, email.indexOf(&quot;@&quot;)));</b>
+<b class="nc">&nbsp;                staffExist.setPicture(oAuth2UserInfo.getImageUrl());</b>
+<b class="nc">&nbsp;                staffAuthRepository.save(staffExist);</b>
+<b class="nc">&nbsp;                return UserPrincipal.create(staffOptionalFPT.get(), oAuth2UserInfo.getAttributes(),roleUser);</b>
+&nbsp;            }else {
+<b class="nc">&nbsp;                CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;                throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } else {
+<b class="nc">&nbsp;            CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;            throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private OAuth2User processManage(OAuth2UserInfo oAuth2UserInfo, String role,String idFacility) {
+<b class="nc">&nbsp;        log.info(&quot;Đã chạy vào process Manage :{}&quot;,oAuth2UserInfo.toString() , role, idFacility);</b>
+&nbsp;
+&nbsp;        // kiểm tra nếu user tồn tại và có dự án trong đó
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; staffOptionalFPT = staffAuthRepository.findStaffByEmailFptAndFacility(</b>
+<b class="nc">&nbsp;                oAuth2UserInfo.getEmail(), idFacility, EntityStatus.ACTIVE</b>
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        if (</b>
+<b class="nc">&nbsp;                staffOptionalFPT.isPresent()</b>
+&nbsp;        ) {
+&nbsp;            // vai trò theo cơ sở
+<b class="nc">&nbsp;            List&lt;String&gt; roleUser = roleAuthRepository.findAllRoleCodesByFacilityIdAndStaffIdAndStatus(staffOptionalFPT.get().getId(),idFacility,EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;            System.out.println(roleUser);</b>
+&nbsp;            // Kiểm tra vai trò của người dùng
+<b class="nc">&nbsp;            if( roleUser.contains(role)){</b>
+<b class="nc">&nbsp;                String email = oAuth2UserInfo.getEmail();</b>
+<b class="nc">&nbsp;                Staff staffExist = staffOptionalFPT.get();</b>
+<b class="nc">&nbsp;                staffExist.setCode(email.substring(0, email.indexOf(&quot;@&quot;)));</b>
+<b class="nc">&nbsp;                staffExist.setPicture(oAuth2UserInfo.getImageUrl());</b>
+<b class="nc">&nbsp;                staffAuthRepository.save(staffExist);</b>
+<b class="nc">&nbsp;                return UserPrincipal.create(staffExist, oAuth2UserInfo.getAttributes(), roleUser);</b>
+&nbsp;                // Kiểm tra người dùng có tham gia dự án không
+&nbsp;//                if (staffProjectRepository.existsByStaff(staffExist)) {
+&nbsp;//                    staffAuthRepository.save(staffExist);
+&nbsp;//                    return UserPrincipal.create(staffExist, oAuth2UserInfo.getAttributes(), roleUser);
+&nbsp;//                } else {
+&nbsp;//                    // Người dùng không có dự án hợp lệ
+&nbsp;//                    CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//                    throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//                }
+&nbsp;
+&nbsp;            }else {
+&nbsp;
+<b class="nc">&nbsp;                CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;                throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;            }
+&nbsp;        } else {
+&nbsp;
+<b class="nc">&nbsp;            CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;            throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private OAuth2User processMemberAndStudent(OAuth2UserInfo oAuth2UserInfo, String role,String idFacility) {
+&nbsp;
+&nbsp;        // kiểm tra nếu user tồn tại và có dự án trong đó
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;đã chạy vào process member and student :{}&quot;, oAuth2UserInfo,role,idFacility);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; staffOptionalFPT = staffAuthRepository.findStaffByEmailFptAndFacility(oAuth2UserInfo.getEmail(),idFacility, EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;        Optional&lt;Student&gt; studentOptional = studentRepository.findStudentsByEmailAndFacility(oAuth2UserInfo.getEmail(),idFacility, EntityStatus.ACTIVE);</b>
+&nbsp;
+&nbsp;        // Vào với vai trò là giảng viên
+<b class="nc">&nbsp;        if (</b>
+<b class="nc">&nbsp;                staffOptionalFPT.isPresent()</b>
+&nbsp;        ) {
+<b class="nc">&nbsp;            log.info(&quot;vào giảng viên&quot;);</b>
+<b class="nc">&nbsp;            List&lt;String&gt; roleUser = roleAuthRepository.findAllRoleCodesByFacilityIdAndStaffIdAndStatus(staffOptionalFPT.get().getId(),idFacility,EntityStatus.ACTIVE);</b>
+&nbsp;            // Kiểm tra vai trò của người dùng
+<b class="nc">&nbsp;            if(roleUser.contains(role)){</b>
+<b class="nc">&nbsp;                String email = oAuth2UserInfo.getEmail();</b>
+<b class="nc">&nbsp;                Staff staffExist = staffOptionalFPT.get();</b>
+<b class="nc">&nbsp;                staffExist.setCode(email.substring(0, email.indexOf(&quot;@&quot;)));</b>
+<b class="nc">&nbsp;                staffExist.setPicture(oAuth2UserInfo.getImageUrl());</b>
+<b class="nc">&nbsp;                staffAuthRepository.save(staffExist);</b>
+<b class="nc">&nbsp;                return UserPrincipal.create(staffExist, oAuth2UserInfo.getAttributes(), roleUser);</b>
+&nbsp;                // Kiểm tra giảng viên có tham gia dự án không
+&nbsp;//                 if (staffProjectRepository.existsByStaff(staffExist)) {
+&nbsp;//                    staffAuthRepository.save(staffExist);
+&nbsp;//                    return UserPrincipal.create(staffExist, oAuth2UserInfo.getAttributes(), roleUser);
+&nbsp;//                } else {
+&nbsp;//                    // Người dùng không có dự án hợp lệ
+&nbsp;//                    CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//                    throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//                }
+&nbsp;            }else {
+<b class="nc">&nbsp;                if (!role.equals(Role.THANH_VIEN.name())) {</b>
+<b class="nc">&nbsp;                    CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;                    throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;        // Vào với vai trò là sinh viên
+<b class="nc">&nbsp;        if(</b>
+<b class="nc">&nbsp;                studentOptional.isPresent()</b>
+&nbsp;        ){
+<b class="nc">&nbsp;            log.info(&quot;người dùng là sinh viên&quot;);</b>
+<b class="nc">&nbsp;            String email = oAuth2UserInfo.getEmail();</b>
+<b class="nc">&nbsp;            Student studentExist = studentOptional.get();</b>
+<b class="nc">&nbsp;            studentExist.setCode(studentOptional.get().getCode() == null || studentOptional.get().getCode().isEmpty()</b>
+<b class="nc">&nbsp;                    ? email.substring(0, email.indexOf(&quot;@&quot;))</b>
+<b class="nc">&nbsp;                    : studentExist.getCode());</b>
+&nbsp;
+<b class="nc">&nbsp;            studentExist.setImage(oAuth2UserInfo.getImageUrl());</b>
+<b class="nc">&nbsp;            studentRepository.save(studentExist);</b>
+<b class="nc">&nbsp;            return UserPrincipal.create(</b>
+&nbsp;                    studentExist,
+<b class="nc">&nbsp;                    oAuth2UserInfo.getAttributes(),</b>
+<b class="nc">&nbsp;                    Arrays.asList(Role.THANH_VIEN.name()));</b>
+&nbsp;            // Kiểm tra sinh viên có tham gia dự án không
+&nbsp;//            if (staffProjectRepository.existsByStudent(studentOptional.get())) {
+&nbsp;//                studentRepository.save(studentExist);
+&nbsp;//                return UserPrincipal.create(
+&nbsp;//                        studentExist,
+&nbsp;//                        oAuth2UserInfo.getAttributes(),
+&nbsp;//                        Arrays.asList(Role.THANH_VIEN.name()));
+&nbsp;//            } else {
+&nbsp;//                // Người dùng không có dự án hợp lệ
+&nbsp;//                CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT, CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//                throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_ASSIGNED_TO_ANY_PROJECT);
+&nbsp;//            }
+<b class="nc">&nbsp;        }else if(</b>
+<b class="nc">&nbsp;                !studentOptional.isPresent()</b>
+&nbsp;        ){
+<b class="nc">&nbsp;            CookieUtils.addCookie(httpServletResponse, CookieConstant.STUDENT_NEEDS_REGISTRATION,  CookieConstant.STUDENT_NEEDS_REGISTRATION);</b>
+<b class="nc">&nbsp;            throw new OAuth2AuthenticationProcessingException(CookieConstant.STUDENT_NEEDS_REGISTRATION);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            log.info(&quot;Khong ton tai&quot;);</b>
+<b class="nc">&nbsp;            CookieUtils.addCookie(httpServletResponse, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;            throw new OAuth2AuthenticationProcessingException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

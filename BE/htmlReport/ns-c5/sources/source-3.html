@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAPhaseRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.phase.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAPhaseRepository (udpm.hn.server.core.manage.phase.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$8dJOOyDH</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$8dJOOyDH$auxiliary$QB0TtSvr</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$8dJOOyDH$auxiliary$THLGZIvo</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$XSl9jXFX</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$XSl9jXFX$auxiliary$bJW9YArO</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseRepository$MockitoMock$XSl9jXFX$auxiliary$kbh1U19n</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.phase.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.phase.model.response.MAPhaseResponse;
+&nbsp;import udpm.hn.server.entity.PhaseProject;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MAPhaseRepository extends PhaseRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select 
+&nbsp;                        pp.name as name,
+&nbsp;                        pp.id as id,
+&nbsp;                        pp.code as code,
+&nbsp;                        pp.createdDate as createDate,
+&nbsp;                        pp.startTime as startTime,
+&nbsp;                        pp.endTime as endTime,
+&nbsp;                        pp.descriptions as descriptions,
+&nbsp;                        pp.statusPhase as statusPhase
+&nbsp;                     from PhaseProject  pp 
+&nbsp;                     join Project p on pp.project.id = p.id
+&nbsp;                     where pp.status = 0 and   (pp.statusPhase = 0 OR pp.statusPhase = 1)  and p.id = :idProject
+&nbsp;                     order by pp.createdDate ASC 
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MAPhaseResponse&gt; getAllPhaseProject(Pageable pageable, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select 
+&nbsp;                        pp.name as name,
+&nbsp;                        pp.id as id,
+&nbsp;                        pp.code as code,
+&nbsp;                        pp.createdDate as createDate,
+&nbsp;                        pp.startTime as startTime,
+&nbsp;                        pp.endTime as endTime,
+&nbsp;                        pp.descriptions as descriptions,
+&nbsp;                        pp.statusPhase as statusPhase
+&nbsp;                     from PhaseProject  pp 
+&nbsp;                     join Project p on pp.project.id = p.id
+&nbsp;                     where pp.status = 0  and p.id = :idProject
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MAPhaseResponse&gt; getAllPhaseProjectStatistics(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    select 
+&nbsp;        pp.name as name,
+&nbsp;        pp.id as id,
+&nbsp;        pp.code as code,
+&nbsp;        pp.createdDate as createDate,
+&nbsp;        pp.startTime as startTime,
+&nbsp;        pp.endTime as endTime,
+&nbsp;        pp.descriptions as descriptions,
+&nbsp;        pp.statusPhase as statusPhase
+&nbsp;    from PhaseProject pp 
+&nbsp;    join Project p on pp.project.id = p.id
+&nbsp;    where pp.status = 0 and pp.statusPhase = 2 and p.id = :idProject 
+&nbsp;    and (:statusPhase IS NULL OR pp.statusPhase = :statusPhase)
+&nbsp;AND (:startOfDay IS NULL OR pp.startTime &lt;= :endOfDay)
+&nbsp;AND (:endOfDay IS NULL OR pp.endTime &gt;= :startOfDay)
+&nbsp;    AND (:search IS NULL OR pp.name LIKE CONCAT(&#39;%&#39;, :search, &#39;%&#39;))
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Page&lt;MAPhaseResponse&gt; getAllSprintProject(Pageable pageable,
+&nbsp;                                              @Param(&quot;idProject&quot;) String idProject,
+&nbsp;                                              @Param(&quot;statusPhase&quot;) StatusPhase statusPhase,
+&nbsp;                                              @Param(&quot;startOfDay&quot;) Long startOfDay,
+&nbsp;                                              @Param(&quot;endOfDay&quot;) Long endOfDay,
+&nbsp;                                              @Param(&quot;search&quot;) String search);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select 
+&nbsp;                        pp.name as name,
+&nbsp;                        pp.id as id,
+&nbsp;                        pp.code as code,
+&nbsp;                        pp.descriptions as descriptions,
+&nbsp;                        pp.statusPhase as statusPhase
+&nbsp;                     from PhaseProject  pp 
+&nbsp;                     join Project p on pp.project.id = p.id
+&nbsp;                     where pp.status = 0 and p.id = :idProject
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MAPhaseResponse&gt; getAllPhaseByProjectId(String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;           SELECT count(pp.id)
+&nbsp;           FROM PhaseProject pp 
+&nbsp;           where pp.project.id = :idProject
+&nbsp;                and pp.statusPhase = :statusPhase
+&nbsp;                and pp.status = 0
+&nbsp;           &quot;&quot;&quot;)
+&nbsp;    int countPhaseProjectByIdProject(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;statusPhase&quot;) StatusPhase statusPhase);
+&nbsp;
+&nbsp;    Optional&lt;PhaseProject&gt; findByStatusPhase(StatusPhase statusPhase);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

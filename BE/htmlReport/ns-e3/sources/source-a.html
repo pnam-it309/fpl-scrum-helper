@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoListRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoListRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$dGm3Gatx</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$dGm3Gatx$auxiliary$5bikG6TI</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$dGm3Gatx$auxiliary$h3KthkM9</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$kIoH1ZJF</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$kIoH1ZJF$auxiliary$RM9mCggY</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$kIoH1ZJF$auxiliary$rt4ySluC</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$PbMiBcIC</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$PbMiBcIC$auxiliary$GBNarzd6</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoListRepository$MockitoMock$PbMiBcIC$auxiliary$OTAyqEu0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.data.jpa.repository.Modifying;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBTodoListResponse;
+&nbsp;import udpm.hn.server.repository.TodoListRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MBMeTodoListRepository extends TodoListRepository {
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE TodoList t 
+&nbsp;    SET t.indexTodoList = t.indexTodoList - 1 
+&nbsp;    WHERE t.indexTodoList &gt; :indexBefore 
+&nbsp;      AND t.indexTodoList &lt;= :indexAfter 
+&nbsp;      AND t.project.id = :idProject
+&nbsp;      AND t.status = 0
+&nbsp;      AND t.phaseProject.id = :idPhase
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoListDecs(@Param(&quot;indexBefore&quot;) Integer indexBefore,
+&nbsp;                                 @Param(&quot;indexAfter&quot;) Integer indexAfter,
+&nbsp;                                 @Param(&quot;idProject&quot;) String idProject,
+&nbsp;                                 @Param(&quot;idPhase&quot;) String idPhase
+&nbsp;    );
+&nbsp;
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE TodoList t 
+&nbsp;    SET t.indexTodoList = t.indexTodoList + 1 
+&nbsp;    WHERE t.indexTodoList &lt; :indexBefore 
+&nbsp;      AND t.indexTodoList &gt;= :indexAfter 
+&nbsp;      AND t.project.id = :idProject
+&nbsp;      AND t.status  =0
+&nbsp;     AND t.phaseProject.id = :idPhase
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoListAsc(@Param(&quot;indexBefore&quot;) Integer indexBefore,
+&nbsp;                                @Param(&quot;indexAfter&quot;) Integer indexAfter,
+&nbsp;                                @Param(&quot;idProject&quot;) String idProject,
+&nbsp;                                @Param(&quot;idPhase&quot;) String idPhase
+&nbsp;    );
+&nbsp;
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE TodoList t SET t.indexTodoList = :indexAfter
+&nbsp;     WHERE t.id = :idTodoList
+&nbsp;      AND t.phaseProject.id = :idPhase
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoList(@Param(&quot;idTodoList&quot;) String idTodoList,
+&nbsp;                             @Param(&quot;indexAfter&quot;) Integer indexAfter,
+&nbsp;                             @Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE TodoList t
+&nbsp;    SET t.indexTodoList = t.indexTodoList - 1
+&nbsp;    WHERE t.indexTodoList &gt; :indexParam
+&nbsp;    AND t.project.id = :idProject
+&nbsp;    AND t.status = 0
+&nbsp;     AND t.phaseProject.id = :idPhase
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoList(@Param(&quot;indexParam&quot;) Integer indexParam,
+&nbsp;                             @Param(&quot;idProject&quot;) String idProject,
+&nbsp;                             @Param(&quot;idPhase&quot;) String idPhase
+&nbsp;                             );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t.id AS id,
+&nbsp;           t.code AS code,
+&nbsp;           t.name AS name,
+&nbsp;           t.describe AS describe,
+&nbsp;           t.indexTodoList AS indexTodoList,
+&nbsp;           t.phaseProject.id AS phaseProjectId
+&nbsp;    FROM TodoList t
+&nbsp;    WHERE t.phaseProject.id = :idPhaseProject
+&nbsp;      AND t.status = 0
+&nbsp;     order by t.indexTodoList asc 
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBTodoListResponse&gt; getAllTodoListByIdPhaseProject(@Param(&quot;idPhaseProject&quot;) String idPhaseProject);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

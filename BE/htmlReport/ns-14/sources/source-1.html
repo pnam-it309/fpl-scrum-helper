@@ -1,0 +1,621 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADProjectServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ADProjectServiceImpl (udpm.hn.server.core.admin.project.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ADProjectServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70.1%
+  </span>
+  <span class="absValue">
+    (61/87)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.2%
+  </span>
+  <span class="absValue">
+    (187/212)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ADProjectServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectServiceImpl$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70.1%
+  </span>
+  <span class="absValue">
+    (61/87)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.3%
+  </span>
+  <span class="absValue">
+    (188/213)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.context.annotation.Primary;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectCreateRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectSTRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.ADProjectOverview;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.ADProjectTodoCountResponse;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.DepartmentProjectCountResponse;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.FacilityProjectCountResponse;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.TodoStatusByProject;
+&nbsp;import udpm.hn.server.core.admin.project.repository.ADProjectRepository;
+&nbsp;import udpm.hn.server.core.admin.project.repository.ADProjectStaffRepository;
+&nbsp;import udpm.hn.server.core.admin.project.repository.ADProjectStudentRepository;
+&nbsp;import udpm.hn.server.core.admin.project.repository.ProjectDFRepository;
+&nbsp;import udpm.hn.server.core.admin.project.service.ADProjectService;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStudentStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusProject;
+&nbsp;import udpm.hn.server.repository.*;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Primary
+&nbsp;public class ADProjectServiceImpl implements ADProjectService {
+&nbsp;
+&nbsp;    private final ADProjectRepository adProjectRepository;
+&nbsp;
+&nbsp;    private final ProjectDFRepository projectDFRepository;
+&nbsp;
+&nbsp;    private final MajorFacilityRepository majorFacilityRepository;
+&nbsp;
+&nbsp;    private final CategoryRepository categoryRepository;
+&nbsp;
+&nbsp;    private final ADProjectStudentRepository adProjectStudentRepository;
+&nbsp;
+&nbsp;    private final ADProjectStaffRepository adProjectStaffRepository;
+&nbsp;
+&nbsp;    private final StaffProjectRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final FacilityRepository facilityRepository;
+&nbsp;
+&nbsp;    private final ActivityLogRepository activityLogRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllProject(ADProjectSearchRequest request) {
+<b class="fc">&nbsp;        StatusProject status = null;</b>
+<b class="pc">&nbsp;        if (request.getStatus() != null) {</b>
+<b class="nc">&nbsp;            status = StatusProject.values()[request.getStatus()];</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(adProjectRepository.getAllProject(page, request, status), HttpStatus.OK, &quot;Lấy thông tin project thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllDepartmentFacility(String idFacility) {
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(projectDFRepository.getAllDepartmentFacility(idFacility), HttpStatus.OK, &quot;Lấy danh sách bộ môn cơ sở thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;?&gt; createProject(ADProjectCreateRequest request) {
+<b class="fc">&nbsp;        log.info(&quot;Dữ liệu request create project:{}&quot;, request);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findByCode(request.getCodeProject());</b>
+<b class="fc">&nbsp;        if(optionalProject.isPresent()){</b>
+<b class="fc">&nbsp;            log.info(&quot;Đã chạy vào đây create&quot;);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND,&quot;Đã có mã này!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; optionalMajorFacility = majorFacilityRepository.findById(request.getIdMajorFacility());</b>
+<b class="fc">&nbsp;        if (optionalMajorFacility.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy chuyên ngành cơ sở&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Category&gt; optionalCategory = categoryRepository.findById(request.getIdCategory());</b>
+<b class="fc">&nbsp;        if (optionalCategory.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy thể loại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Long startTime = Long.valueOf(request.getStartTime());</b>
+<b class="fc">&nbsp;        Long endTime = Long.valueOf(request.getEndTime());</b>
+<b class="fc">&nbsp;        Long currentTime = new Date().getTime();</b>
+&nbsp;
+<b class="fc">&nbsp;        Project project = new Project();</b>
+<b class="fc">&nbsp;        project.setStartTime(startTime);</b>
+<b class="fc">&nbsp;        project.setEndTime(endTime);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (currentTime &lt; startTime) {</b>
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.CHUA_DIEN_RA);</b>
+<b class="pc">&nbsp;        } else if (currentTime &gt;= startTime &amp;&amp; currentTime &lt;= endTime) {</b>
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.DANG_DIEN_RA);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.DA_DIEN_RA);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        project.setProgress(0f);</b>
+<b class="fc">&nbsp;        project.setCategory(optionalCategory.get());</b>
+<b class="fc">&nbsp;        project.setBackgroundColor(&quot;#59a1e3&quot;);</b>
+<b class="fc">&nbsp;        project.setBackgroundImage(&quot;https://wallpaper-mania.com/wp-content/uploads/2018/09/High_resolution_wallpaper_background_ID_77701599633.jpg&quot;);</b>
+<b class="fc">&nbsp;        project.setName(request.getNameProject());</b>
+<b class="fc">&nbsp;        project.setCode(request.getCodeProject());</b>
+<b class="fc">&nbsp;        project.setDescriptions(request.getDescriptions());</b>
+<b class="fc">&nbsp;        project.setMajorFacility(optionalMajorFacility.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        Project newProject = projectRepository.save(project);</b>
+<b class="fc">&nbsp;        List&lt;StaffProject&gt; newStaffProjects = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (ADProjectSTRequest item : request.getListMembers()) {</b>
+<b class="fc">&nbsp;            String email = item.getEmail();</b>
+<b class="pc">&nbsp;            if (email == null || email.trim().isEmpty()) continue;</b>
+&nbsp;
+<b class="fc">&nbsp;            StaffProject staffProject = new StaffProject();</b>
+<b class="fc">&nbsp;            staffProject.setProject(newProject);</b>
+&nbsp;
+&nbsp;            // Ưu tiên tìm Staff
+<b class="fc">&nbsp;            Optional&lt;Staff&gt; staff = adProjectStaffRepository.findByEmailFe(email);</b>
+<b class="fc">&nbsp;            if (staff.isEmpty()) {</b>
+<b class="fc">&nbsp;                staff = adProjectStaffRepository.findByEmailFpt(email);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (staff.isPresent()) {</b>
+<b class="fc">&nbsp;                staffProject.setStaff(staff.get());</b>
+&nbsp;            } else {
+&nbsp;                // Nếu không tìm thấy staff thì tìm Student
+<b class="fc">&nbsp;                Optional&lt;Student&gt; optionalStudent = adProjectStudentRepository.findByEmail(email);</b>
+<b class="pc">&nbsp;                if (optionalStudent.isPresent()) {</b>
+<b class="fc">&nbsp;                    staffProject.setStudent(optionalStudent.get());</b>
+&nbsp;                } else {
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            String role = item.getRole();</b>
+<b class="pc">&nbsp;            if (&quot;QUAN_Li&quot;.equalsIgnoreCase(role)) {</b>
+<b class="nc">&nbsp;                staffProject.setRole(EntityStudentStatus.QUAN_Li);</b>
+<b class="fc">&nbsp;            } else if (&quot;DEV&quot;.equalsIgnoreCase(role)) {</b>
+<b class="fc">&nbsp;                staffProject.setRole(EntityStudentStatus.DEV);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                staffProject.setRole(EntityStudentStatus.TESTER);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            newStaffProjects.add(staffProject);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        staffProjectRepository.saveAll(newStaffProjects);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        ActivityLog activityLog = new ActivityLog();</b>
+<b class="fc">&nbsp;        activityLog.setRole(&quot;ADMIN&quot;);</b>
+<b class="fc">&nbsp;        activityLog.setExecutorEmail(request.getEmailLogin());</b>
+<b class="fc">&nbsp;        activityLog.setContent(&quot;Đã thêm mới dự án có tên : &quot;+request.getNameProject());</b>
+<b class="fc">&nbsp;        activityLogRepository.save(activityLog);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Thêm dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; updateProject(String idProject, ADProjectCreateRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;List user request update project :{}&quot;, request.toString());</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findById(idProject);</b>
+<b class="fc">&nbsp;        if (optionalProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy dự án này&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Project existingProject = optionalProject.get();</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!request.getCodeProject().equals(existingProject.getCode())) { // Sử dụng .equals() để so sánh String</b>
+<b class="nc">&nbsp;            Optional&lt;Project&gt; optionalProjectCode = projectRepository.findByCode(request.getCodeProject());</b>
+<b class="nc">&nbsp;            if (optionalProjectCode.isPresent()) {</b>
+<b class="nc">&nbsp;                log.info(&quot;Mã dự án đã tồn tại: {}&quot;, request.getCodeProject());</b>
+&nbsp;
+&nbsp;                // 4. Trả về lỗi CONFLICT thay vì NOT_FOUND cho trường hợp trùng lặp
+&nbsp;                //    Lỗi NOT_FOUND không phù hợp khi tài nguyên đã tồn tại.
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;().error(HttpStatus.CONFLICT, &quot;Mã dự án đã tồn tại!&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;MajorFacility&gt; optionalMajorFacility = majorFacilityRepository.findById(request.getIdMajorFacility());</b>
+<b class="pc">&nbsp;        if (optionalMajorFacility.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy chuyên ngành cơ sở&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Category&gt; optionalCategory = categoryRepository.findById(request.getIdCategory());</b>
+<b class="pc">&nbsp;        if (optionalCategory.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy thể loại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;StaffProject&gt; newStaffProjects = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;ADProjectSTRequest&gt; listMembers = request.getListMembers();</b>
+&nbsp;
+<b class="fc">&nbsp;        Project project = optionalProject.get();</b>
+&nbsp;
+&nbsp;        // ======= BƯỚC 1: KIỂM TRA TOÀN BỘ THÀNH VIÊN TRƯỚC =======
+<b class="fc">&nbsp;        for (ADProjectSTRequest item : listMembers) {</b>
+<b class="fc">&nbsp;            String email = item.getEmail();</b>
+<b class="pc">&nbsp;            if (email == null || email.isEmpty()) {</b>
+&nbsp;//                return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Email của thành viên không được để trống&quot;);
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            StaffProject staffProject = new StaffProject();</b>
+&nbsp;
+<b class="fc">&nbsp;            Optional&lt;Staff&gt; staff = adProjectStaffRepository.findByEmailFe(email);</b>
+<b class="pc">&nbsp;            if (staff.isEmpty()) {</b>
+<b class="nc">&nbsp;                staff = adProjectStaffRepository.findByEmailFpt(email);</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (staff.isPresent()) {</b>
+<b class="fc">&nbsp;                staffProject.setStaff(staff.get());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                Optional&lt;Student&gt; student = adProjectStudentRepository.findByEmail(email);</b>
+<b class="nc">&nbsp;                if (student.isPresent()) {</b>
+<b class="nc">&nbsp;                    staffProject.setStudent(student.get());</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Không tìm thấy người dùng với email: &quot; + email);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Gán vai trò
+<b class="fc">&nbsp;            String role = item.getRole();</b>
+<b class="fc">&nbsp;            if (&quot;QUAN_Li&quot;.equalsIgnoreCase(role)) {</b>
+<b class="fc">&nbsp;                staffProject.setRole(EntityStudentStatus.QUAN_Li);</b>
+<b class="fc">&nbsp;            } else if (&quot;DEV&quot;.equalsIgnoreCase(role)) {</b>
+<b class="fc">&nbsp;                staffProject.setRole(EntityStudentStatus.DEV);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                staffProject.setRole(EntityStudentStatus.TESTER);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            staffProject.setProject(project);</b>
+<b class="fc">&nbsp;            staffProject.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;            newStaffProjects.add(staffProject);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // ======= BƯỚC 2: CẬP NHẬT PROJECT =======
+<b class="fc">&nbsp;        Long startTime = Long.valueOf(request.getStartTime());</b>
+<b class="fc">&nbsp;        Long endTime = Long.valueOf(request.getEndTime());</b>
+<b class="fc">&nbsp;        Long currentTime = new Date().getTime();</b>
+&nbsp;
+<b class="fc">&nbsp;        project.setStartTime(startTime);</b>
+<b class="fc">&nbsp;        project.setEndTime(endTime);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (currentTime &lt; startTime) {</b>
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.CHUA_DIEN_RA);</b>
+<b class="pc">&nbsp;        } else if (currentTime &gt;= startTime &amp;&amp; currentTime &lt;= endTime) {</b>
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.DANG_DIEN_RA);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            project.setStatusProject(StatusProject.DA_DIEN_RA);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        project.setProgress(0f);</b>
+<b class="fc">&nbsp;        project.setCategory(optionalCategory.get());</b>
+<b class="fc">&nbsp;        project.setBackgroundColor(&quot;#59a1e3&quot;);</b>
+<b class="fc">&nbsp;        project.setName(request.getNameProject());</b>
+<b class="fc">&nbsp;        project.setCode(request.getCodeProject());</b>
+<b class="fc">&nbsp;        project.setDescriptions(request.getDescriptions());</b>
+<b class="fc">&nbsp;        project.setMajorFacility(optionalMajorFacility.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        projectRepository.save(project);</b>
+&nbsp;
+&nbsp;        // ======= BƯỚC 3: XÓA THÀNH VIÊN CŨ KHÔNG CÒN TRONG DANH SÁCH MỚI =======
+<b class="fc">&nbsp;        List&lt;StaffProject&gt; existingStaffProjects = staffProjectRepository.findByProject(project);</b>
+<b class="fc">&nbsp;        Set&lt;String&gt; requestEmails = listMembers.stream().map(ADProjectSTRequest::getEmail).collect(Collectors.toSet());</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;StaffProject&gt; toDelete = existingStaffProjects.stream().filter(sp -&gt; {</b>
+<b class="pc">&nbsp;            String email = (sp.getStaff() != null) ? sp.getStaff().getEmailFe() : (sp.getStudent() != null) ? sp.getStudent().getEmail() : null;</b>
+<b class="fc">&nbsp;            return !requestEmails.contains(email);</b>
+<b class="fc">&nbsp;        }).toList();</b>
+&nbsp;
+<b class="fc">&nbsp;        toDelete.forEach(sp -&gt; sp.setStatus(EntityStatus.INACTIVE));</b>
+<b class="fc">&nbsp;        staffProjectRepository.saveAll(toDelete);</b>
+&nbsp;
+&nbsp;        // ======= BƯỚC 4: CẬP NHẬT HOẶC THÊM MỚI THÀNH VIÊN =======
+<b class="fc">&nbsp;        for (StaffProject newSP : newStaffProjects) {</b>
+<b class="pc">&nbsp;            if (newSP.getStaff() != null) {</b>
+<b class="fc">&nbsp;                Optional&lt;StaffProject&gt; existing = staffProjectRepository.findByStaffAndProject(newSP.getStaff(), project);</b>
+<b class="pc">&nbsp;                if (existing.isPresent()) {</b>
+<b class="nc">&nbsp;                    StaffProject existingSP = existing.get();</b>
+<b class="nc">&nbsp;                    existingSP.setRole(newSP.getRole());</b>
+<b class="nc">&nbsp;                    existingSP.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;                    staffProjectRepository.save(existingSP);</b>
+&nbsp;                    continue;
+&nbsp;                }
+<b class="pc">&nbsp;            } else if (newSP.getStudent() != null) {</b>
+<b class="nc">&nbsp;                Optional&lt;StaffProject&gt; existing = staffProjectRepository.findByStudentAndProject(newSP.getStudent(), project);</b>
+<b class="nc">&nbsp;                if (existing.isPresent()) {</b>
+<b class="nc">&nbsp;                    StaffProject existingSP = existing.get();</b>
+<b class="nc">&nbsp;                    existingSP.setRole(newSP.getRole());</b>
+<b class="nc">&nbsp;                    existingSP.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;                    staffProjectRepository.save(existingSP);</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            staffProjectRepository.save(newSP);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        ActivityLog activityLog = new ActivityLog();</b>
+<b class="fc">&nbsp;        activityLog.setRole(&quot;ADMIN&quot;);</b>
+<b class="fc">&nbsp;        activityLog.setExecutorEmail(request.getEmailLogin());</b>
+<b class="fc">&nbsp;        activityLog.setContent(&quot;Đã sửa dự án có tên : &quot;+request.getNameProject());</b>
+<b class="fc">&nbsp;        activityLogRepository.save(activityLog);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailProject(String idProject) {
+<b class="fc">&nbsp;        return adProjectRepository.findById(idProject).map(project -&gt; new ResponseObject&lt;&gt;(project, HttpStatus.OK, &quot;Lấy thông tin dự án thành công!&quot;)).orElseGet(() -&gt; new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy dự án!&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteProject(String idProject) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = adProjectRepository.findById(idProject);</b>
+<b class="fc">&nbsp;        if (optionalProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy dự án này&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Project project = optionalProject.get();</b>
+<b class="fc">&nbsp;        project.setStatus(EntityStatus.INACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;        adProjectRepository.save(project);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Xóa thành công dự án&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllFacility() {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(facilityRepository.findAll(), HttpStatus.OK, &quot;Lấy dư liệu cơ sở thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countProjectByStatus() {
+<b class="fc">&nbsp;        List&lt;Object[]&gt; resultRaw = adProjectRepository.countProjectByStatus();</b>
+<b class="fc">&nbsp;        Map&lt;String, Long&gt; result = new LinkedHashMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object[] row : resultRaw) {</b>
+<b class="fc">&nbsp;            String status = String.valueOf(row[0]);</b>
+<b class="fc">&nbsp;            Long count = ((Number) row[1]).longValue();  // Chuyển đổi đúng kiểu từ Number</b>
+<b class="fc">&nbsp;            result.put(status, count);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê trạng thái dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getProjectParticipantCounts() {
+<b class="fc">&nbsp;        List&lt;Object[]&gt; resultRaw = adProjectRepository.getProjectParticipantCounts();</b>
+<b class="fc">&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; result = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (Object[] row : resultRaw) {</b>
+<b class="fc">&nbsp;            String projectName = String.valueOf(row[0]);</b>
+<b class="fc">&nbsp;            Long totalParticipants = ((Number) row[1]).longValue();</b>
+&nbsp;
+<b class="fc">&nbsp;            Map&lt;String, Object&gt; item = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;            item.put(&quot;projectName&quot;, projectName);</b>
+<b class="fc">&nbsp;            item.put(&quot;totalParticipants&quot;, totalParticipants);</b>
+<b class="fc">&nbsp;            result.add(item);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê số lượng người tham gia theo dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getProjectTodoCounts() {
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;ADProjectTodoCountResponse&gt; result = adProjectRepository.countTodoByProjectName();</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê số lượng công việc theo dự án thành công&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(false, &quot;Lỗi khi thống kê công việc&quot;, null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countTotalProjects() {
+<b class="fc">&nbsp;        Long total = adProjectRepository.countTotalProjects();</b>
+<b class="fc">&nbsp;        Long overdue = adProjectRepository.countOverdueProjects(1);</b>
+&nbsp;
+&nbsp;        // Initialize counts for each status
+<b class="fc">&nbsp;        Long inProgress = 0L;</b>
+<b class="fc">&nbsp;        Long done = 0L;</b>
+<b class="fc">&nbsp;        Long paused = 0L;</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Object[]&gt; groupedStatus = adProjectRepository.countProjectsGroupedByStatus();</b>
+<b class="fc">&nbsp;        for (Object[] row : groupedStatus) {</b>
+<b class="fc">&nbsp;            Byte statusByte = (Byte) row[0]; // Assuming the database returns a Byte</b>
+<b class="fc">&nbsp;            Long count = ((Number) row[1]).longValue();</b>
+&nbsp;
+<b class="fc">&nbsp;            StatusProject status = StatusProject.values()[statusByte.intValue()]; // Convert Byte to enum</b>
+&nbsp;
+<b class="pc">&nbsp;            switch (status) {</b>
+&nbsp;                case DANG_DIEN_RA: // In progress
+<b class="fc">&nbsp;                    inProgress = count;</b>
+&nbsp;                    break;
+&nbsp;                case DA_DIEN_RA:   // Done
+<b class="fc">&nbsp;                    done = count;</b>
+&nbsp;                    break;
+&nbsp;                case CHUA_DIEN_RA: // Paused or not yet started
+<b class="fc">&nbsp;                    paused = count;</b>
+&nbsp;                    break;
+&nbsp;                default:
+&nbsp;                    // Handle unexpected status values if necessary
+&nbsp;                    break;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        ADProjectOverview dto = new ADProjectOverview();</b>
+<b class="fc">&nbsp;        dto.setTotalProjects(total);</b>
+<b class="fc">&nbsp;        dto.setInProgress(inProgress);</b>
+<b class="fc">&nbsp;        dto.setDone(done);</b>
+<b class="fc">&nbsp;        dto.setPaused(paused);</b>
+<b class="fc">&nbsp;        dto.setOverdue(overdue);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(dto, HttpStatus.OK, &quot;Thống kê tổng số dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countProjectsByFacility() {
+<b class="fc">&nbsp;        List&lt;FacilityProjectCountResponse&gt; result = adProjectRepository.countProjectsByFacility();</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê tổng số dự án theo cơ sở&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countProjectsByDepartment() {
+<b class="fc">&nbsp;        List&lt;DepartmentProjectCountResponse&gt; result = adProjectRepository.countProjectsByDepartment();</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê tổng số dự án theo bộ môn&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countTaskByStatusAndProject() {
+<b class="fc">&nbsp;        List&lt;TodoStatusByProject&gt; result = adProjectRepository.countTaskByStatusAndProject();</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(result, HttpStatus.OK, &quot;Thống kê công việc theo trạng thái qua dự án&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

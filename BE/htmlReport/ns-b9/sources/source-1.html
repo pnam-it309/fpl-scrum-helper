@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADDepartmentExtendRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.department.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADDepartmentExtendRepository (udpm.hn.server.core.admin.department.department.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$RA6bQWj4</td>
+  </tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$RA6bQWj4$auxiliary$hTTdoidh</td>
+  </tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$RA6bQWj4$auxiliary$YlVGjuK7</td>
+  </tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$xcsAS5op</td>
+  </tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$xcsAS5op$auxiliary$NNsnAegN</td>
+  </tr>
+  <tr>
+    <td class="name">ADDepartmentExtendRepository$MockitoMock$xcsAS5op$auxiliary$ohEKEe1o</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.department.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.request.DepartmentSearchRequest;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.response.DepartmentReponse;
+&nbsp;import udpm.hn.server.core.admin.department.department.model.response.DetailDepartmentResponse;
+&nbsp;import udpm.hn.server.repository.DepartmentRepository;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ADDepartmentExtendRepository extends DepartmentRepository {
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                    SELECT 
+&nbsp;                        ROW_NUMBER() OVER (ORDER BY d.createdDate DESC) AS orderNumber,
+&nbsp;                        d.id AS departmentId, 
+&nbsp;                        d.code AS departmentCode, 
+&nbsp;                        d.name AS departmentName, 
+&nbsp;                        d.status AS departmentStatus,
+&nbsp;                        d.createdDate AS createdDate  
+&nbsp;                    FROM 
+&nbsp;                        Department d
+&nbsp;                    WHERE 
+&nbsp;                        (:#{#rep.departmentSearch} IS NULL OR
+&nbsp;                        d.name LIKE CONCAT(&#39;%&#39;, :#{#rep.departmentSearch}, &#39;%&#39;) OR
+&nbsp;                        d.code LIKE CONCAT(&#39;%&#39;, :#{#rep.departmentSearch}, &#39;%&#39;))
+&nbsp;                        AND (:#{#rep.departmentStatus} IS NULL OR d.status = :#{#rep.departmentStatus})
+&nbsp;                        order by d.createdDate DESC 
+&nbsp;                    &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            COUNT(d.id)
+&nbsp;        FROM 
+&nbsp;            Department d
+&nbsp;        WHERE 
+&nbsp;            (:#{#rep.departmentSearch} IS NULL OR
+&nbsp;            d.name LIKE CONCAT(&#39;%&#39;, :#{#rep.departmentSearch}, &#39;%&#39;) OR
+&nbsp;            d.code LIKE CONCAT(&#39;%&#39;, :#{#rep.departmentSearch}, &#39;%&#39;))
+&nbsp;            AND (:#{#rep.departmentStatus} IS NULL OR d.status = :#{#rep.departmentStatus})
+&nbsp;
+&nbsp;            &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;DepartmentReponse&gt; getAllDepartmentByFilter(Pageable pageable, @Param(&quot;rep&quot;) DepartmentSearchRequest req);
+&nbsp;
+&nbsp;    Boolean existsByName(String name);
+&nbsp;
+&nbsp;    Boolean existsByCode(String code);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;            	d.id AS id,
+&nbsp;            	d.code AS departmentCode,
+&nbsp;            	d.name AS departmentName
+&nbsp;            FROM
+&nbsp;            	Department d
+&nbsp;            WHERE
+&nbsp;                d.id = :id
+&nbsp;            &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;                COUNT(d.id)
+&nbsp;            FROM
+&nbsp;                Department d
+&nbsp;            WHERE
+&nbsp;                 d.id = :id
+&nbsp;            &quot;&quot;&quot;
+&nbsp;            )
+&nbsp;    DetailDepartmentResponse getDetailDepartment(String id);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

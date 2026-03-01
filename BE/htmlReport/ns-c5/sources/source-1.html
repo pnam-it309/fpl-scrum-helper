@@ -1,0 +1,110 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAPhaseStaffProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.phase.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAPhaseStaffProjectRepository (udpm.hn.server.core.manage.phase.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAPhaseStaffProjectRepository$MockitoMock$2L7CxKC9</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseStaffProjectRepository$MockitoMock$2L7CxKC9$auxiliary$baaytYRV</td>
+  </tr>
+  <tr>
+    <td class="name">MAPhaseStaffProjectRepository$MockitoMock$2L7CxKC9$auxiliary$Sww5ofIT</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.phase.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MAPhaseStaffProjectRepository extends StaffProjectRepository {
+&nbsp;
+&nbsp;    @Query(value= &quot;&quot;&quot;
+&nbsp;        SELECT s.emailFe
+&nbsp;        FROM Staff s
+&nbsp;        JOIN StaffProject sp on sp.staff.id = s.id
+&nbsp;        JOIN Project p on p.id = sp.project.id  
+&nbsp;        JOIN PhaseProject pp on pp.project.id = p.id
+&nbsp;        WHERE pp.id = :idPhase
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;String&gt; getStaffByPhaseProject(@Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;
+&nbsp;    @Query(value= &quot;&quot;&quot;
+&nbsp;        SELECT s.email
+&nbsp;        FROM Student s
+&nbsp;        JOIN StaffProject sp on sp.student.id = s.id
+&nbsp;        JOIN Project p on p.id = sp.project.id  
+&nbsp;        JOIN PhaseProject pp on pp.project.id = p.id
+&nbsp;        WHERE pp.id = :idPhase
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;String&gt; getStudentByPhaseProject(@Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

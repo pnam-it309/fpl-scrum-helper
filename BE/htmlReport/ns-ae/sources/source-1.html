@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FacilityExtendRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.facility.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: FacilityExtendRepository (udpm.hn.server.core.admin.facility.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">FacilityExtendRepository$MockitoMock$lRuaDwXw</td>
+  </tr>
+  <tr>
+    <td class="name">FacilityExtendRepository$MockitoMock$lRuaDwXw$auxiliary$Rku224L3</td>
+  </tr>
+  <tr>
+    <td class="name">FacilityExtendRepository$MockitoMock$lRuaDwXw$auxiliary$yvLiXl5C</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.facility.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.admin.facility.model.request.ADFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.facility.model.response.ADFacilityResponse;
+&nbsp;import udpm.hn.server.entity.Facility;
+&nbsp;import udpm.hn.server.repository.FacilityRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface FacilityExtendRepository extends FacilityRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT 
+&nbsp;                ROW_NUMBER() OVER (ORDER BY fa.createdDate DESC ) AS orderNumber,
+&nbsp;                fa.id AS id, 
+&nbsp;                fa.name AS facilityName, 
+&nbsp;                fa.code AS facilityCode, 
+&nbsp;                fa.status AS facilityStatus, 
+&nbsp;                fa.createdDate AS createdDate
+&nbsp;            FROM 
+&nbsp;                Facility fa
+&nbsp;            WHERE 
+&nbsp;                (:#{#request.facilityName} IS NULL OR fa.name LIKE CONCAT(&#39;%&#39;,:#{#request.facilityName},&#39;%&#39;) 
+&nbsp;                 OR fa.code LIKE CONCAT(&#39;%&#39;,:#{#request.facilityName},&#39;%&#39;))
+&nbsp;                AND (:#{#request.facilityStatus} IS NULL OR fa.status = :#{#request.facilityStatus})
+&nbsp;                order by fa.createdDate DESC 
+&nbsp;        &quot;&quot;&quot; , countQuery = &quot;&quot;&quot;
+&nbsp;            SELECT 
+&nbsp;                COUNT(DISTINCT fa.id) 
+&nbsp;            FROM 
+&nbsp;                Facility fa
+&nbsp;            WHERE 
+&nbsp;                (:#{#request.facilityName} IS NULL OR fa.name LIKE CONCAT(&#39;%&#39;,:#{#request.facilityName},&#39;%&#39;))
+&nbsp;                AND (:#{#request.facilityStatus} IS NULL OR fa.status = :#{#request.facilityStatus})
+&nbsp;            
+&nbsp;            &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;ADFacilityResponse&gt; getAllFacility(Pageable pageable, @Param(&quot;request&quot;) ADFacilityRequest request);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                    SELECT
+&nbsp;                        fa.id AS id,
+&nbsp;                        fa.code AS facilityCode,
+&nbsp;                        fa.name AS facilityName,
+&nbsp;                        fa.status AS facilityStatus,
+&nbsp;                        fa.createdDate AS createdDate
+&nbsp;                    FROM
+&nbsp;                        Facility fa
+&nbsp;                    WHERE
+&nbsp;                        fa.id = :facilityId
+&nbsp;                    &quot;&quot;&quot;)
+&nbsp;    Optional&lt;ADFacilityResponse&gt; getDetailFacilityById(String facilityId);
+&nbsp;
+&nbsp;    List&lt;Facility&gt; findAllByName(String name);
+&nbsp;
+&nbsp;    boolean existsByNameAndIdNot(String name,String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

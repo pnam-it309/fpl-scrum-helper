@@ -1,0 +1,158 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TodoListRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: TodoListRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$tmjOvxn1</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$tmjOvxn1$auxiliary$Rq6GwbtB</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$tmjOvxn1$auxiliary$YErXYKPa</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$vSVx7BBm</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$vSVx7BBm$auxiliary$d71iS3JT</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$vSVx7BBm$auxiliary$IaT4oUva</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$Xbtt8mdB</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$Xbtt8mdB$auxiliary$aBBCPcId</td>
+  </tr>
+  <tr>
+    <td class="name">TodoListRepository$MockitoMock$Xbtt8mdB$auxiliary$Nfok6nYv</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.todotable.model.response.TodoListPhaseResponse;
+&nbsp;import udpm.hn.server.entity.TodoList;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface TodoListRepository  extends JpaRepository&lt;TodoList, String&gt; {
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(t) FROM TodoList t WHERE t.project.id = :projectId and t.status =0&quot;)
+&nbsp;    Integer countSimpleEntityByIdProject(@Param(&quot;projectId&quot;) String projectId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT MAX(t.indexTodoList) FROM TodoList t WHERE t.project.id = :idProject AND t.status =0&quot;)
+&nbsp;    Byte getIndexTodoListMax(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT MAX(t.indexTodoList) 
+&nbsp;    FROM TodoList t 
+&nbsp;    WHERE t.project.id = :idProject 
+&nbsp;      AND t.phaseProject.id = :idPhase
+&nbsp;      AND t.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Byte getIndexTodoListMaxWhereIDPHASE(
+&nbsp;            @Param(&quot;idProject&quot;) String idProject,
+&nbsp;            @Param(&quot;idPhase&quot;) String idPhase
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        select tl from TodoList tl
+&nbsp;        where tl.code = :nameTodoList and tl.StatusListTodo = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;TodoList&gt; findByCode(String nameTodoList);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    select tl from TodoList tl
+&nbsp;    join PhaseProject pp on tl.phaseProject.id = pp.id
+&nbsp;    where tl.StatusListTodo = 0 and pp.id = :id and tl.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;TodoList&gt; findByPhaseProjectId(String id);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        select 
+&nbsp;            tl.id AS todoListId,
+&nbsp;            tl.name AS todoListName
+&nbsp;        from TodoList tl
+&nbsp;        join PhaseProject pp on tl.phaseProject.id = pp.id
+&nbsp;        join Project p on tl.project.id = p.id
+&nbsp;        where tl.project.id = :idProject
+&nbsp;        and tl.phaseProject.id = :idPhase
+&nbsp;        and tl.status = 0
+&nbsp;        order by tl.indexTodoList
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;TodoListPhaseResponse&gt; getAllTodoListByPhaseProject(String idProject, String idPhase);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

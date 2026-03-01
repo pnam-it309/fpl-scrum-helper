@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADStaffRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.staff.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADStaffRepository (udpm.hn.server.core.admin.staff.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADStaffRepository$MockitoMock$i28tPlGL</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffRepository$MockitoMock$i28tPlGL$auxiliary$Je0TLjz8</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffRepository$MockitoMock$i28tPlGL$auxiliary$wIDVMXuF</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.staff.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.admin.staff.model.request.ADStaffRequest;
+&nbsp;import udpm.hn.server.core.admin.staff.model.response.StaffResponse;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ADStaffRepository extends StaffRepository {
+&nbsp;        @Query(&quot;&quot;&quot;
+&nbsp;        SELECT s.id 
+&nbsp;        FROM Staff s
+&nbsp;        LEFT JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;        LEFT JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;        LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;        LEFT JOIN Facility f ON f.id = df.facility.id
+&nbsp;        WHERE 
+&nbsp;            (:#{#req.search} IS NULL OR :#{#req.search} = &#39;&#39; OR 
+&nbsp;                s.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR 
+&nbsp;                s.code LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR 
+&nbsp;                s.emailFe LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)
+&nbsp;            )
+&nbsp;            AND (:#{#req.searchFacility} IS NULL OR :#{#req.searchFacility} = &#39;&#39; OR f.id = :#{#req.searchFacility})
+&nbsp;            AND (:status IS NULL OR s.status = :status)
+&nbsp;        ORDER BY s.createdDate DESC
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;        Page&lt;String&gt; findStaffIds(Pageable pageable, @Param(&quot;req&quot;) ADStaffRequest req, @Param(&quot;status&quot;) EntityStatus status);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;
+&nbsp;                       SELECT 
+&nbsp;                         ROW_NUMBER() OVER (ORDER BY s.createdDate DESC) AS orderNumber,
+&nbsp;                            s.id AS id,
+&nbsp;                            s.code AS codeStaff,
+&nbsp;                            s.name AS nameStaff,
+&nbsp;                            s.emailFe AS emailFe,
+&nbsp;                            s.emailFpt AS emailFpt,
+&nbsp;                            s.status AS status,
+&nbsp;                            r.name AS nameRole,
+&nbsp;                            r.id AS idRole,
+&nbsp;                            f.name AS nameFacility
+&nbsp;                       FROM Staff s
+&nbsp;                       LEFT JOIN StaffRole sr ON s.id = sr.staff.id
+&nbsp;                       LEFT JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;                       LEFT JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;                       LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                       LEFT JOIN Facility f on f.id = df.facility.id
+&nbsp;                       LEFT JOIN Role r on sr.role.id = r.id
+&nbsp;                       WHERE 
+&nbsp;                             (:#{#req.search} IS NULL
+&nbsp;                             OR :#{#req.search} = &#39;&#39;
+&nbsp;                             OR s.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)
+&nbsp;                             OR s.code LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)
+&nbsp;                             OR s.emailFe LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;))
+&nbsp;                             AND (:#{#req.searchFacility} IS NULL 
+&nbsp;                                  OR :#{#req.searchFacility} = &#39;&#39; 
+&nbsp;                                  OR f.id = :#{#req.searchFacility})
+&nbsp;                             AND (:status IS NULL OR s.status = :status)
+&nbsp;                       ORDER BY s.createdDate DESC
+&nbsp;                    &quot;&quot;&quot;,
+&nbsp;            countQuery = &quot;&quot;&quot;
+&nbsp;       SELECT COUNT(DISTINCT s.id)
+&nbsp;       FROM Staff s
+&nbsp;       LEFT JOIN StaffRole sr ON s.id = sr.staff.id
+&nbsp;       LEFT JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;       LEFT JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;       LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;       LEFT JOIN Facility f on f.id = df.facility.id
+&nbsp;       LEFT JOIN Role r on sr.role.id = r.id
+&nbsp;       WHERE 
+&nbsp;             (:#{#req.search} IS NULL
+&nbsp;             OR :#{#req.search} = &#39;&#39;
+&nbsp;             OR s.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)
+&nbsp;             OR s.code LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)
+&nbsp;             OR s.emailFe LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;))
+&nbsp;             AND (:#{#req.searchFacility} IS NULL 
+&nbsp;                  OR :#{#req.searchFacility} = &#39;&#39; 
+&nbsp;                  OR f.id = :#{#req.searchFacility})
+&nbsp;             AND (:status IS NULL OR s.status = :status)
+&nbsp;       ORDER BY s.createdDate DESC
+&nbsp;    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;StaffResponse&gt; getAllStaff(Pageable pageable, @Param(&quot;req&quot;) ADStaffRequest req, @Param(&quot;status&quot;) EntityStatus status);
+&nbsp;        @Query(&quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            s.id AS id,
+&nbsp;            s.code AS codeStaff,
+&nbsp;            s.name AS nameStaff,
+&nbsp;            s.emailFe AS emailFe,
+&nbsp;            s.emailFpt AS emailFpt,
+&nbsp;            s.status AS status,
+&nbsp;            r.name AS nameRole,
+&nbsp;            r.id AS idRole,
+&nbsp;            f.name AS nameFacility
+&nbsp;        FROM Staff s
+&nbsp;        LEFT JOIN StaffRole sr ON s.id = sr.staff.id
+&nbsp;        LEFT JOIN Role r ON sr.role.id = r.id
+&nbsp;        LEFT JOIN StaffMajorFacility smf ON s.id = smf.staff.id
+&nbsp;        LEFT JOIN MajorFacility mf ON smf.majorFacility.id = mf.id
+&nbsp;        LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;        LEFT JOIN Facility f ON f.id = df.facility.id
+&nbsp;        WHERE s.id IN :ids
+&nbsp;        ORDER BY s.createdDate DESC
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;        List&lt;StaffResponse&gt; findStaffDetailsByIds(@Param(&quot;ids&quot;) List&lt;String&gt; ids);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        
+&nbsp;        select
+&nbsp;            s.id as id,
+&nbsp;            s.code as codeStaff,
+&nbsp;            s.name as nameStaff,
+&nbsp;            s.emailFe as emailFe,
+&nbsp;            s.emailFpt as emailFpt,
+&nbsp;            s.status as status
+&nbsp;        from
+&nbsp;            Staff s
+&nbsp;        where
+&nbsp;            s.id = :id               
+&nbsp;        &quot;&quot;&quot; )
+&nbsp;    Optional&lt;StaffResponse&gt; findByIdStaff(@Param(&quot;id&quot;) String id);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT     
+&nbsp;        S.id as id,
+&nbsp;            S.picture as image,
+&nbsp;            S.code as codeStaff,
+&nbsp;            S.name as nameStaff,
+&nbsp;            S.emailFe as emailFe,
+&nbsp;            S.emailFpt as emailFpt,
+&nbsp;            S.status as status
+&nbsp;        FROM Staff S                    
+&nbsp;        LEFT JOIN StaffProject sp ON S = sp.staff
+&nbsp;        WHERE sp.id IS NULL
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffResponse&gt; getAllStaffNoProject();
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByCode(String code);
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFe(String emailFe);
+&nbsp;
+&nbsp;    Optional&lt;Staff&gt; findByEmailFpt(String emailFPT);
+&nbsp;
+&nbsp;    Boolean existsByEmailFe(String emailFe);
+&nbsp;
+&nbsp;    Boolean existsByEmailFpt(String emailFpt);
+&nbsp;
+&nbsp;    Boolean existsByCode(String code);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(st) FROM Staff st&quot;)
+&nbsp;    Long countAllStaff();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

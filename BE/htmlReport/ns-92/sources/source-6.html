@@ -1,0 +1,132 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MATodoProjectResponse</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.model.response</a>
+</div>
+
+<h1>Coverage Summary for Class: MATodoProjectResponse (udpm.hn.server.core.manage.project.model.response)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$1OhswIm9</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$1OhswIm9$auxiliary$4brP7ECh</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$1OhswIm9$auxiliary$CjyAGska</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$VY4LKW3L</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$VY4LKW3L$auxiliary$nsRoJUzK</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoProjectResponse$MockitoMock$VY4LKW3L$auxiliary$yCX89bg6</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.model.response;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonRawValue;
+&nbsp;import udpm.hn.server.infrastructure.constant.PriorityLevel;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MATodoProjectResponse {
+&nbsp;
+&nbsp;    String getOrderNumber();
+&nbsp;
+&nbsp;    String getIdTodo();
+&nbsp;
+&nbsp;    String getNameTodo();
+&nbsp;
+&nbsp;    String getDeadline();
+&nbsp;
+&nbsp;    String getDescriptionsTodo();
+&nbsp;
+&nbsp;    StatusTodo getStatusTodo();
+&nbsp;
+&nbsp;    String getNamePhaseProject();
+&nbsp;
+&nbsp;    List&lt;MaPhaseProjectResponse&gt; getPhaseProject();
+&nbsp;
+&nbsp;    String getPicture();
+&nbsp;
+&nbsp;    String getEmail();
+&nbsp;
+&nbsp;    PriorityLevel getPriorityLevel();
+&nbsp;
+&nbsp;    String getCreatedDate();
+&nbsp;
+&nbsp;    String getLastModifiedDate();
+&nbsp;
+&nbsp;    String getPhaseId();
+&nbsp;
+&nbsp;    String getProjectId();
+&nbsp;
+&nbsp;    @JsonRawValue
+&nbsp;    String getStudents();
+&nbsp;
+&nbsp;    @JsonRawValue
+&nbsp;    String getStaff();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

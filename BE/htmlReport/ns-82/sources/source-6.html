@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HistoryLogUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: HistoryLogUtils (udpm.hn.server.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HistoryLogUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.utils;
+&nbsp;
+&nbsp;import lombok.Setter;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.transaction.annotation.Propagation;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import udpm.hn.server.entity.HistoryImport;
+&nbsp;import udpm.hn.server.infrastructure.constant.LogFileType;
+&nbsp;import udpm.hn.server.infrastructure.constant.LogType;
+&nbsp;import udpm.hn.server.repository.FacilityRepository;
+&nbsp;import udpm.hn.server.repository.HistoryImportRepository;
+&nbsp;import udpm.hn.server.repository.RoleRepository;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class HistoryLogUtils {</b>
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private HistoryImportRepository historyImportRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private FacilityRepository facilityRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private RoleRepository roleRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private StaffRepository staffRepository;
+&nbsp;
+&nbsp;//    @Setter(onMethod_ = {@Autowired})
+&nbsp;//    private SessionHelper sessionHelper;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private UserContextHelper userContextHelper;
+&nbsp;
+&nbsp;    public void logErrorRecord(String message, String fileName) {
+<b class="nc">&nbsp;        HistoryImport historyImport = new HistoryImport();</b>
+&nbsp;//        historyImport.setFileName(fileName);
+&nbsp;//        historyImport.setFacility(facilityRepository.getReferenceById(userContextHelper.getCurrentIdFacility()));
+&nbsp;//        historyImport.setMessage(message);
+&nbsp;//        historyImport.setStaff(staffRepository.getReferenceById(userContextHelper.getCurrentUserId()));
+&nbsp;//        historyImport.setType(LogType.ERROR);
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+&nbsp;//    public void logErrorRecord(
+&nbsp;//            String message,
+&nbsp;//            String fileName,
+&nbsp;//            String staffId,
+&nbsp;//            LogFileType logFileType
+&nbsp;//    ) {
+&nbsp;//        HistoryImport historyImport = new HistoryImport();
+&nbsp;//        historyImport.setFileName(fileName);
+&nbsp;//        historyImport.setMessage(message);
+&nbsp;//        historyImport.setStaff(staffRepository.getReferenceById(staffId));
+&nbsp;//        historyImport.setType(LogType.ERROR);
+&nbsp;//        historyImport.setLogFileType(logFileType);
+&nbsp;//
+&nbsp;////        List&lt;Role&gt; roles = roleRepository.findRoleByStaff(staffId);
+&nbsp;////        if (!roles.isEmpty()) {
+&nbsp;////            historyImport.setRole(roles.get(0)); // Lưu 1 role chính
+&nbsp;////        }
+&nbsp;//
+&nbsp;//        historyImportRepository.save(historyImport);
+&nbsp;//    }
+&nbsp;//
+&nbsp;//
+&nbsp;//    public void logSuccessRecord(String message, String fileName) {
+&nbsp;//        HistoryImport historyImport = new HistoryImport();
+&nbsp;//        historyImport.setFileName(fileName);
+&nbsp;//        historyImport.setFacility(facilityRepository.getReferenceById(userContextHelper.getCurrentIdFacility()));
+&nbsp;//        historyImport.setMessage(message);
+&nbsp;//        historyImport.setStaff(staffRepository.getReferenceById(userContextHelper.getCurrentUserId()));
+&nbsp;//        historyImport.setType(LogType.SUCCESS);
+&nbsp;//        historyImportRepository.save(historyImport);
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    public List&lt;HistoryImport&gt; getHistoryImport() {
+&nbsp;//        return historyImportRepository.findAll();
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    public List&lt;HistoryImport&gt; getHistoryImportByFacilityIdAndStaffIdAndFileType(
+&nbsp;//
+&nbsp;//            String staffId,
+&nbsp;//            LogFileType logFileType
+&nbsp;//    ) {
+&nbsp;//        List&lt;HistoryImport&gt; historyImportList = historyImportRepository.findAllByStaff_IdAndLogFileType(
+&nbsp;//                staffId,
+&nbsp;//                logFileType
+&nbsp;//        );
+&nbsp;//
+&nbsp;//        return historyImportList
+&nbsp;//                .stream()
+&nbsp;//                .sorted((o1, o2) -&gt; o2.getCreatedDate().compareTo(o1.getCreatedDate()))
+&nbsp;//                .toList();
+&nbsp;//    }
+&nbsp;
+&nbsp;
+&nbsp;}}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

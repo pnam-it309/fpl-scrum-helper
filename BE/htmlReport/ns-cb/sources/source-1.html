@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAUserProject</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.user.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAUserProject (udpm.hn.server.core.manage.user.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$PBq8zYOZ</td>
+  </tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$PBq8zYOZ$auxiliary$OACgA7qn</td>
+  </tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$PBq8zYOZ$auxiliary$XoMXdhwE</td>
+  </tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$Q38FgWQh</td>
+  </tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$Q38FgWQh$auxiliary$eJGbmEYS</td>
+  </tr>
+  <tr>
+    <td class="name">MAUserProject$MockitoMock$Q38FgWQh$auxiliary$OOA6HvDX</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.user.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.user.model.request.MAUserRequest;
+&nbsp;import udpm.hn.server.core.manage.user.model.response.MAUserProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.user.model.response.MAUserResponse;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MAUserProject extends StaffProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select s.id as idStaff,
+&nbsp;                    s.code as codeStaff,
+&nbsp;                    s.name as nameStaff,
+&nbsp;                    s2.id as idStudent,
+&nbsp;                    s2.code as codeStudent,
+&nbsp;                    s2.name as nameStudent
+&nbsp;                    from StaffProject sp 
+&nbsp;                    left join Staff s on sp.staff.id = s.id
+&nbsp;                    left join Student s2 on sp.student.id = s2.id
+&nbsp;                    join Project p on sp.project.id = p.id
+&nbsp;                    where sp.status = 0 and p.id = :idProject
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MAUserProjectResponse&gt; listUserProject(Pageable pageable, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select s.id as idStaff,
+&nbsp;                    s.code as codeStaff,
+&nbsp;                    s.name as nameStaff,
+&nbsp;                    s2.id as idStudent,
+&nbsp;                    s2.code as codeStudent,
+&nbsp;                    s2.name as nameStudent,
+&nbsp;                    p.code as codeProject,
+&nbsp;                    p.name as nameProject,
+&nbsp;                    sp.id as idStaffProject
+&nbsp;                    from StaffProject sp 
+&nbsp;                    left join Staff s on sp.staff.id = s.id
+&nbsp;                    left join Student s2 on sp.student.id = s2.id
+&nbsp;                    join Project p on sp.project.id = p.id
+&nbsp;                    where sp.status = 0 and p.id = :idProject and sp.id = :idStaffProject
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;MAUserProjectResponse&gt; listUser(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;idStaffProject&quot;) String idStaffProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select
+&nbsp;            case
+&nbsp;                when s.id is not null then s.name
+&nbsp;                else s2.name
+&nbsp;            end as name,
+&nbsp;            case
+&nbsp;                when s.id is not null then s.code
+&nbsp;                else s2.code
+&nbsp;            end as code,
+&nbsp;            cast(sp.role as string) as role,
+&nbsp;            case
+&nbsp;                when s.id is not null then s.emailFpt
+&nbsp;                else s2.email
+&nbsp;            end as email,
+&nbsp;            (select count(t.id)
+&nbsp;             from Assign a
+&nbsp;             join Todo t on a.todo.id = t.id
+&nbsp;             where a.staffProject.id = sp.id
+&nbsp;               and t.statusTodo in (
+&nbsp;                   udpm.hn.server.infrastructure.constant.StatusTodo.DA_HOAN_THANH,
+&nbsp;                   udpm.hn.server.infrastructure.constant.StatusTodo.HOAN_THANH_SOM,
+&nbsp;                   udpm.hn.server.infrastructure.constant.StatusTodo.QUA_HAN
+&nbsp;               )
+&nbsp;            ) as countTodo,
+&nbsp;            (select count(t.id)
+&nbsp;             from Assign a
+&nbsp;             join PhaseTodoProject ptp on a.todo.id = ptp.todo.id
+&nbsp;             join Todo t on a.todo.id = t.id
+&nbsp;             where a.staffProject.id = sp.id and ptp.phaseProject.id = :idPhase
+&nbsp;             and (t.statusTodo = udpm.hn.server.infrastructure.constant.StatusTodo.DA_HOAN_THANH OR t.statusTodo = udpm.hn.server.infrastructure.constant.StatusTodo.HOAN_THANH_SOM)) as countCompletedTodo,
+&nbsp;            (select count(a.id)
+&nbsp;             from Assign a
+&nbsp;             join PhaseTodoProject ptp on a.todo.id = ptp.todo.id
+&nbsp;             where a.staffProject.id = sp.id and ptp.phaseProject.id = :idPhase) as countTodoByPhase,
+&nbsp;            p.code as codeProject,
+&nbsp;            sp.id as idStaffProject
+&nbsp;        from StaffProject sp
+&nbsp;        left join Staff s on sp.staff.id = s.id
+&nbsp;        left join Student s2 on sp.student.id = s2.id
+&nbsp;        join Project p on sp.project.id = p.id
+&nbsp;        where sp.status = 0 and p.id = :idProject
+&nbsp;          AND (
+&nbsp;                :#{#req.search} IS NULL OR
+&nbsp;                (
+&nbsp;                  (s.id IS NOT NULL AND (s.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR s.code LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR s.emailFpt LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR s.emailFe LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;)) OR
+&nbsp;                  (s2.id IS NOT NULL AND (s2.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR s2.code LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) OR s2.email LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;))
+&nbsp;                )
+&nbsp;            )))
+&nbsp;            
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Page&lt;MAUserResponse&gt; getListUser(Pageable pageable,
+&nbsp;                                     @Param(&quot;idProject&quot;) String idProject,
+&nbsp;                                     @Param(&quot;idPhase&quot;) String idPhase,
+&nbsp;                                     @Param(&quot;req&quot;) MAUserRequest req);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

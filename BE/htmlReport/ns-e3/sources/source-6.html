@@ -1,0 +1,482 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$0FncGRJ4</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$0FncGRJ4$auxiliary$4FqdWjWm</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$0FncGRJ4$auxiliary$DRJJQfaV</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$66HfJDff</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$66HfJDff$auxiliary$i4llrA7S</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$66HfJDff$auxiliary$LdUC2M33</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$9xCcnooR</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$9xCcnooR$auxiliary$AeXaqRfp</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$9xCcnooR$auxiliary$bBgFocuX</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$BGVE7A9A</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$BGVE7A9A$auxiliary$6MD0WOqk</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$BGVE7A9A$auxiliary$JS3GSKYX</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$ckgQQkv6</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$ckgQQkv6$auxiliary$7jjF14oO</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$ckgQQkv6$auxiliary$JvnVjbGs</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$LHhX5llv</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$LHhX5llv$auxiliary$4x5pGSQu</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$LHhX5llv$auxiliary$neJnrcBS</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$tKDpAI35</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$tKDpAI35$auxiliary$4xXmJ3Rp</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$tKDpAI35$auxiliary$tHWwIoCZ</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$wLwsvEy7</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$wLwsvEy7$auxiliary$dMxV7Chg</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$wLwsvEy7$auxiliary$i5zVGIYj</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$z8qGKFEF</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$z8qGKFEF$auxiliary$oUFWkU79</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoRepository$MockitoMock$z8qGKFEF$auxiliary$z7sOg7gC</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.springframework.data.jpa.repository.Modifying;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeFilterTodoRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeTodoChildResponse;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeTodoResponse;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.entity.TodoList;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MBMeTodoRepository extends ToDoRepository {
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT a.id AS id, 
+&nbsp;           a.code AS code, 
+&nbsp;           a.name AS name, 
+&nbsp;           a.completionTime AS completionTime, 
+&nbsp;           a.priorityLevel AS priorityLevel, 
+&nbsp;           a.deadline AS deadline, 
+&nbsp;           round( a.progress)AS progress, 
+&nbsp;           a.indexTodo AS indexTodo, 
+&nbsp;           a.urlImage AS urlImage,
+&nbsp;           a.imageId AS imageId,
+&nbsp;              t.type AS typeTodo,
+&nbsp;           (SELECT COUNT(g) FROM Todo g WHERE g.todoList.id = a.todoList.id) AS numberTodo,
+&nbsp;           (SELECT COUNT(g) FROM Todo g WHERE g.todoList.id = a.todoList.id AND g.statusTodo = 1) AS numberTodoComplete,
+&nbsp;           a.todoList.id AS todoListId
+&nbsp;    FROM Todo a
+&nbsp;    LEFT JOIN a.typeTodo t
+&nbsp;    JOIN PhaseTodoProject b ON a.id = b.todo.id
+&nbsp;    JOIN PhaseProject c ON b.phaseProject.id = c.id
+&nbsp;    WHERE a.todoList.id = :#{#req.idTodoList}
+&nbsp;    AND c.id = :#{#req.idPhase}
+&nbsp;    AND a.status =0 
+&nbsp;    AND a.todoList.status =0
+&nbsp;    ORDER BY a.indexTodo
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeTodoResponse&gt; getToDoByPeriodAndIdTodoList(@Param(&quot;req&quot;) MBMeFilterTodoRequest req);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t
+&nbsp;    FROM TodoList t
+&nbsp;    WHERE t.project.id = :projectId 
+&nbsp;      AND t.phaseProject.id = :phaseId
+&nbsp;      AND t.status = 0
+&nbsp;    ORDER BY t.indexTodoList
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;TodoList&gt; findAllByProjectIdAndPhaseIdOrderByIndexTodoList(
+&nbsp;            @Param(&quot;projectId&quot;) String projectId,
+&nbsp;            @Param(&quot;phaseId&quot;) String phaseId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE Todo t
+&nbsp;    SET t.indexTodo = t.indexTodo - 1
+&nbsp;    WHERE t.indexTodo &gt; :indexBefore AND t.indexTodo &lt;= :indexAfter
+&nbsp;    AND t.todoList.id = :idTodoList
+&nbsp;    AND t.status = 0 
+&nbsp;    AND EXISTS (
+&nbsp;              SELECT 1 FROM PhaseTodoProject pt
+&nbsp;              WHERE pt.todo.id = t.id AND pt.phaseProject.id = :idPhase
+&nbsp;    )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoDecs(@Param(&quot;indexBefore&quot;) Short indexBefore,
+&nbsp;                             @Param(&quot;indexAfter&quot;) Short indexAfter,
+&nbsp;                             @Param(&quot;idPhase&quot;) String idPhase,
+&nbsp;                             @Param(&quot;idTodoList&quot;) String idTodoList);
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE Todo t
+&nbsp;    SET t.indexTodo = t.indexTodo + 1
+&nbsp;    WHERE t.indexTodo &lt; :indexBefore AND t.indexTodo &gt;= :indexAfter
+&nbsp;    AND t.todoList.id = :idTodoList
+&nbsp;    AND t.status = 0
+&nbsp;    AND EXISTS (
+&nbsp;              SELECT 1 FROM PhaseTodoProject pt
+&nbsp;              WHERE pt.todo.id = t.id AND pt.phaseProject.id = :idPhase
+&nbsp;          )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoAsc(@Param(&quot;indexBefore&quot;) Short indexBefore,
+&nbsp;                            @Param(&quot;indexAfter&quot;) Short indexAfter,
+&nbsp;                            @Param(&quot;idPhase&quot;) String idPhase,
+&nbsp;                            @Param(&quot;idTodoList&quot;) String idTodoList);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT COUNT(t.id)
+&nbsp;    FROM Todo t
+&nbsp;    WHERE t.todoList.id = :idTodoList
+&nbsp;   AND t.status = 0
+&nbsp;   AND EXISTS (
+&nbsp;              SELECT 1 FROM PhaseTodoProject pt
+&nbsp;              WHERE pt.todo.id = t.id AND pt.phaseProject.id = :idPhase
+&nbsp;    )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Short countTodoInTodoList(@Param(&quot;idTodoList&quot;) String idTodoList,
+&nbsp;                              @Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE Todo t
+&nbsp;    SET t.indexTodo = t.indexTodo - 1
+&nbsp;    WHERE t.todoList.id = :idTodoList
+&nbsp;    AND t.indexTodo &gt; :indexBefore
+&nbsp;    AND t.status = 0
+&nbsp;    AND EXISTS (
+&nbsp;              SELECT 1 FROM PhaseTodoProject pt
+&nbsp;              WHERE pt.todo.id = t.id AND pt.phaseProject.id = :idPhase
+&nbsp;    )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoInTodoListOld(@Param(&quot;idTodoList&quot;) String idTodoList,
+&nbsp;                                      @Param(&quot;idPhase&quot;) String idPhase,
+&nbsp;                                      @Param(&quot;indexBefore&quot;) Short indexBefore);
+&nbsp;
+&nbsp;    @Modifying
+&nbsp;    @Transactional
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    UPDATE Todo t
+&nbsp;    SET t.indexTodo = t.indexTodo + 1
+&nbsp;    WHERE t.todoList.id = :idTodoList
+&nbsp;    AND t.indexTodo &gt;= :indexAfter
+&nbsp;    AND t.id != :idTodo
+&nbsp;    AND t.status = 0
+&nbsp;    AND EXISTS (
+&nbsp;              SELECT 1 FROM PhaseTodoProject pt
+&nbsp;              WHERE pt.todo.id = t.id AND pt.phaseProject.id = :idPhase
+&nbsp;    )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    void updateIndexTodoInTodoListNew(@Param(&quot;idTodoList&quot;) String idTodoList,
+&nbsp;                                      @Param(&quot;idPhase&quot;) String idPhase,
+&nbsp;                                      @Param(&quot;indexAfter&quot;) Short indexAfter,
+&nbsp;                                      @Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;
+&nbsp;    boolean existsByTodoList_Id(String todoListId);
+&nbsp;
+&nbsp;    boolean existsByTodoList_IdAndStatus(String todoListId, EntityStatus status);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        t.id AS id,
+&nbsp;        t.code AS code,
+&nbsp;        t.name AS name,
+&nbsp;        t.completionTime AS completionTime,
+&nbsp;        t.priorityLevel AS priorityLevel,
+&nbsp;        t.deadline AS deadline,
+&nbsp;        t.progress AS progress,
+&nbsp;        t.indexTodo AS indexTodo,
+&nbsp;        i.id AS imageId,
+&nbsp;        i.name AS nameFile,
+&nbsp;        t.todoList.id AS todoListId,
+&nbsp;        
+&nbsp;        (SELECT COUNT(tc) FROM TodoChild tc WHERE tc.todo.id = :idTodo) AS numberTodo,
+&nbsp;        (SELECT COUNT(tc) FROM TodoChild tc WHERE tc.todo.id = :idTodo AND tc.statusTodoChild = 0) AS numberTodoComplete
+&nbsp;        
+&nbsp;    FROM Todo t
+&nbsp;    LEFT JOIN Image i ON i.todo.id = t.id
+&nbsp;    WHERE t.id = :idTodo
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    MBMeTodoResponse findTodoDetailById(@Param(&quot;idTodo&quot;) String idTodo);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT
+&nbsp;            tc.id AS id,
+&nbsp;            tc.code AS code,
+&nbsp;            tc.name AS name,   
+&nbsp;            tc.status AS status,
+&nbsp;             tc.statusTodoChild as statusTodoChild      
+&nbsp;        FROM TodoChild tc
+&nbsp;        WHERE tc.todo.id = :todoId 
+&nbsp;        AND tc.status = 0
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeTodoChildResponse&gt; getAllCheckTodoChild(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT COUNT(tc)
+&nbsp;        FROM TodoChild tc
+&nbsp;        WHERE tc.todo.id = :todoId
+&nbsp;        AND tc.status = 0
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Short countByTodoChildId(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT COUNT(tc)
+&nbsp;        FROM TodoChild tc
+&nbsp;        WHERE tc.todo.id = :todoId 
+&nbsp;        AND tc.statusTodoChild = 1
+&nbsp;        AND tc.status = 0
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    Short countCompletedByTodoChildId(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(t) FROM Todo t WHERE t.id = :todoId&quot;)
+&nbsp;    Short countTodoInCheckList(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(c) FROM Comment c WHERE c.todo.id = :todoId AND c.status = 0&quot;)
+&nbsp;    Integer countCommentByIdTodo(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(r) FROM Resource r WHERE r.todo.id = :todoId AND r.status =0&quot;)
+&nbsp;    Integer countResourceByIdTodo(@Param(&quot;todoId&quot;) String todoId);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.priorityLevel ASC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoPriorityASC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.priorityLevel DESC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoPriorityDESC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.deadline ASC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoDeadlineASC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.deadline DESC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoDeadlineDESC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.createdDate ASC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoCreateDateASC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.createdDate DESC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoCreateDateDESC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.name ASC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoNameASC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.name DESC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoNameDESC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.progress ASC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoProgressASC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT t 
+&nbsp;    FROM Todo t 
+&nbsp;    WHERE t.todoList = :todoList 
+&nbsp;      AND t.todoList.phaseProject.id = :phaseProjectId 
+&nbsp;    ORDER BY t.progress DESC
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Todo&gt; findTodoSortTodoProgressDESC(
+&nbsp;            @Param(&quot;todoList&quot;) TodoList todoList,
+&nbsp;            @Param(&quot;phaseProjectId&quot;) String phaseProjectId
+&nbsp;    );
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

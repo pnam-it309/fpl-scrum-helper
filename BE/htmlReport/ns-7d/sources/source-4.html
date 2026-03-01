@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OAuth2AuthenticationSuccessHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.oauth2</a>
+</div>
+
+<h1>Coverage Summary for Class: OAuth2AuthenticationSuccessHandler (udpm.hn.server.infrastructure.security.oauth2)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OAuth2AuthenticationSuccessHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.1%
+  </span>
+  <span class="absValue">
+    (2/28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.oauth2;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.JsonProcessingException;
+&nbsp;import jakarta.servlet.http.Cookie;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.coyote.BadRequestException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.infrastructure.constant.CookieConstant;
+&nbsp;import udpm.hn.server.infrastructure.constant.OAuth2Constant;
+&nbsp;import udpm.hn.server.infrastructure.exception.RedirectException;
+&nbsp;import udpm.hn.server.infrastructure.security.response.TokenUriResponse;
+&nbsp;import udpm.hn.server.infrastructure.security.service.RefreshTokenService;
+&nbsp;import udpm.hn.server.infrastructure.security.service.TokenProvider;
+&nbsp;import udpm.hn.server.utils.CookieUtils;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.MalformedURLException;
+&nbsp;import java.net.URISyntaxException;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{</b>
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private TokenProvider tokenProvider;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private RefreshTokenService refreshTokenService;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+&nbsp;
+&nbsp;    @Value(&quot;${frontend.url}&quot;)
+&nbsp;    private String DEFAULT_TARGET_URL_TUTOR_CLIENT;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void onAuthenticationSuccess(
+&nbsp;            HttpServletRequest request,
+&nbsp;            HttpServletResponse response,
+&nbsp;            Authentication authentication
+&nbsp;    ) throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;Đã chạy vào success khi đăng nhập thành công&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        String targetUrl = determineTargetUrl(request, response, authentication);</b>
+<b class="nc">&nbsp;        if (response.isCommitted()) {</b>
+<b class="nc">&nbsp;            logger.debug(&quot;Response has already been committed. Unable to redirect to &quot; + targetUrl);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        clearAuthenticationAttributes(request, response);</b>
+<b class="nc">&nbsp;        getRedirectStrategy().sendRedirect(request, response, targetUrl);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected String determineTargetUrl(
+&nbsp;            HttpServletRequest request,
+&nbsp;            HttpServletResponse response,
+&nbsp;            Authentication authentication
+&nbsp;    ) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Optional&lt;String&gt; redirectUri = CookieUtils.getCookie(request, OAuth2Constant.REDIRECT_URI_PARAM_COOKIE_NAME)</b>
+<b class="nc">&nbsp;                    .map(Cookie::getValue);</b>
+<b class="nc">&nbsp;            if (redirectUri.isEmpty()) throw new RedirectException(&quot;Redirect uri not found! Please try again later!&quot;);</b>
+<b class="nc">&nbsp;            String targetUrl = redirectUri.orElse(getDefaultTargetUrl());</b>
+<b class="nc">&nbsp;            String token = tokenProvider.createToken(authentication);</b>
+<b class="nc">&nbsp;            String refreshToken = refreshTokenService.createRefreshToken(authentication).getRefreshToken();</b>
+<b class="nc">&nbsp;            return buildSuccessUrl(targetUrl, TokenUriResponse.getState(token, refreshToken));</b>
+&nbsp;        } catch (RedirectException e) {
+<b class="nc">&nbsp;            e.printStackTrace(System.out);</b>
+<b class="nc">&nbsp;            return buildErrorUri(request, response, e.getMessage());</b>
+&nbsp;        } catch (BadRequestException | JsonProcessingException | MalformedURLException | URISyntaxException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
+<b class="nc">&nbsp;        super.clearAuthenticationAttributes(request);</b>
+<b class="nc">&nbsp;        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String buildErrorUri(HttpServletRequest request, HttpServletResponse response, String message) {
+<b class="nc">&nbsp;        Optional&lt;String&gt; redirectUri = CookieUtils.getCookie(request, OAuth2Constant.REDIRECT_URI_PARAM_COOKIE_NAME)</b>
+<b class="nc">&nbsp;                .map(Cookie::getValue);</b>
+<b class="nc">&nbsp;        if (message.equalsIgnoreCase(CookieConstant.ACCOUNT_NOT_EXIST)) {</b>
+<b class="nc">&nbsp;            CookieUtils.addCookie(response, CookieConstant.ACCOUNT_NOT_EXIST, CookieConstant.ACCOUNT_NOT_EXIST);</b>
+<b class="nc">&nbsp;        } else if (message.equalsIgnoreCase(CookieConstant.ACCOUNT_NOT_HAVE_PERMISSION)) {</b>
+<b class="nc">&nbsp;            CookieUtils.addCookie(response, CookieConstant.ACCOUNT_NOT_HAVE_PERMISSION, CookieConstant.ACCOUNT_NOT_HAVE_PERMISSION);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return redirectUri.orElse(DEFAULT_TARGET_URL_TUTOR_CLIENT);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String buildSuccessUrl(String targetUrl, String token) throws MalformedURLException, URISyntaxException {
+<b class="nc">&nbsp;        return targetUrl + &quot;?state=&quot; + token;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

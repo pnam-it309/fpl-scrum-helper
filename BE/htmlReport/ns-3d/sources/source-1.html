@@ -1,0 +1,373 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BurndownServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.chart.burndown.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: BurndownServiceImpl (udpm.hn.server.core.member.chart.burndown.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BurndownServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53.1%
+  </span>
+  <span class="absValue">
+    (17/32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65.7%
+  </span>
+  <span class="absValue">
+    (69/105)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BurndownServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53.1%
+  </span>
+  <span class="absValue">
+    (17/32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65.7%
+  </span>
+  <span class="absValue">
+    (69/105)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.chart.burndown.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.model.request.BurndownDailyRequest;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.model.request.BurndownPoint;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.model.request.BurndownRequest;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.repository.PhaseBurndownRepository;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.repository.TodoCountRepository;
+&nbsp;import udpm.hn.server.core.member.chart.burndown.service.BurndownService;
+&nbsp;import udpm.hn.server.entity.PhaseProject;
+&nbsp;import udpm.hn.server.entity.Project;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.ZoneId;
+&nbsp;import java.time.temporal.ChronoUnit;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class BurndownServiceImpl implements BurndownService {
+&nbsp;
+&nbsp;    private final PhaseBurndownRepository phaseBurndownRepository;
+&nbsp;
+&nbsp;    private final TodoCountRepository todoCountRepository;
+&nbsp;
+&nbsp;    private final ToDoRepository toDoRepository;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; burnDownChart( String idProject, String idPhase) {
+<b class="fc">&nbsp;        Long durationDays = phaseBurndownRepository.calculatePhaseDurationDays(idPhase, idProject);</b>
+<b class="pc">&nbsp;        if (durationDays == null || durationDays == 0) {</b>
+<b class="fc">&nbsp;            return ResponseObject.errorForward(&quot;Thời gian phase không hợp lệ hoặc bằng 0.&quot;, HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        PhaseProject phase = phaseBurndownRepository</b>
+<b class="fc">&nbsp;                .findByIdAndProjectId(idPhase, idProject)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Không tìm thấy phase hoặc project.&quot;));</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Long totalTasks = todoCountRepository.countTodosByPhaseProject(idPhase);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;StatusTodo&gt; completedStatuses = List.of(StatusTodo.DA_HOAN_THANH, StatusTodo.HOAN_THANH_SOM,StatusTodo.QUA_HAN);</b>
+<b class="fc">&nbsp;        Long totalCompleted = todoCountRepository.countCompletedTasksByPhaseAndProject(idProject, idPhase, completedStatuses);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;StatusTodo&gt; remainingStatuses = List.of(StatusTodo.CHUA_HOAN_THANH);</b>
+<b class="fc">&nbsp;        Long remainingTasks = todoCountRepository.countRemainingTasksByPhaseAndProject(idProject, idPhase, remainingStatuses);</b>
+&nbsp;
+<b class="fc">&nbsp;        Double estimatedPerDay = BigDecimal.valueOf((double) totalTasks / durationDays)</b>
+<b class="fc">&nbsp;                .setScale(2, RoundingMode.HALF_UP)</b>
+<b class="fc">&nbsp;                .doubleValue();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Long&gt; completedPerDay = todoCountRepository.countCompletedTasksPerDay(idProject, idPhase, completedStatuses);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;BurndownDailyRequest&gt; byDate = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        LocalDate startDate = Instant.ofEpochMilli(phase.getStartTime())</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault()).toLocalDate();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; durationDays; i++) {</b>
+<b class="fc">&nbsp;            String currentDate = startDate.plusDays(i).toString();</b>
+<b class="pc">&nbsp;            Long realityCount = (i &lt; completedPerDay.size()) ? completedPerDay.get(i) : 0L;</b>
+&nbsp;
+<b class="fc">&nbsp;            BurndownDailyRequest daily = new BurndownDailyRequest(</b>
+&nbsp;                    currentDate,
+&nbsp;                    estimatedPerDay,
+&nbsp;                    realityCount,
+&nbsp;                    totalCompleted,
+&nbsp;                    remainingTasks
+&nbsp;            );
+<b class="fc">&nbsp;            byDate.add(daily);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        BurndownRequest response = new BurndownRequest();</b>
+<b class="fc">&nbsp;        response.setEstimatedNumberOfTasks(estimatedPerDay);</b>
+<b class="fc">&nbsp;        response.setReality(completedPerDay);</b>
+<b class="fc">&nbsp;        response.setTotalActual(totalCompleted);</b>
+<b class="fc">&nbsp;        response.setRemaining(remainingTasks);</b>
+<b class="fc">&nbsp;        response.setByDate(byDate);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(response, HttpStatus.OK, &quot;OK&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getBurndownDataStoryPoint(String projectId, String phaseId) {
+<b class="fc">&nbsp;        PhaseProject phase = phaseBurndownRepository.findById(String.valueOf(UUID.fromString(phaseId)))</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Phase not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        LocalDate start = Instant.ofEpochMilli(phase.getStartTime())</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault()).toLocalDate();</b>
+<b class="fc">&nbsp;        LocalDate end = Instant.ofEpochMilli(phase.getEndTime())</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault()).toLocalDate();</b>
+<b class="fc">&nbsp;        int days = (int) ChronoUnit.DAYS.between(start, end);</b>
+&nbsp;
+<b class="fc">&nbsp;        int totalPoint = Optional.ofNullable(</b>
+<b class="fc">&nbsp;                toDoRepository.getTotalStoryPointByPhaseAndProject(projectId, phaseId)</b>
+<b class="fc">&nbsp;        ).orElse(0);</b>
+<b class="pc">&nbsp;        int pointPerDay = days &gt; 0 ? totalPoint / days : totalPoint;</b>
+&nbsp;
+&nbsp;        // Lấy status hợp lệ
+<b class="fc">&nbsp;        List&lt;StatusTodo&gt; validStatuses = Arrays.asList(</b>
+&nbsp;                StatusTodo.DA_HOAN_THANH,
+&nbsp;                StatusTodo.HOAN_THANH_SOM,
+&nbsp;                StatusTodo.QUA_HAN
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;LocalDate, Integer&gt; donePerDay = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;Object[]&gt; results = toDoRepository.getDonePointsByDateAndProject(</b>
+&nbsp;                projectId,
+&nbsp;                phaseId,
+<b class="fc">&nbsp;                phase.getStartTime(),</b>
+<b class="fc">&nbsp;                phase.getEndTime(),</b>
+&nbsp;                validStatuses
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        for (Object[] row : results) {</b>
+<b class="fc">&nbsp;            LocalDate date = LocalDate.parse(row[0].toString());</b>
+<b class="fc">&nbsp;            int done = ((Number) row[1]).intValue();</b>
+<b class="fc">&nbsp;            donePerDay.put(date, done);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;BurndownPoint&gt; chartData = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        int doneSoFar = 0;</b>
+<b class="fc">&nbsp;        Integer lastActual = null;</b>
+<b class="fc">&nbsp;        boolean hasStartedActual = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        LocalDate today = LocalDate.now();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt;= days; i++) {</b>
+<b class="fc">&nbsp;            LocalDate current = start.plusDays(i);</b>
+<b class="fc">&nbsp;            int doneToday = donePerDay.getOrDefault(current, 0);</b>
+&nbsp;
+<b class="pc">&nbsp;            if (!current.isAfter(today)) {</b>
+<b class="fc">&nbsp;                if (doneToday &gt; 0 || hasStartedActual) {</b>
+<b class="fc">&nbsp;                    doneSoFar += doneToday;</b>
+<b class="fc">&nbsp;                    lastActual = Math.max(totalPoint - doneSoFar, 0);</b>
+<b class="fc">&nbsp;                    hasStartedActual = true;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            int expected = Math.max(totalPoint - pointPerDay * i, 0);</b>
+&nbsp;
+<b class="fc">&nbsp;            chartData.add(new BurndownPoint(</b>
+<b class="fc">&nbsp;                    current.toString(),</b>
+<b class="fc">&nbsp;                    expected,</b>
+<b class="pc">&nbsp;                    !current.isAfter(today) ? lastActual : null</b>
+&nbsp;            ));
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(chartData, HttpStatus.OK, &quot;OK&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getBurndownDataStoryPointByProject(String projectId) {
+<b class="nc">&nbsp;        Project project = projectRepository.findById(projectId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Project not found&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        LocalDate start = Instant.ofEpochMilli(project.getStartTime())</b>
+<b class="nc">&nbsp;                .atZone(ZoneId.systemDefault()).toLocalDate();</b>
+<b class="nc">&nbsp;        LocalDate end = Instant.ofEpochMilli(project.getEndTime())</b>
+<b class="nc">&nbsp;                .atZone(ZoneId.systemDefault()).toLocalDate();</b>
+&nbsp;
+&nbsp;        // +1 để bao gồm cả ngày bắt đầu và kết thúc
+<b class="nc">&nbsp;        int days = (int) ChronoUnit.DAYS.between(start, end) + 1;</b>
+&nbsp;
+<b class="nc">&nbsp;        int totalPoint = Optional.ofNullable(</b>
+<b class="nc">&nbsp;                toDoRepository.getTotalStoryPointByProject(projectId)</b>
+<b class="nc">&nbsp;        ).orElse(0);</b>
+&nbsp;
+&nbsp;        // Mỗi ngày giảm đều, ngày cuối = 0
+<b class="nc">&nbsp;        double pointPerDay = days &gt; 1 ? (double) totalPoint / (days - 1) : totalPoint;</b>
+&nbsp;
+&nbsp;        // Status hợp lệ để tính actual
+<b class="nc">&nbsp;        List&lt;StatusTodo&gt; validStatuses = Arrays.asList(</b>
+&nbsp;                StatusTodo.DA_HOAN_THANH,
+&nbsp;                StatusTodo.HOAN_THANH_SOM,
+&nbsp;                StatusTodo.QUA_HAN
+&nbsp;        );
+&nbsp;
+&nbsp;        // Lấy dữ liệu điểm done theo ngày
+<b class="nc">&nbsp;        Map&lt;LocalDate, Integer&gt; donePerDay = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Object[]&gt; results = toDoRepository.getDonePointsByDateAndProjectOnly(</b>
+&nbsp;                projectId,
+<b class="nc">&nbsp;                project.getStartTime(),</b>
+<b class="nc">&nbsp;                project.getEndTime(),</b>
+&nbsp;                validStatuses
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        for (Object[] row : results) {</b>
+<b class="nc">&nbsp;            LocalDate date = LocalDate.parse(row[0].toString());</b>
+<b class="nc">&nbsp;            int done = ((Number) row[1]).intValue();</b>
+<b class="nc">&nbsp;            donePerDay.put(date, done);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;BurndownPoint&gt; chartData = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        int doneSoFar = 0;</b>
+<b class="nc">&nbsp;        LocalDate today = LocalDate.now();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (int i = 0; i &lt; days; i++) {</b>
+<b class="nc">&nbsp;            LocalDate current = start.plusDays(i);</b>
+&nbsp;
+&nbsp;            // Expected giảm đều
+<b class="nc">&nbsp;            int expected = (int) Math.max(totalPoint - Math.round(pointPerDay * i), 0);</b>
+&nbsp;
+&nbsp;            // Actual: chỉ set giá trị nếu hôm đó có done
+<b class="nc">&nbsp;            Integer actual = null;</b>
+<b class="nc">&nbsp;            if (!current.isAfter(today)) {</b>
+<b class="nc">&nbsp;                int doneToday = donePerDay.getOrDefault(current, 0);</b>
+<b class="nc">&nbsp;                if (doneToday &gt; 0) {</b>
+<b class="nc">&nbsp;                    doneSoFar += doneToday;</b>
+<b class="nc">&nbsp;                    actual = Math.max(totalPoint - doneSoFar, 0);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            chartData.add(new BurndownPoint(</b>
+<b class="nc">&nbsp;                    current.toString(),</b>
+<b class="nc">&nbsp;                    expected,</b>
+&nbsp;                    actual
+&nbsp;            ));
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(chartData, HttpStatus.OK, &quot;OK&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

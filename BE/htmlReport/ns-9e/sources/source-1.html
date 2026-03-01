@@ -1,0 +1,167 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TodoTableByPhaseProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todotable.reposiroty</a>
+</div>
+
+<h1>Coverage Summary for Class: TodoTableByPhaseProjectRepository (udpm.hn.server.core.manage.todotable.reposiroty)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">TodoTableByPhaseProjectRepository$MockitoMock$XGPd9dJu</td>
+  </tr>
+  <tr>
+    <td class="name">TodoTableByPhaseProjectRepository$MockitoMock$XGPd9dJu$auxiliary$Q86yUnx0</td>
+  </tr>
+  <tr>
+    <td class="name">TodoTableByPhaseProjectRepository$MockitoMock$XGPd9dJu$auxiliary$qkqA1Yuf</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todotable.reposiroty;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.manage.todotable.model.response.TodoByPhaseProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.todotable.model.response.TodoListIndexTodoResponse;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface TodoTableByPhaseProjectRepository extends ToDoRepository {
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;    select 
+&nbsp;        ROW_NUMBER() OVER(ORDER BY t.id DESC) AS orderNumber,
+&nbsp;        t.id AS idTodo,
+&nbsp;        t.createdDate AS createdDate,
+&nbsp;        t.name AS todoName, 
+&nbsp;        t.completionTime AS completionTime,
+&nbsp;        t.statusTodo AS statusTodo,
+&nbsp;        t.priorityLevel AS priorityLevel,
+&nbsp;        t.indexTodo AS indexTodo,
+&nbsp;        t.deadline AS deadlineTodo, 
+&nbsp;        tl.name AS todoListName, 
+&nbsp;        tl.id AS todoListId,
+&nbsp;        tt.type AS typeTodo,
+&nbsp;        (
+&nbsp;            SELECT JSON_ARRAYAGG(JSON_OBJECT(
+&nbsp;                &#39;id&#39;, sp_student.id,
+&nbsp;                &#39;name&#39;, sp_student.name,
+&nbsp;                &#39;image&#39;, sp_student.image,
+&nbsp;                &#39;email&#39;, sp_student.email
+&nbsp;            ))
+&nbsp;            FROM Assign tv_sub
+&nbsp;            JOIN StaffProject sp ON tv_sub.staffProject.id = sp.id
+&nbsp;            JOIN Student sp_student ON sp.student.id = sp_student.id
+&nbsp;            WHERE tv_sub.todo.id = t.id 
+&nbsp;        ) AS students,
+&nbsp;        (
+&nbsp;            SELECT JSON_ARRAYAGG(JSON_OBJECT(
+&nbsp;                &#39;id&#39;, sp_staff.id,
+&nbsp;                &#39;name&#39;, sp_staff.name,
+&nbsp;                &#39;picture&#39;, sp_staff.picture
+&nbsp;            ))
+&nbsp;            FROM Assign tv_sub
+&nbsp;            JOIN StaffProject sp ON tv_sub.staffProject.id = sp.id
+&nbsp;            JOIN Staff sp_staff ON sp.staff.id = sp_staff.id
+&nbsp;            WHERE tv_sub.todo.id = t.id 
+&nbsp;        ) AS staff,
+&nbsp;        (
+&nbsp;            SELECT JSON_ARRAYAGG(JSON_OBJECT(
+&nbsp;                &#39;id&#39;, lp.id,
+&nbsp;                &#39;name&#39;, lp.name,
+&nbsp;                &#39;color&#39;, lp.color
+&nbsp;            ))
+&nbsp;            FROM LabelProject lp
+&nbsp;            JOIN LabelProjectTodo lpt ON lp.id = lpt.labelProject.id
+&nbsp;            WHERE lpt.todo.id = t.id and lp.status =0
+&nbsp;        ) as label
+&nbsp;    from Todo t
+&nbsp;    join PhaseTodoProject ptp ON t.id  = ptp.todo.id
+&nbsp;    join PhaseProject pp on ptp.phaseProject.id = pp.id
+&nbsp;    join TodoList tl on t.todoList.id = tl.id
+&nbsp;     LEFT JOIN TypeTodo tt ON t.typeTodo.id = tt.id
+&nbsp;    where pp.project.id = :idProject and pp.id = :idPhase
+&nbsp;    order by t.indexTodo
+&nbsp;&quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;    select 
+&nbsp;        COUNT(t.id) 
+&nbsp;    from Todo t
+&nbsp;    join PhaseTodoProject ptp ON t.id  = ptp.todo.id
+&nbsp;    join PhaseProject pp on ptp.phaseProject.id = pp.id
+&nbsp;    join TodoList tl on t.todoList.id = tl.id
+&nbsp;    where pp.project.id = :idProject and pp.id = :idPhase
+&nbsp;&quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;TodoByPhaseProjectResponse&gt; getAllTodoByPhaseProject(Pageable pageable, String idProject, String idPhase);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    select t.indexTodo as indexTodo from Todo t
+&nbsp;    join TodoList tl on t.todoList.id = tl.id
+&nbsp;    where t.todoList.id = :id
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    List&lt;TodoListIndexTodoResponse&gt; getIndexTodo(String id);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

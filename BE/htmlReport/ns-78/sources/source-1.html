@@ -1,0 +1,178 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LogService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.log</a>
+</div>
+
+<h1>Coverage Summary for Class: LogService (udpm.hn.server.infrastructure.log)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LogService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.7%
+  </span>
+  <span class="absValue">
+    (2/30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.log;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.commons.csv.CSVFormat;
+&nbsp;import org.apache.commons.csv.CSVParser;
+&nbsp;import org.apache.commons.csv.CSVRecord;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.io.FileNotFoundException;
+&nbsp;import java.io.FileReader;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class LogService {</b>
+&nbsp;
+&nbsp;    public List&lt;LogEntry&gt; readCSV(String filePath) throws FileNotFoundException {
+<b class="nc">&nbsp;        List&lt;LogEntry&gt; logEntries = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        try (FileReader reader = new FileReader(filePath)) {</b>
+<b class="nc">&nbsp;                CSVFormat csvFormat = CSVFormat.DEFAULT.builder()</b>
+<b class="nc">&nbsp;                    .setHeader(&quot;ID&quot;, &quot;Student&quot;, &quot;Message&quot;)</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            try (CSVParser csvParser = new CSVParser(reader, csvFormat)) {</b>
+<b class="nc">&nbsp;                for (CSVRecord csvRecord : csvParser) {</b>
+<b class="nc">&nbsp;                    LogEntry logEntry = new LogEntry();</b>
+<b class="nc">&nbsp;                    logEntry.setId(csvRecord.get(&quot;ID&quot;));</b>
+<b class="nc">&nbsp;                    logEntry.setStudent(csvRecord.get(&quot;Student&quot;));</b>
+<b class="nc">&nbsp;                    logEntry.setMessage(csvRecord.get(&quot;Message&quot;));</b>
+<b class="nc">&nbsp;                    logEntries.add(logEntry);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return logEntries;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;LogEntryTodoList&gt; readCSVTodoList(String filePath) throws FileNotFoundException {
+<b class="nc">&nbsp;        List&lt;LogEntryTodoList&gt; logEntries = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        try (FileReader reader = new FileReader(filePath)) {</b>
+<b class="nc">&nbsp;            CSVFormat csvFormat = CSVFormat.DEFAULT.builder()</b>
+<b class="nc">&nbsp;                    .setHeader(&quot;ID&quot;, &quot;Todo&quot;, &quot;Message&quot;)</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            try (CSVParser csvParser = new CSVParser(reader, csvFormat)) {</b>
+<b class="nc">&nbsp;                for (CSVRecord csvRecord : csvParser) {</b>
+<b class="nc">&nbsp;                    LogEntryTodoList logEntry = new LogEntryTodoList();</b>
+<b class="nc">&nbsp;                    logEntry.setId(csvRecord.get(&quot;ID&quot;));</b>
+<b class="nc">&nbsp;                    logEntry.setTodo(csvRecord.get(&quot;Todo&quot;));</b>
+<b class="nc">&nbsp;                    logEntry.setMessage(csvRecord.get(&quot;Message&quot;));</b>
+<b class="nc">&nbsp;                    logEntries.add(logEntry);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return logEntries;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

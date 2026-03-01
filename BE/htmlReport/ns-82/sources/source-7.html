@@ -1,0 +1,297 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ScheduleDaily</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.utils</a>
+</div>
+
+<h1>Coverage Summary for Class: ScheduleDaily (udpm.hn.server.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ScheduleDaily</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.5%
+  </span>
+  <span class="absValue">
+    (1/65)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.utils;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.scheduling.annotation.Scheduled;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.entity.Assign;
+&nbsp;import udpm.hn.server.entity.MemberNotification;
+&nbsp;import udpm.hn.server.entity.Notification;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.infrastructure.configemail.EmailSender;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusReminder;
+&nbsp;import udpm.hn.server.repository.AssignRepository;
+&nbsp;import udpm.hn.server.repository.MemberNotificationRepository;
+&nbsp;import udpm.hn.server.repository.NotificationRepository;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;import udpm.hn.server.repository.TodoVoteRepository;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Component
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class ScheduleDaily {
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final PhaseRepository phaseRepository;
+&nbsp;
+&nbsp;    private final ToDoRepository toDoRepository;
+&nbsp;
+&nbsp;    private final TodoVoteRepository todoVoteRepository;
+&nbsp;
+&nbsp;    private final AssignRepository assignRepository;
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;    private final NotificationRepository notificationRepository;
+&nbsp;
+&nbsp;    private final MemberNotificationRepository memberNotificationRepository;
+&nbsp;    private final EmailSender emailSender;
+&nbsp;
+&nbsp;    @Scheduled(cron = &quot;0 * * * * ?&quot;)
+&nbsp;    public void dailyChecking() {
+<b class="nc">&nbsp;        List&lt;Todo&gt; todosFind = toDoRepository.getAllTodoReminder();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; listStrMemberId = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        boolean check = false;</b>
+<b class="nc">&nbsp;        for (Todo item : todosFind) {</b>
+<b class="nc">&nbsp;            Long deliveryDateMinutes = item.getDeliveryDate();</b>
+&nbsp;
+<b class="nc">&nbsp;            long deadline = item.getDeadline();</b>
+&nbsp;
+<b class="nc">&nbsp;            long deliveryDateMillis = 0;</b>
+<b class="nc">&nbsp;            if (deliveryDateMinutes != 0) {</b>
+<b class="nc">&nbsp;                deliveryDateMillis = deadline - (deliveryDateMinutes * 60L * 1000);</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Ngày giao hàng được tính toán: &quot; + new Date(deliveryDateMillis));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                System.out.println(&quot;Ngày giao hàng không thay đổi : &quot; + new Date(deadline));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (deliveryDateMillis &lt; System.currentTimeMillis() &amp;&amp; item.getStatusReminder() == StatusReminder.CHUA_GUI) {</b>
+&nbsp;
+<b class="nc">&nbsp;                List&lt;Assign&gt; listAssign = assignRepository.getAllAssignByIdTodo(item.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                if (listAssign == null) {</b>
+<b class="nc">&nbsp;                    log.warn(&quot;Không tìm thấy TodoVote cho Todo ID: &quot; + item.getId());</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                String phaseId = toDoRepository.getPhaseByIdTodo(item.getId());</b>
+<b class="nc">&nbsp;                String projectId = toDoRepository.getProjectByIdTodo(item.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                Optional&lt;Todo&gt; todoOptional = toDoRepository.findById(item.getId());</b>
+<b class="nc">&nbsp;                if (!todoOptional.isPresent()) {</b>
+<b class="nc">&nbsp;                    log.warn(&quot;Không tìm thấy Todo với ID: &quot; + item.getId());</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                Notification notification = new Notification();</b>
+<b class="nc">&nbsp;                notification.setTodo(todoOptional.get());</b>
+<b class="nc">&nbsp;                notification.setMemberIdCreated(null);</b>
+<b class="nc">&nbsp;                notification.setName(&quot;Đầu việc &quot; + item.getName() + &quot; mà bạn đang tham gia sẽ hết hạn vào lúc &quot; + DateConverter.convertDateToStringMail(item.getDeadline()));</b>
+<b class="nc">&nbsp;                notification.setUrl(&quot;/project-detail/&quot; + projectId + &quot;/&quot; + phaseId + &quot;?idTodo=&quot; + item.getId());</b>
+&nbsp;
+<b class="nc">&nbsp;                Notification newNotification = notificationRepository.save(notification);</b>
+<b class="nc">&nbsp;                if (newNotification == null) {</b>
+<b class="nc">&nbsp;                    log.warn(&quot;Không thể tạo Notification cho Todo ID: &quot; + item.getId());</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                List&lt;MemberNotification&gt; notificationMemberList = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;                for (Assign assign : listAssign) {</b>
+<b class="nc">&nbsp;                    String idStaffProject = assign.getStaffProject().getId();</b>
+<b class="nc">&nbsp;                    Optional&lt;String&gt; memberId = todoVoteRepository.getUserIdByStaffProjectId(idStaffProject);</b>
+<b class="nc">&nbsp;                    if (memberId.isEmpty()) {</b>
+<b class="nc">&nbsp;                        log.warn(&quot;Không tìm thấy memberId cho StaffProject ID: &quot; + idStaffProject);</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    MemberNotification notificationMember = new MemberNotification();</b>
+<b class="nc">&nbsp;                    notificationMember.setMemberId(memberId.get());</b>
+&nbsp;
+<b class="nc">&nbsp;                    Optional&lt;Notification&gt; notificationOpt = notificationRepository.findById(newNotification.getId());</b>
+<b class="nc">&nbsp;                    if (!notificationOpt.isPresent()) {</b>
+<b class="nc">&nbsp;                        log.warn(&quot;Không tìm thấy Notification với ID: &quot; + newNotification.getId());</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    notificationMember.setNotification(notificationOpt.get());</b>
+<b class="nc">&nbsp;                    notificationMember.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;                    notificationMemberList.add(notificationMember);</b>
+&nbsp;
+<b class="nc">&nbsp;                    if (!listStrMemberId.contains(memberId.get())) {</b>
+<b class="nc">&nbsp;                        listStrMemberId.add(memberId.get());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                if (!notificationMemberList.isEmpty()) {</b>
+<b class="nc">&nbsp;                    memberNotificationRepository.saveAll(notificationMemberList);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                List&lt;String&gt; emailList = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;                for (Assign todoVote : listAssign) {</b>
+<b class="nc">&nbsp;                    String staffProjectId = todoVote.getStaffProject().getId();</b>
+<b class="nc">&nbsp;                    Optional&lt;String&gt; email = todoVoteRepository.getEmailUserByStaffProjectId(staffProjectId);</b>
+<b class="nc">&nbsp;                    if (email.isEmpty()) {</b>
+&nbsp;                        break;
+&nbsp;                    }
+<b class="nc">&nbsp;                    emailList.add(email.get());</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                String[] emailArray = emailList.toArray(new String[0]);</b>
+<b class="nc">&nbsp;                String emailContent = &quot;&quot;&quot;</b>
+&nbsp;                        &lt;html&gt;&lt;body&gt;
+&nbsp;                        &lt;p&gt;&lt;span style=\&quot;font-size: 20px;\&quot;&gt;Xin chào!&lt;/span&gt; Đây là một email
+&nbsp;                        nhắc nhở về đầu việc &lt;span style=\&quot;color: red;\&quot;&gt;&lt;b&gt;
+<b class="nc">&nbsp;                        &quot;&quot;&quot; + item.getName() + &quot;&quot;&quot;</b>
+&nbsp;                        &lt;/b&gt;&lt;/span&gt; mà bạn đang tham gia.&lt;/p&gt;
+&nbsp;                        &lt;p&gt;Chúng tôi xin nhắc nhở rằng ngày hạn của đầu việc
+&nbsp;                        này sẽ sắp đến trong thời gian tới.
+&nbsp;                        Vì vậy, chúng tôi đề nghị bạn hoàn thành và
+&nbsp;                        gửi báo cáo/trạng thái của đầu việc trước ngày hạn.&lt;/p&gt;
+&nbsp;                        &lt;p&gt;Thông tin chi tiết về đầu việc:&lt;/p&gt;
+&nbsp;                        &lt;ul&gt;
+&nbsp;                        &lt;li&gt;Tên đầu việc: &lt;span style=\&quot;color: red;\&quot;&gt;&lt;b&gt;
+<b class="nc">&nbsp;                        &quot;&quot;&quot; + item.getName() + &quot;&lt;/b&gt;&lt;/span&gt;&lt;/li&gt;&quot; + &quot;&lt;li&gt;Ngày hạn: &lt;span style=\&quot;color: red;\&quot;&gt;&lt;b&gt;&quot; + DateConverter.convertDateToStringMail(item.getDeadline()) + &quot;&lt;/b&gt;&lt;/span&gt;&lt;/li&gt;&quot; + &quot;&quot;&quot;</b>
+&nbsp;                        &lt;/ul&gt;
+&nbsp;                        &lt;p&gt;Vui lòng đảm bảo rằng bạn đã hoàn thành công việc và gửi báo cáo
+&nbsp;                        đúng hạn để đảm bảo tiến độ và chất lượng của dự án.&lt;/p&gt;
+&nbsp;                        &lt;p&gt;Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ bổ sung, xin vui lòng
+&nbsp;                        liên hệ với chúng tôi.&lt;/p&gt;
+&nbsp;                        &lt;p&gt;Xin cảm ơn sự cống hiến và đóng góp của bạn cho dự án!&lt;/p&gt;
+&nbsp;                        &lt;p&gt;Trân trọng,&lt;/p&gt;
+&nbsp;                        &lt;p&gt;- Quản lý dự án xưởng -&lt;/p&gt;
+&nbsp;                        &lt;/body&gt;&lt;/html&gt;
+&nbsp;                        &quot;&quot;&quot;;
+<b class="nc">&nbsp;                Runnable emailTask = () -&gt; {</b>
+<b class="nc">&nbsp;                    emailSender.sendEmail(emailArray, &quot;Quản lý dự án xưởng xin thông báo&quot;, &quot;Thông báo đầu việc sắp hết hạn&quot;, emailContent);</b>
+&nbsp;                };
+<b class="nc">&nbsp;                new Thread(emailTask).start();</b>
+<b class="nc">&nbsp;                toDoRepository.updateStatusReminder(item.getId());</b>
+<b class="nc">&nbsp;                check = true;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (String str : listStrMemberId) {</b>
+<b class="nc">&nbsp;            log.info(&quot;Gửi thông báo cho thành viên ID: &quot; + str);</b>
+<b class="nc">&nbsp;            messagingTemplate.convertAndSend(&quot;/topic/create-notification-member/&quot; + str, check);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

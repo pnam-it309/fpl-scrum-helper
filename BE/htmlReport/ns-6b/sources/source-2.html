@@ -1,0 +1,350 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffProcessor</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.staff.commonio</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffProcessor (udpm.hn.server.infrastructure.job.staff.commonio)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaffProcessor</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/54)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3%
+  </span>
+  <span class="absValue">
+    (3/101)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.staff.commonio;
+&nbsp;
+&nbsp;import lombok.Setter;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.commons.lang3.StringUtils;
+&nbsp;import org.springframework.batch.item.ItemProcessor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.infrastructure.config.global.GlobalVariables;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.dto.TransferStaffRole;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.request.StaffExcelRequest;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigMajorFacilityCustomRepository;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigStaffCustomRepository;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.service.impl.HistoryImportStaffService;
+&nbsp;import udpm.hn.server.repository.*;
+&nbsp;import udpm.hn.server.utils.ValidationUtil;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class StaffProcessor implements ItemProcessor&lt;StaffExcelRequest, TransferStaffRole&gt; {</b>
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private ConfigStaffCustomRepository staffCustomRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private ConfigMajorFacilityCustomRepository majorFacilityCustomRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private StaffMajorFacilityRepository staffMajorFacilityRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private DepartmentRepository departmentRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private FacilityRepository facilityRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private MajorRepository majorRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private ValidationUtil validationUtil;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private GlobalVariables globalVariables;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private HistoryImportStaffService historyImportService;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = {@Autowired})
+&nbsp;    private CsvHistoryWriterStaff csvHistoryWriterStaff;
+&nbsp;
+<b class="fc">&nbsp;    private final Set&lt;String&gt; seenEmails = new HashSet&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+&nbsp;    private void saveMessageToDatabase(String record, String message) {
+<b class="nc">&nbsp;        String fullMessage = record + &quot; - &quot; + message;</b>
+<b class="nc">&nbsp;        log.info(&quot;BẮT ĐẦU LƯU VÀO DB: {}&quot;, fullMessage);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            historyImportService.saveHistory(fullMessage);</b>
+<b class="nc">&nbsp;            log.info(&quot;LƯU VÀO DB THÀNH CÔNG: {}&quot;, fullMessage);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;LỖI LƯU VÀO DB: {}&quot;, fullMessage, e);</b>
+&nbsp;            throw e;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    void logFacility(String message) {
+<b class="nc">&nbsp;        String fullMessage = message;</b>
+<b class="nc">&nbsp;        log.info(&quot;BẮT ĐẦU LƯU VÀO DB: {}&quot;, fullMessage);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            historyImportService.saveHistory(fullMessage);</b>
+<b class="nc">&nbsp;            log.info(&quot;LƯU VÀO DB THÀNH CÔNG: {}&quot;, fullMessage);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;LỖI LƯU VÀO DB: {}&quot;, fullMessage, e);</b>
+&nbsp;            throw e; // Tạm thời ném ngoại lệ để debug
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    void saveError(String record, String message) {
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;BẮT ĐẦU saveError: record={}, message={}&quot;, record, message);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            saveMessageToDatabase(record, message);</b>
+<b class="nc">&nbsp;            log.info(&quot;LƯU LỖI VÀO DB THÀNH CÔNG: record={}&quot;, record);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;LỖI KHI LƯU VÀO DB: record={}, message={}&quot;, record, message, e);</b>
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            csvHistoryWriterStaff.writeHistory(record, message);</b>
+<b class="nc">&nbsp;            log.info(&quot;GHI LỖI VÀO CSV THÀNH CÔNG: record={}&quot;, record);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;LỖI KHI GHI VÀO CSV: record={}, message={}&quot;, record, message, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public TransferStaffRole process(StaffExcelRequest item) throws Exception {
+<b class="nc">&nbsp;        log.info(&quot;BẮT ĐẦU XỬ LÝ STAFF: {}&quot;, item);</b>
+<b class="nc">&nbsp;        if (item == null) {</b>
+<b class="nc">&nbsp;            log.error(&quot;ITEM NULL, BỎ QUA BẢN GHI&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getFacility() == null || item.getFacility().trim().isEmpty()) {</b>
+&nbsp;//            String staffCode = item.getStaffCode() != null ? item.getStaffCode() : &quot;N/A&quot;;
+&nbsp;//            String name = item.getName() != null ? item.getName() : &quot;N/A&quot;;
+<b class="nc">&nbsp;            logFacility( &quot;Cơ sở không được để trống..&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        if (item.getEmailFpt().isEmpty() || item.getEmailFe().isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getName(), &quot;Email không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getName().isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getName(), &quot;Họ tên nhân viên không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getStaffCode().isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getName(), &quot;Mã nhân viên không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // [ADDED] Chuẩn hóa email và kiểm tra trùng lặp trong batch hiện tại
+<b class="nc">&nbsp;        String emailFpt = item.getEmailFpt().toLowerCase().trim();</b>
+<b class="nc">&nbsp;        String emailFe = item.getEmailFe().toLowerCase().trim();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (seenEmails.contains(emailFpt) || seenEmails.contains(emailFe)) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + emailFpt, &quot;Email đã trùng trong file import&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // [MODIFIED] Kiểm tra trùng email trong database
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; existingEmail = staffCustomRepository.findByEmailFeOrEmailFpt(emailFpt, emailFe);</b>
+<b class="nc">&nbsp;        if (existingEmail.isPresent()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + emailFpt, &quot;Email đã tồn tại trong hệ thống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; existingStaff = staffCustomRepository.findByCodeAndStatus(item.getStaffCode(), EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;        if (existingStaff.isPresent()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getEmailFpt(), &quot;Đã có nhân viên với mã này&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getEmailFpt() == null || item.getEmailFpt().isBlank() ||</b>
+<b class="nc">&nbsp;                item.getEmailFe() == null || item.getEmailFe().isBlank()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getName(), &quot;Email không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!validationUtil.isValidEmailExcel(item.getEmailFpt()) || !validationUtil.isValidEmailExcel(item.getEmailFe())) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getEmailFpt(), &quot;Email không đúng định dạng&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        seenEmails.add(emailFpt);</b>
+<b class="nc">&nbsp;        seenEmails.add(emailFe);</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;Facility&gt; optionalFacility = facilityRepository.findByName(item.getFacility());</b>
+<b class="nc">&nbsp;        if (optionalFacility.isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getFacility(), &quot;Không tìm thấy cơ sở này&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getDepartment() == null || item.getDepartment().isBlank()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode(), &quot;Bộ môn không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Optional&lt;Department&gt; optionalDepartment = departmentRepository.findByName(item.getDepartment());</b>
+<b class="nc">&nbsp;        if (optionalDepartment.isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getDepartment(), &quot;Không tìm thấy bộ môn này&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (item.getMajor() == null || item.getMajor().isBlank()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode(), &quot;Chuyên ngành không được để trống&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Optional&lt;Major&gt; optionalMajor = majorRepository.findByName(item.getMajor());</b>
+<b class="nc">&nbsp;        if (optionalMajor.isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getMajor(), &quot;Không tìm thấy chuyên ngành này&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;MajorFacility&gt; majorFacility = fetchMajorFacility(item.getDepartment(), item.getMajor(), item.getFacility());</b>
+<b class="nc">&nbsp;        if (majorFacility.isEmpty()) {</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode() + &quot; - &quot; + item.getEmailFpt(), &quot;Không tìm thấy chuyên ngành cơ sở này&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            Staff staff = new Staff();</b>
+<b class="nc">&nbsp;            staff.setId(UUID.randomUUID().toString());</b>
+<b class="nc">&nbsp;            staff.setCode(item.getStaffCode());</b>
+<b class="nc">&nbsp;            staff.setName(item.getName());</b>
+<b class="nc">&nbsp;            staff.setEmailFpt(item.getEmailFpt());</b>
+<b class="nc">&nbsp;            staff.setEmailFe(item.getEmailFe());</b>
+<b class="nc">&nbsp;            staff.setStatus(EntityStatus.ACTIVE);</b>
+&nbsp;
+<b class="nc">&nbsp;            Optional&lt;MajorFacility&gt; majorFacilitys = fetchMajorFacility(item.getDepartment(), item.getMajor(), item.getFacility());</b>
+<b class="nc">&nbsp;            if (majorFacilitys.isEmpty()) {</b>
+<b class="nc">&nbsp;                saveError(item.getStaffCode(), &quot;Không tìm thấy chuyên ngành cơ sở này&quot;);</b>
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            StaffMajorFacility staffMajorFacility = new StaffMajorFacility();</b>
+<b class="nc">&nbsp;            staffMajorFacility.setStatus(EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;            staffMajorFacility.setMajorFacility(majorFacilitys.get());</b>
+<b class="nc">&nbsp;            staffMajorFacility.setStaff(staff);</b>
+&nbsp;
+<b class="nc">&nbsp;            return new TransferStaffRole(staff, staffMajorFacility);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Đã có lỗi khi xử lý nhân viên: &quot; + item.getStaffCode(), e);</b>
+<b class="nc">&nbsp;            saveError(item.getStaffCode(), &quot;Lỗi xử lý dữ liệu nhân viên&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private Optional&lt;MajorFacility&gt; fetchMajorFacility(String department, String major, String facility) {
+<b class="nc">&nbsp;        List&lt;MajorFacility&gt; majorFacilities = majorFacilityCustomRepository.getMajorFacilities(department, major, facility);</b>
+<b class="nc">&nbsp;        return majorFacilities.isEmpty() ? Optional.empty() : Optional.of(majorFacilities.get(0));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

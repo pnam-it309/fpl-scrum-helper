@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeCommentController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeCommentController (udpm.hn.server.core.member.projectdetails.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeCommentController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeCommentService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(MappingConstants.API_PROJECT_DETAILS_COMMENT_TODO)
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeCommentController {
+&nbsp;
+&nbsp;    private final MBMeCommentService mbMeCommentService;
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-comment&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-comment&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; addComment(MBMeCreateCommentRequest request) {
+<b class="fc">&nbsp;        return mbMeCommentService.addCommment(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseObject&lt;?&gt; getAllCommentByIdTodo(final MBMeFindCommentRequest request){
+<b class="fc">&nbsp;        return mbMeCommentService.getAllCommentByIdTodo(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/tag-member&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; getAllMemberInProject(final MBMeFindTagMemberRequest request){
+<b class="fc">&nbsp;        return mbMeCommentService.getAllMemberInProject(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-comment&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-comment&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateComment(MBMeUpdateCommentRequest request) {
+<b class="fc">&nbsp;        return mbMeCommentService.updateComment(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-comment&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-comment&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; deleteComment(MBMeDeleteCommentRequest request) {
+<b class="fc">&nbsp;        return mbMeCommentService.deleteComment(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

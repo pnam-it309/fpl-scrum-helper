@@ -1,0 +1,131 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBTodoProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.report.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBTodoProjectRepository (udpm.hn.server.core.member.report.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$brXfQxoT</td>
+  </tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$brXfQxoT$auxiliary$Ve8niZ8B</td>
+  </tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$brXfQxoT$auxiliary$vRpG0ooO</td>
+  </tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$U0z97Z3d</td>
+  </tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$U0z97Z3d$auxiliary$LUNkcN3O</td>
+  </tr>
+  <tr>
+    <td class="name">MBTodoProjectRepository$MockitoMock$U0z97Z3d$auxiliary$mQX74bDG</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.report.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.member.report.model.request.MBTodoProjectRequest;
+&nbsp;import udpm.hn.server.core.member.report.model.response.MBTodoProjectResponse;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MBTodoProjectRepository extends ToDoRepository {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            ROW_NUMBER() OVER(ORDER BY t.id DESC) AS orderNumber, 
+&nbsp;            t.id AS idTodo,
+&nbsp;            t.name AS nameTodo,
+&nbsp;            t.createdDate AS createdDate,
+&nbsp;            sp.project.id AS projectId,
+&nbsp;            t.priorityLevel AS priorityLevel
+&nbsp;        FROM 
+&nbsp;            Todo t
+&nbsp;            JOIN Assign tv on t.id = tv.todo.id
+&nbsp;            join StaffProject sp on tv.staffProject.id  = sp.id
+&nbsp;        WHERE 
+&nbsp;            (sp.staff.id = :#{#userContextHelper.currentUserId}
+&nbsp;             OR sp.student.id = :#{#userContextHelper.currentUserId})
+&nbsp;        and sp.project.id = :idProject
+&nbsp;        &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            COUNT(t.id) 
+&nbsp;        FROM 
+&nbsp;            Todo t
+&nbsp;        JOIN Assign tv on t.id = tv.todo.id
+&nbsp;        join StaffProject sp on tv.staffProject.id  = sp.id
+&nbsp;        WHERE 
+&nbsp;            (sp.staff.id = :#{#userContextHelper.currentUserId}
+&nbsp;             OR sp.student.id = :#{#userContextHelper.currentUserId})
+&nbsp;        and sp.project.id = :idProject
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    Page&lt;MBTodoProjectResponse&gt; getAllTodoByProjectAndStaffProject(Pageable pageable, String idProject, UserContextHelper userContextHelper, @Param(&quot;req&quot;)MBTodoProjectRequest req);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

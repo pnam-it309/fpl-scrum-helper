@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeMemberProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeMemberProjectRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$Q3MVu0LD</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$Q3MVu0LD$auxiliary$rBQDW0rb</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$Q3MVu0LD$auxiliary$T6cV1KIq</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$SJgEqqbw</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$SJgEqqbw$auxiliary$lxNWOm7a</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeMemberProjectRepository$MockitoMock$SJgEqqbw$auxiliary$O40MwRhw</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeMemberProjectResponse;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MBMeMemberProjectRepository extends StaffProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        COALESCE(st.id, s.id) AS id,
+&nbsp;        COALESCE(st.name, s.name) AS name,
+&nbsp;        COALESCE(st.emailFpt, s.email) AS email,
+&nbsp;        COALESCE(st.picture, s.image) AS image,
+&nbsp;        CASE WHEN tv.id IS NOT NULL THEN true ELSE false END AS isAdded
+&nbsp;    FROM StaffProject sp
+&nbsp;    LEFT JOIN sp.staff st
+&nbsp;    LEFT JOIN sp.student s
+&nbsp;    LEFT JOIN Assign tv ON tv.staffProject.id = sp.id AND tv.todo.id = :idTodo
+&nbsp;    WHERE sp.project.id = :idProject AND sp.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeMemberProjectResponse&gt; findAllMembersWithAddedFlag(
+&nbsp;            @Param(&quot;idProject&quot;) String idProject,
+&nbsp;            @Param(&quot;idTodo&quot;) String idTodo
+&nbsp;    );
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT sp.id
+&nbsp;    FROM StaffProject sp
+&nbsp;    WHERE (sp.student.id = :idMember OR sp.staff.id = :idMember)
+&nbsp;      AND sp.project.id = :idProject
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    String findIdByMemberIdAndProjectId(@Param(&quot;idMember&quot;) String idMember,
+&nbsp;                                        @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;SELECT sp.id FROM StaffProject sp &quot; +
+&nbsp;            &quot;LEFT JOIN sp.staff s &quot; +
+&nbsp;            &quot;LEFT JOIN sp.student st &quot; +
+&nbsp;            &quot;WHERE (s.emailFpt = :email AND s.status = 0) &quot; +
+&nbsp;            &quot;   OR (st.email = :email AND st.status = 0)&quot;)
+&nbsp;    Optional&lt;String&gt; findIdStaffProjectByEmailUser(@Param(&quot;email&quot;) String email);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        COALESCE(st.id, s.id) AS id,
+&nbsp;        COALESCE(st.name, s.name) AS name,
+&nbsp;        COALESCE(st.emailFpt, s.email) AS email,
+&nbsp;        COALESCE(st.picture, s.image) AS image
+&nbsp;    FROM StaffProject sp
+&nbsp;    LEFT JOIN sp.staff st
+&nbsp;    LEFT JOIN sp.student s
+&nbsp;    WHERE sp.project.id = :idProject
+&nbsp;      AND sp.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeMemberProjectResponse&gt; getAllFilterMemberProject(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

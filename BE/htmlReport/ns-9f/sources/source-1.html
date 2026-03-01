@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TodoCountRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.chart.burndown.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: TodoCountRepository (udpm.hn.server.core.member.chart.burndown.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">TodoCountRepository$MockitoMock$byxHc5uC</td>
+  </tr>
+  <tr>
+    <td class="name">TodoCountRepository$MockitoMock$byxHc5uC$auxiliary$DDLMcHJK</td>
+  </tr>
+  <tr>
+    <td class="name">TodoCountRepository$MockitoMock$byxHc5uC$auxiliary$hA8Y8crV</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.chart.burndown.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;import udpm.hn.server.repository.PhaseTodoProjectRepository;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface TodoCountRepository extends PhaseTodoProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(ptp) FROM PhaseTodoProject ptp WHERE ptp.phaseProject.id = :phaseProjectId&quot;)
+&nbsp;    Long countTodosByPhaseProject(@Param(&quot;phaseProjectId&quot;) String phaseProjectId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT COUNT(ptp)
+&nbsp;    FROM PhaseTodoProject ptp
+&nbsp;    WHERE ptp.phaseProject.project.id = :projectId
+&nbsp;      AND ptp.phaseProject.id = :phaseId
+&nbsp;      AND ptp.todo.statusTodo IN (:completedStatuses)
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Long countCompletedTasksByPhaseAndProject(
+&nbsp;            @Param(&quot;projectId&quot;) String projectId,
+&nbsp;            @Param(&quot;phaseId&quot;) String phaseId,
+&nbsp;            @Param(&quot;completedStatuses&quot;) List&lt;StatusTodo&gt; completedStatuses);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT COUNT(ptp)
+&nbsp;    FROM PhaseTodoProject ptp
+&nbsp;    WHERE ptp.phaseProject.project.id = :projectId
+&nbsp;      AND ptp.phaseProject.id = :phaseId
+&nbsp;      AND ptp.todo.statusTodo IN (:remainingStatuses)
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Long countRemainingTasksByPhaseAndProject(
+&nbsp;            @Param(&quot;projectId&quot;) String projectId,
+&nbsp;            @Param(&quot;phaseId&quot;) String phaseId,
+&nbsp;            @Param(&quot;remainingStatuses&quot;) List&lt;StatusTodo&gt; remainingStatuses);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;           COUNT(t.id)
+&nbsp;    FROM PhaseTodoProject ptp
+&nbsp;    JOIN ptp.todo t
+&nbsp;    WHERE ptp.phaseProject.project.id = :projectId 
+&nbsp;      AND ptp.phaseProject.id = :phaseId
+&nbsp;      AND t.statusTodo IN :completedStatuses
+&nbsp;      AND t.completionTime IS NOT NULL
+&nbsp;    GROUP BY FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000, &#39;%Y-%m-%d&#39;)
+&nbsp;    ORDER BY FUNCTION(&#39;FROM_UNIXTIME&#39;, t.completionTime / 1000, &#39;%Y-%m-%d&#39;)
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;Long&gt; countCompletedTasksPerDay(
+&nbsp;            @Param(&quot;projectId&quot;) String projectId,
+&nbsp;            @Param(&quot;phaseId&quot;) String phaseId,
+&nbsp;            @Param(&quot;completedStatuses&quot;) List&lt;StatusTodo&gt; completedStatuses);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

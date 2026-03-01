@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeCommentRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeCommentRepository (udpm.hn.server.core.member.projectdetails.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeCommentRepository$MockitoMock$dngDwM1Z</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeCommentRepository$MockitoMock$dngDwM1Z$auxiliary$ai9IC4w3</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeCommentRepository$MockitoMock$dngDwM1Z$auxiliary$ju4zqtvx</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeFindCommentRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeCommentResponse;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeUserInProjectResponse;
+&nbsp;import udpm.hn.server.repository.CommentRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MBMeCommentRepository extends CommentRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT c.content AS content,
+&nbsp;           c.id AS id,
+&nbsp;           CAST(c.todo.id AS string) AS todoId,
+&nbsp;           CAST(c.staffProject.project.id AS string) AS projectId,
+&nbsp;           CAST(c.staffProject.id AS string) AS staffProjectId,
+&nbsp;           c.statusEdit AS statusEdit,
+&nbsp;           c.createdDate AS createdDate,
+&nbsp;
+&nbsp;           COALESCE(CAST(sp.staff.id AS string), CAST(sp.student.id AS string)) AS userId,
+&nbsp;           COALESCE(sp.staff.code, sp.student.code) AS userCode,
+&nbsp;           COALESCE(sp.staff.name, sp.student.name) AS userName,
+&nbsp;           COALESCE(sp.staff.emailFpt, sp.student.email) AS userEmail,
+&nbsp;           COALESCE(sp.staff.picture, sp.student.image) AS userImage
+&nbsp;
+&nbsp;    FROM Comment c
+&nbsp;    LEFT JOIN c.staffProject sp
+&nbsp;    LEFT JOIN sp.staff s
+&nbsp;    LEFT JOIN sp.student st
+&nbsp;    WHERE c.todo.id = :#{#req.idTodo}
+&nbsp;    AND c.status = 0
+&nbsp;    ORDER BY c.createdDate DESC
+&nbsp;   
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Page&lt;MBMeCommentResponse&gt; getAllCommentByIdTodo(Pageable page, @Param(&quot;req&quot;) MBMeFindCommentRequest req);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        COALESCE(CAST(s.id AS string), CAST(st.id AS string)) AS userId,
+&nbsp;        COALESCE(s.code, st.code) AS userCode,
+&nbsp;        COALESCE(s.name, st.name) AS userName,
+&nbsp;        COALESCE(s.emailFpt, st.email) AS userEmail,
+&nbsp;        COALESCE(s.picture, st.image) AS userImage
+&nbsp;    FROM StaffProject sp
+&nbsp;    LEFT JOIN sp.staff s
+&nbsp;    LEFT JOIN sp.student st
+&nbsp;    WHERE sp.project.id = :idProject
+&nbsp;    AND sp.status = 0
+&nbsp;    AND (s.status = 0 OR st.status =0)
+&nbsp;    AND (s.emailFpt != :email OR st.email != :email)
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MBMeUserInProjectResponse&gt; getUsersByProject(@Param(&quot;idProject&quot;) String idProject,@Param(&quot;email&quot;) String email);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

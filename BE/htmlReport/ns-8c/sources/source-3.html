@@ -1,0 +1,127 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAStaffProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAStaffProjectRepository (udpm.hn.server.core.manage.todo.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$mLzKS8rH</td>
+  </tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$mLzKS8rH$auxiliary$fDviwF7P</td>
+  </tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$mLzKS8rH$auxiliary$NyvUzA9l</td>
+  </tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$yVLhOMTU</td>
+  </tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$yVLhOMTU$auxiliary$a1L2ncsd</td>
+  </tr>
+  <tr>
+    <td class="name">MAStaffProjectRepository$MockitoMock$yVLhOMTU$auxiliary$CFXHvtgC</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MACountTodoByStaffProject;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.repository.StaffProjectRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MAStaffProjectRepository extends StaffProjectRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select st from StaffProject st 
+&nbsp;                    join Project p on st.project.id = p.id
+&nbsp;                    where p.id  = :idProject and st.status = 0
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;StaffProject&gt; getAllUserByProject(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                    select 
+&nbsp;                        s.name as nameStaff,
+&nbsp;                        s2.name as nameStudent,
+&nbsp;                        s.picture as imageStaff,
+&nbsp;                        s2.image as imageStudent,
+&nbsp;                        count(t.name) as countTodo
+&nbsp;                        from StaffProject sp 
+&nbsp;                    left join Staff s on sp.staff.id = s.id
+&nbsp;                    left join Student s2 on sp.student.id = s2.id
+&nbsp;                    join TodoVote  tv on sp.id = tv.staffProject.id 
+&nbsp;                    join Todo t on tv.todo.id = t.id
+&nbsp;                    join Project p on sp.project.id = p.id
+&nbsp;                    join TodoList tl on t.todoList.id = tl.id
+&nbsp;                    join PhaseProject pp on tl.phaseProject.id = pp.id
+&nbsp;                    where  p.id like :idProject
+&nbsp;                     and (:idPhase IS NULL OR pp.id like :idPhase)
+&nbsp;                    group by s.name, s2.name, s.picture,s2.image
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MACountTodoByStaffProject&gt; countTodoByStaffProject(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

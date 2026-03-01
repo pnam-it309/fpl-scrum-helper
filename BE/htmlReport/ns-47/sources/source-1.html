@@ -1,0 +1,262 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeActivityServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeActivityServiceImpl (udpm.hn.server.core.member.projectdetails.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeActivityServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37.5%
+  </span>
+  <span class="absValue">
+    (3/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+  <span class="absValue">
+    (51/59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MBMeActivityServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37.5%
+  </span>
+  <span class="absValue">
+    (3/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+  <span class="absValue">
+    (51/59)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageImpl;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeFindActivityRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeActivityConvertResponse;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeActivityResponse;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeActivityRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeActivityService;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;import udpm.hn.server.repository.StudentRepository;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeActivityServiceImpl implements MBMeActivityService {
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    private final StaffRepository staffRepository;
+&nbsp;
+&nbsp;    private final StudentRepository studentRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllActivityWhereIdTodo(MBMeFindActivityRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        Page&lt;MBMeActivityResponse&gt; activities = mbMeActivityRepository.getAllActivityWhereIdTodo(pageable, request);</b>
+<b class="fc">&nbsp;        List&lt;MBMeActivityConvertResponse&gt; result = activities.stream().map(activity -&gt; {</b>
+<b class="fc">&nbsp;            MBMeActivityConvertResponse dto = new MBMeActivityConvertResponse();</b>
+<b class="fc">&nbsp;            dto.setMemberCreatedId(activity.getMemberCreatedId());</b>
+<b class="fc">&nbsp;            dto.setMemberId(activity.getMemberId());</b>
+<b class="fc">&nbsp;            dto.setProjectId(activity.getProjectId());</b>
+<b class="fc">&nbsp;            dto.setTodoId(activity.getTodoId());</b>
+<b class="fc">&nbsp;            dto.setTodoListId(activity.getTodoListId());</b>
+<b class="fc">&nbsp;            dto.setContentAction(activity.getContentAction());</b>
+<b class="fc">&nbsp;            dto.setUrlImage(activity.getUrlImage());</b>
+<b class="fc">&nbsp;            dto.setCreatedDate(activity.getCreatedDate());</b>
+<b class="fc">&nbsp;            dto.setUrlPath(activity.getUrlPath());</b>
+&nbsp;            // Tìm thông tin thành viên
+<b class="fc">&nbsp;            String memberCreatedId = activity.getMemberCreatedId();</b>
+<b class="fc">&nbsp;            Staff staff = staffRepository.findById(memberCreatedId).orElse(null);</b>
+<b class="pc">&nbsp;            if (staff != null) {</b>
+<b class="fc">&nbsp;                dto.setMemberName(staff.getName());</b>
+<b class="fc">&nbsp;                dto.setMemberEmail(staff.getEmailFpt());</b>
+<b class="fc">&nbsp;                dto.setMemberImage(staff.getPicture());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                Student student = studentRepository.findById(memberCreatedId).orElse(null);</b>
+<b class="nc">&nbsp;                if (student != null) {</b>
+<b class="nc">&nbsp;                    dto.setMemberName(student.getName());</b>
+<b class="nc">&nbsp;                    dto.setMemberEmail(student.getEmail());</b>
+<b class="nc">&nbsp;                    dto.setMemberImage(student.getImage());</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return dto;</b>
+<b class="fc">&nbsp;        }).collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(new PageImpl&lt;&gt;(result, pageable, activities.getTotalElements())),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Get all activity successfully&quot;
+&nbsp;        );
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllActivityWhereIdProject(MBMeFindActivityRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        Page&lt;MBMeActivityResponse&gt; activities = mbMeActivityRepository.getAllActivityWhereIdProject(pageable, request);</b>
+<b class="fc">&nbsp;        List&lt;MBMeActivityConvertResponse&gt; result = activities.stream().map(activity -&gt; {</b>
+<b class="fc">&nbsp;            MBMeActivityConvertResponse dto = new MBMeActivityConvertResponse();</b>
+<b class="fc">&nbsp;            dto.setMemberCreatedId(activity.getMemberCreatedId());</b>
+<b class="fc">&nbsp;            dto.setMemberId(activity.getMemberId());</b>
+<b class="fc">&nbsp;            dto.setProjectId(activity.getProjectId());</b>
+<b class="fc">&nbsp;            dto.setTodoId(activity.getTodoId());</b>
+<b class="fc">&nbsp;            dto.setTodoListId(activity.getTodoListId());</b>
+<b class="fc">&nbsp;            dto.setContentAction(activity.getContentAction());</b>
+<b class="fc">&nbsp;            dto.setUrlImage(activity.getUrlImage());</b>
+<b class="fc">&nbsp;            dto.setCreatedDate(activity.getCreatedDate());</b>
+<b class="fc">&nbsp;            dto.setContentActionProject(activity.getContentActionProject());</b>
+<b class="fc">&nbsp;            dto.setUrlPath(activity.getUrlPath());</b>
+&nbsp;
+&nbsp;            // Tìm thông tin thành viên
+<b class="fc">&nbsp;            String memberCreatedId = activity.getMemberCreatedId();</b>
+<b class="fc">&nbsp;            Staff staff = staffRepository.findById(memberCreatedId).orElse(null);</b>
+<b class="pc">&nbsp;            if (staff != null) {</b>
+<b class="nc">&nbsp;                dto.setMemberName(staff.getName());</b>
+<b class="nc">&nbsp;                dto.setMemberEmail(staff.getEmailFpt());</b>
+<b class="nc">&nbsp;                dto.setMemberImage(staff.getPicture());</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                Student student = studentRepository.findById(memberCreatedId).orElse(null);</b>
+<b class="pc">&nbsp;                if (student != null) {</b>
+<b class="fc">&nbsp;                    dto.setMemberName(student.getName());</b>
+<b class="fc">&nbsp;                    dto.setMemberEmail(student.getEmail());</b>
+<b class="fc">&nbsp;                    dto.setMemberImage(student.getImage());</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return dto;</b>
+<b class="fc">&nbsp;        }).collect(Collectors.toList());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(new PageImpl&lt;&gt;(result, pageable, activities.getTotalElements())),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Get all activity successfully&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countTotalActivitiesWhereIdProject(MBMeFindActivityRequest request) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;( mbMeActivityRepository.countTotalActivitiesWhereIdProject(request),</b>
+&nbsp;                HttpStatus.OK,&quot;Lấy thành công tổng hoạt động của du an &quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

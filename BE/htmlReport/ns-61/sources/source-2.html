@@ -1,0 +1,323 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExcelOneFileOneSheet</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.doc.ADReportProject.utils.excel</a>
+</div>
+
+<h1>Coverage Summary for Class: ExcelOneFileOneSheet (udpm.hn.server.infrastructure.doc.ADReportProject.utils.excel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExcelOneFileOneSheet</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/126)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.doc.ADReportProject.utils.excel;
+&nbsp;
+&nbsp;import org.apache.poi.ss.usermodel.*;
+&nbsp;import org.apache.poi.ss.util.CellRangeAddress;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFSheet;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.DocADProjectMemberResponse;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.PersonalReportResponse;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.ADReportRepository;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.DocADProjectRepository;
+&nbsp;
+&nbsp;import java.io.FileOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.time.*;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.*;
+&nbsp;
+<b class="nc">&nbsp;public class ExcelOneFileOneSheet {</b>
+&nbsp;
+&nbsp;    public static void exportExcelOneFileOneSheet(String filePath,
+&nbsp;                                             List&lt;DocADProjectMemberResponse&gt; allMembers,
+&nbsp;                                             ADReportRepository adReportRepository,
+&nbsp;                                             DocADProjectRepository docADProjectRepository) throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        LocalDate minStartDate = allMembers.stream()</b>
+<b class="nc">&nbsp;                .map(m -&gt; docADProjectRepository.findProjectStartTimeById(m.getProjectId()).getStartTime())</b>
+<b class="nc">&nbsp;                .map(t -&gt; Instant.ofEpochMilli(t).atZone(ZoneId.systemDefault()).toLocalDate())</b>
+<b class="nc">&nbsp;                .map(d -&gt; d.with(DayOfWeek.MONDAY))</b>
+<b class="nc">&nbsp;                .min(LocalDate::compareTo)</b>
+<b class="nc">&nbsp;                .orElse(LocalDate.now());</b>
+&nbsp;
+<b class="nc">&nbsp;        LocalDate endDate = LocalDate.now();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;LocalDate&gt; allDates = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (LocalDate d = minStartDate; !d.isAfter(endDate); d = d.plusDays(1)) {</b>
+<b class="nc">&nbsp;            allDates.add(d);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;LocalDate, List&lt;Integer&gt;&gt; mondayToDateCols = new LinkedHashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;LocalDate&gt; mondays = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; allDates.size(); i++) {</b>
+<b class="nc">&nbsp;            LocalDate date = allDates.get(i);</b>
+<b class="nc">&nbsp;            LocalDate monday = date.with(DayOfWeek.MONDAY);</b>
+<b class="nc">&nbsp;            mondayToDateCols.computeIfAbsent(monday, k -&gt; new ArrayList&lt;&gt;()).add(i);</b>
+<b class="nc">&nbsp;            if (!mondays.contains(monday)) mondays.add(monday);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        XSSFWorkbook workbook = new XSSFWorkbook();</b>
+<b class="nc">&nbsp;        XSSFSheet sheet = workbook.createSheet(&quot;Report Tổng Hợp&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        CellStyle headerStyle = workbook.createCellStyle();</b>
+<b class="nc">&nbsp;        Font font = workbook.createFont();</b>
+<b class="nc">&nbsp;        font.setBold(true);</b>
+<b class="nc">&nbsp;        headerStyle.setFont(font);</b>
+<b class="nc">&nbsp;        headerStyle.setAlignment(HorizontalAlignment.CENTER);</b>
+<b class="nc">&nbsp;        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);</b>
+<b class="nc">&nbsp;        headerStyle.setWrapText(true);</b>
+&nbsp;
+<b class="nc">&nbsp;        int startColOffset = 5;</b>
+&nbsp;
+<b class="nc">&nbsp;        Row header0 = sheet.createRow(0);</b>
+<b class="nc">&nbsp;        Row header1 = sheet.createRow(1);</b>
+<b class="nc">&nbsp;        String[] fixedHeaders = {&quot;STT&quot;, &quot;MSSV&quot;, &quot;Họ tên sinh viên&quot;, &quot;Team&quot;, &quot;Dự án&quot;};</b>
+&nbsp;
+<b class="nc">&nbsp;        for (int i = 0; i &lt; fixedHeaders.length; i++) {</b>
+<b class="nc">&nbsp;            Cell cell0 = header0.createCell(i);</b>
+<b class="nc">&nbsp;            cell0.setCellValue(fixedHeaders[i]);</b>
+<b class="nc">&nbsp;            cell0.setCellStyle(headerStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            Cell cell1 = header1.createCell(i);</b>
+<b class="nc">&nbsp;            cell1.setCellStyle(headerStyle);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        DateTimeFormatter weekFormatter = DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy&quot;);</b>
+<b class="nc">&nbsp;        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern(&quot;dd/MM&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        Set&lt;Integer&gt; lastColOfWeek = new HashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (List&lt;Integer&gt; cols : mondayToDateCols.values()) {</b>
+<b class="nc">&nbsp;            lastColOfWeek.add(cols.get(cols.size() - 1) + startColOffset);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (Map.Entry&lt;LocalDate, List&lt;Integer&gt;&gt; entry : mondayToDateCols.entrySet()) {</b>
+<b class="nc">&nbsp;            LocalDate monday = entry.getKey();</b>
+<b class="nc">&nbsp;            List&lt;Integer&gt; cols = entry.getValue();</b>
+<b class="nc">&nbsp;            int firstCol = cols.get(0) + startColOffset;</b>
+<b class="nc">&nbsp;            int lastCol = cols.get(cols.size() - 1) + startColOffset;</b>
+&nbsp;
+<b class="nc">&nbsp;            String weekTitle = &quot;Tuần (Từ &quot; + monday.format(weekFormatter) + &quot; đến &quot; + monday.plusDays(6).format(weekFormatter) + &quot;)&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            CellStyle weekHeaderStyle = workbook.createCellStyle();</b>
+<b class="nc">&nbsp;            weekHeaderStyle.cloneStyleFrom(headerStyle);</b>
+<b class="nc">&nbsp;            if (lastColOfWeek.contains(lastCol)) {</b>
+<b class="nc">&nbsp;                weekHeaderStyle.setBorderRight(BorderStyle.MEDIUM);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Cell cell = header0.createCell(firstCol);</b>
+<b class="nc">&nbsp;            cell.setCellValue(weekTitle);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(weekHeaderStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (firstCol != lastCol) {</b>
+<b class="nc">&nbsp;                sheet.addMergedRegion(new CellRangeAddress(0, 0, firstCol, lastCol));</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; cols.size(); i++) {</b>
+<b class="nc">&nbsp;                LocalDate date = allDates.get(cols.get(i));</b>
+<b class="nc">&nbsp;                int colIndex = cols.get(i) + startColOffset;</b>
+<b class="nc">&nbsp;                Cell cell1 = header1.createCell(colIndex);</b>
+<b class="nc">&nbsp;                cell1.setCellValue(date.format(dayFormatter));</b>
+<b class="nc">&nbsp;                cell1.setCellStyle(headerStyle);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int rowIndex = 2;</b>
+<b class="nc">&nbsp;        int stt = 1;</b>
+<b class="nc">&nbsp;        int teamStartRow = rowIndex;</b>
+<b class="nc">&nbsp;        int projectStartRow = rowIndex;</b>
+<b class="nc">&nbsp;        String prevTeam = null;</b>
+<b class="nc">&nbsp;        String prevProject = null;</b>
+&nbsp;
+<b class="nc">&nbsp;        for (DocADProjectMemberResponse member : allMembers) {</b>
+<b class="nc">&nbsp;            Row row = sheet.createRow(rowIndex);</b>
+<b class="nc">&nbsp;            row.createCell(0).setCellValue(stt++);</b>
+<b class="nc">&nbsp;            row.createCell(1).setCellValue(member.getUserCode());</b>
+<b class="nc">&nbsp;            row.createCell(2).setCellValue(member.getMemberName());</b>
+&nbsp;
+<b class="nc">&nbsp;            String currentTeam = member.getProjectCode();</b>
+<b class="nc">&nbsp;            String currentProject = docADProjectRepository.findProjectStartTimeById(member.getProjectId()).getName();</b>
+&nbsp;
+<b class="nc">&nbsp;            row.createCell(3).setCellValue(currentTeam);</b>
+<b class="nc">&nbsp;            row.createCell(4).setCellValue(currentProject);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;PersonalReportResponse&gt; reports = adReportRepository.findAllReportsByStaffProjectId(member.getStaffProjectId());</b>
+<b class="nc">&nbsp;            Map&lt;LocalDate, PersonalReportResponse&gt; reportMap = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;            for (PersonalReportResponse r : reports) {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    LocalDate date = Instant.ofEpochMilli(Long.parseLong(r.getReportTime())).atZone(ZoneId.systemDefault()).toLocalDate();</b>
+<b class="nc">&nbsp;                    reportMap.put(date, r);</b>
+&nbsp;                } catch (Exception ignored) {}
+&nbsp;            }
+<b class="nc">&nbsp;            LocalDate projectStartDate = Instant.ofEpochMilli(</b>
+<b class="nc">&nbsp;                    docADProjectRepository.findProjectStartTimeById(member.getProjectId()).getStartTime()</b>
+<b class="nc">&nbsp;            ).atZone(ZoneId.systemDefault()).toLocalDate();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; allDates.size(); i++) {</b>
+<b class="nc">&nbsp;                LocalDate date = allDates.get(i);</b>
+<b class="nc">&nbsp;                int col = i + startColOffset;</b>
+<b class="nc">&nbsp;                Cell cell = row.createCell(col);</b>
+<b class="nc">&nbsp;                CellStyle wrapStyle = workbook.createCellStyle();</b>
+<b class="nc">&nbsp;                wrapStyle.setWrapText(true);</b>
+<b class="nc">&nbsp;                if (lastColOfWeek.contains(col)) {</b>
+<b class="nc">&nbsp;                    wrapStyle.setBorderRight(BorderStyle.MEDIUM);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                if (date.isBefore(projectStartDate)) {</b>
+<b class="nc">&nbsp;                    cell.setCellValue(&quot;Dự án chưa bắt đầu&quot;);</b>
+<b class="nc">&nbsp;                } else if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {</b>
+<b class="nc">&nbsp;                    cell.setCellValue(&quot;Nghỉ&quot;);</b>
+<b class="nc">&nbsp;                } else if (reportMap.containsKey(date)) {</b>
+<b class="nc">&nbsp;                    PersonalReportResponse r = reportMap.get(date);</b>
+<b class="nc">&nbsp;                    String content = &quot;Hôm nay làm: &quot; + r.getWorkDoneToday()</b>
+<b class="nc">&nbsp;                            + &quot;\nKhó khăn: &quot; + r.getObstacles()</b>
+<b class="nc">&nbsp;                            + &quot;\nNgày mai làm gì: &quot; + r.getWorkPlanTomorrow();</b>
+<b class="nc">&nbsp;                    cell.setCellValue(content);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    cell.setCellValue(&quot;Chưa báo cáo&quot;);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                cell.setCellStyle(wrapStyle);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (!currentTeam.equals(prevTeam) &amp;&amp; prevTeam != null) {</b>
+<b class="nc">&nbsp;                if (teamStartRow &lt; rowIndex - 1) {</b>
+<b class="nc">&nbsp;                    sheet.addMergedRegion(new CellRangeAddress(teamStartRow, rowIndex - 1, 3, 3));</b>
+&nbsp;                }
+<b class="nc">&nbsp;                teamStartRow = rowIndex;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            prevTeam = currentTeam;</b>
+&nbsp;
+<b class="nc">&nbsp;            if (!currentProject.equals(prevProject) &amp;&amp; prevProject != null) {</b>
+<b class="nc">&nbsp;                if (projectStartRow &lt; rowIndex - 1) {</b>
+<b class="nc">&nbsp;                    sheet.addMergedRegion(new CellRangeAddress(projectStartRow, rowIndex - 1, 4, 4));</b>
+&nbsp;                }
+<b class="nc">&nbsp;                projectStartRow = rowIndex;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            prevProject = currentProject;</b>
+&nbsp;
+<b class="nc">&nbsp;            rowIndex++;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int lastRow = rowIndex - 1;</b>
+<b class="nc">&nbsp;        if (teamStartRow &lt; lastRow) {</b>
+<b class="nc">&nbsp;            sheet.addMergedRegion(new CellRangeAddress(teamStartRow, lastRow, 3, 3));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (projectStartRow &lt; lastRow) {</b>
+<b class="nc">&nbsp;            sheet.addMergedRegion(new CellRangeAddress(projectStartRow, lastRow, 4, 4));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (int i = 0; i &lt; allDates.size() + startColOffset; i++) {</b>
+<b class="nc">&nbsp;            sheet.autoSizeColumn(i);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        try (FileOutputStream fos = new FileOutputStream(filePath)) {</b>
+<b class="nc">&nbsp;            workbook.write(fos);</b>
+&nbsp;        }
+&nbsp;        workbook.close();
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > VelocityRecordRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: VelocityRecordRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$kEJ9chMY</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$kEJ9chMY$auxiliary$mWo2mUTq</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$kEJ9chMY$auxiliary$qtBukKWr</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$mcIFPTIJ</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$mcIFPTIJ$auxiliary$S7Q9VBfd</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$mcIFPTIJ$auxiliary$sUXd4yeJ</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$PL7KRGG9</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$PL7KRGG9$auxiliary$NchMu77N</td>
+  </tr>
+  <tr>
+    <td class="name">VelocityRecordRepository$MockitoMock$PL7KRGG9$auxiliary$yyjctXwZ</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.VelocityRecord;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface VelocityRecordRepository extends JpaRepository&lt;VelocityRecord, String&gt; {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                select avg(vr.actual_point)
+&nbsp;                from velocity_record vr
+&nbsp;                         join phase_project pp on vr.id_phase_project = pp.id
+&nbsp;                         join project p on pp.id_project = p.id
+&nbsp;                where p.id = :idProject
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Float avgActualPoint(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                    select avg(vr.actual_working_day)  
+&nbsp;                from velocity_record vr
+&nbsp;                         join phase_project pp on vr.id_phase_project = pp.id
+&nbsp;                         join project p on pp.id_project = p.id
+&nbsp;                where p.id = :idProject
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Float avgActualWorkingDay(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT v FROM VelocityRecord v WHERE v.phaseProject.project.id = :projectId&quot;)
+&nbsp;    List&lt;VelocityRecord&gt; findAllByProjectId(String projectId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

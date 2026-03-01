@@ -1,0 +1,386 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TokenProvider</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.security.service</a>
+</div>
+
+<h1>Coverage Summary for Class: TokenProvider (udpm.hn.server.infrastructure.security.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TokenProvider</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    26.3%
+  </span>
+  <span class="absValue">
+    (5/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.7%
+  </span>
+  <span class="absValue">
+    (6/129)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.security.service;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.JsonProcessingException;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import io.jsonwebtoken.security.SignatureException;
+&nbsp;import jakarta.servlet.http.Cookie;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import lombok.Setter;
+&nbsp;import io.jsonwebtoken.ExpiredJwtException;
+&nbsp;import io.jsonwebtoken.MalformedJwtException;
+&nbsp;import io.jsonwebtoken.UnsupportedJwtException;
+&nbsp;import io.jsonwebtoken.security.Keys;
+&nbsp;import io.jsonwebtoken.Claims;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.coyote.BadRequestException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.Student;
+&nbsp;import udpm.hn.server.infrastructure.constant.CookieConstant;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.OAuth2Constant;
+&nbsp;import udpm.hn.server.infrastructure.constant.Role;
+&nbsp;import udpm.hn.server.infrastructure.exception.RedirectException;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StaffAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StaffRoleAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.repository.StudentAuthRepository;
+&nbsp;import udpm.hn.server.infrastructure.security.user.StaffFacilityResponse;
+&nbsp;import udpm.hn.server.infrastructure.security.user.StudentFacilityResponse;
+&nbsp;import udpm.hn.server.infrastructure.security.user.UserPrincipal;
+&nbsp;import udpm.hn.server.infrastructure.security.response.TokenInfoResponse;
+&nbsp;import udpm.hn.server.utils.CookieUtils;
+&nbsp;import io.jsonwebtoken.Jwts;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class TokenProvider {</b>
+&nbsp;
+&nbsp;    @Value(&quot;${jwt.secret}&quot;)
+&nbsp;    private String tokenSecret;
+&nbsp;
+<b class="fc">&nbsp;    private final long TOKEN_EXP = System.currentTimeMillis() + 2 * 60 * 60 * 100000;</b>
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private StaffAuthRepository staffAuthRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private StudentAuthRepository studentAuthRepository;
+&nbsp;
+&nbsp;    @Setter(onMethod_ = @Autowired)
+&nbsp;    private HttpServletRequest httpServletRequest;
+&nbsp;
+&nbsp;    private StaffRoleAuthRepository staffRoleAuthRepository;
+&nbsp;
+&nbsp;    public String createToken(Authentication authentication) throws BadRequestException, JsonProcessingException {
+&nbsp;
+<b class="nc">&nbsp;        log.info(&quot;Đã chạy vào tạo token :{}&quot;, authentication.toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();</b>
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;String&gt; screenForRole = CookieUtils.getCookie(httpServletRequest, OAuth2Constant.SCREEN_FOR_ROLE_COOKIE_NAME)</b>
+<b class="nc">&nbsp;                .map(Cookie::getValue);</b>
+&nbsp;
+<b class="nc">&nbsp;        TokenInfoResponse tokenInfoResponse = new TokenInfoResponse();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (screenForRole.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new RedirectException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            Staff staffUser = getCurrentStaffLogin(userPrincipal.getEmail());</b>
+&nbsp;
+<b class="nc">&nbsp;                        if(staffUser != null){</b>
+<b class="nc">&nbsp;                            tokenInfoResponse = getTokenSubjectResponse(staffUser);</b>
+<b class="nc">&nbsp;                            tokenInfoResponse.setRoleScreen(screenForRole.get());</b>
+&nbsp;                        }else {
+<b class="nc">&nbsp;                            Student studentUser = getCurrentStudentLogin(userPrincipal.getEmail());</b>
+<b class="nc">&nbsp;                            if(studentUser == null){</b>
+<b class="nc">&nbsp;                                throw new RedirectException(CookieConstant.ACCOUNT_NOT_EXIST);</b>
+&nbsp;                            }
+<b class="nc">&nbsp;                            tokenInfoResponse = getTokenSubjectResponseForStudent(studentUser);</b>
+<b class="nc">&nbsp;                            tokenInfoResponse.setRoleScreen(screenForRole.get());</b>
+&nbsp;                        }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        String subject = new ObjectMapper().writeValueAsString(tokenInfoResponse);</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; claims = getBodyClaims(tokenInfoResponse);</b>
+&nbsp;
+<b class="nc">&nbsp;        String token =  Jwts.builder()</b>
+<b class="nc">&nbsp;                .setSubject(subject)</b>
+<b class="nc">&nbsp;                .setClaims(claims)</b>
+<b class="nc">&nbsp;                .setIssuedAt(new Date(System.currentTimeMillis()))</b>
+<b class="nc">&nbsp;                .setExpiration(new Date(TOKEN_EXP))</b>
+<b class="nc">&nbsp;                .setIssuer(&quot;udpm.hn&quot;)</b>
+<b class="nc">&nbsp;                .signWith(Keys.hmacShaKeyFor(tokenSecret.getBytes()))</b>
+<b class="nc">&nbsp;                .compact();</b>
+<b class="nc">&nbsp;        System.out.println(&quot;Generated Token: &quot; + token);</b>
+<b class="nc">&nbsp;        return token;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String generateToken(Map&lt;String, Object&gt; claims) throws JsonProcessingException {
+<b class="nc">&nbsp;        String subject = new ObjectMapper().writeValueAsString(claims);</b>
+<b class="nc">&nbsp;        return Jwts.builder()</b>
+<b class="nc">&nbsp;                .setSubject(subject)</b>
+<b class="nc">&nbsp;                .setClaims(claims)</b>
+<b class="nc">&nbsp;                .setIssuedAt(new Date(System.currentTimeMillis()))</b>
+<b class="nc">&nbsp;                .setExpiration(new Date(TOKEN_EXP))</b>
+<b class="nc">&nbsp;                .setIssuer(&quot;udpm.hn&quot;)</b>
+<b class="nc">&nbsp;                .signWith(Keys.hmacShaKeyFor(tokenSecret.getBytes()))</b>
+<b class="nc">&nbsp;                .compact();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private TokenInfoResponse getTokenSubjectResponse(Staff staff) throws JsonProcessingException {
+<b class="nc">&nbsp;        TokenInfoResponse response = new TokenInfoResponse();</b>
+<b class="nc">&nbsp;        Optional&lt;StaffFacilityResponse&gt; staffFacilityResponse=  staffAuthRepository.findStaffWithFacilityById(staff.getId());</b>
+<b class="nc">&nbsp;        response.setUserId(staff.getId());</b>
+<b class="nc">&nbsp;        response.setFullName(staff.getName());</b>
+<b class="nc">&nbsp;        response.setUserCode(staff.getCode());</b>
+<b class="nc">&nbsp;        response.setPictureUrl(staff.getPicture());</b>
+<b class="nc">&nbsp;        List&lt;String&gt; rolesCode = staffRoleAuthRepository.getRoleCodesByStaffId(staff.getId());</b>
+<b class="nc">&nbsp;        response.setEmailFe(staff.getEmailFe() != null ? staff.getEmailFe() : &quot;&quot;);</b>
+<b class="nc">&nbsp;        response.setEmailFPT(staff.getEmailFpt() != null ? staff.getEmailFpt() : &quot;&quot;);</b>
+<b class="nc">&nbsp;        if (!rolesCode.isEmpty()) {</b>
+<b class="nc">&nbsp;            response.setRolesCode(rolesCode);</b>
+<b class="nc">&nbsp;            response.setRolesName(staffRoleAuthRepository.getRoleNamesByStaffId(staff.getId()));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        response.setHost(httpServletRequest.getRemoteHost());</b>
+<b class="nc">&nbsp;        response.setRoleSwitch(&quot;true&quot;);</b>
+&nbsp;        // kt và gán cơ sở
+<b class="nc">&nbsp;        if(staffFacilityResponse.isPresent()) {</b>
+<b class="nc">&nbsp;            StaffFacilityResponse stf =staffFacilityResponse.get();</b>
+<b class="nc">&nbsp;            response.setIdFacility(stf.getFacilityId());</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            response.setIdFacility(null);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private TokenInfoResponse getTokenSubjectResponseForStudent(Student student) {
+<b class="nc">&nbsp;        TokenInfoResponse response = new TokenInfoResponse();</b>
+<b class="nc">&nbsp;        Optional&lt;StudentFacilityResponse&gt; studentFacilityResponse=  studentAuthRepository.findFacilityIdByStudentId(student.getId());</b>
+<b class="nc">&nbsp;        response.setUserId(student.getId());</b>
+<b class="nc">&nbsp;        response.setFullName(student.getName());</b>
+<b class="nc">&nbsp;        response.setUserCode(student.getCode());</b>
+<b class="nc">&nbsp;        response.setPictureUrl(student.getImage());</b>
+<b class="nc">&nbsp;        response.setEmailSV(student.getEmail());</b>
+<b class="nc">&nbsp;        response.setRolesCode(Collections.singletonList(Role.THANH_VIEN.name()));</b>
+<b class="nc">&nbsp;        response.setRolesName(Collections.singletonList(Role.THANH_VIEN.name()));</b>
+<b class="nc">&nbsp;        response.setHost(httpServletRequest.getRemoteHost());</b>
+<b class="nc">&nbsp;        response.setRoleSwitch(&quot;true&quot;);</b>
+<b class="nc">&nbsp;        if(studentFacilityResponse.isPresent()) {</b>
+<b class="nc">&nbsp;            StudentFacilityResponse stf =studentFacilityResponse.get();</b>
+<b class="nc">&nbsp;            response.setIdFacility(stf.getFacilityId());</b>
+&nbsp;        }else{
+<b class="nc">&nbsp;            response.setIdFacility(null);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static Map&lt;String, Object&gt; getBodyClaims(TokenInfoResponse tokenInfoResponse) {
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        claims.put(&quot;userId&quot;, tokenInfoResponse.getUserId());</b>
+<b class="nc">&nbsp;        claims.put(&quot;userName&quot;, tokenInfoResponse.getUserName());</b>
+<b class="nc">&nbsp;        claims.put(&quot;userCode&quot;, tokenInfoResponse.getUserCode());</b>
+<b class="nc">&nbsp;        claims.put(&quot;fullName&quot;, tokenInfoResponse.getFullName());</b>
+<b class="nc">&nbsp;        claims.put(&quot;pictureUrl&quot;, tokenInfoResponse.getPictureUrl());</b>
+<b class="nc">&nbsp;        List&lt;String&gt; rolesCode = tokenInfoResponse.getRolesCode();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; rolesName = tokenInfoResponse.getRolesName();</b>
+<b class="nc">&nbsp;        claims.put(&quot;rolesCode&quot;, rolesCode);</b>
+<b class="nc">&nbsp;        claims.put(&quot;rolesName&quot;, rolesName);</b>
+<b class="nc">&nbsp;        claims.put(&quot;host&quot;, tokenInfoResponse.getHost());</b>
+<b class="nc">&nbsp;        claims.put(&quot;roleScreen&quot;, tokenInfoResponse.getRoleScreen());</b>
+<b class="nc">&nbsp;        claims.put(&quot;roleSwitch&quot;, tokenInfoResponse.getRoleSwitch());</b>
+<b class="nc">&nbsp;        claims.put(&quot;idFacility&quot;, tokenInfoResponse.getIdFacility());</b>
+<b class="nc">&nbsp;        claims.put(&quot;email&quot;, tokenInfoResponse.getEmailFPT() != null ? tokenInfoResponse.getEmailFPT() : tokenInfoResponse.getEmailSV());</b>
+&nbsp;
+<b class="nc">&nbsp;        return claims;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getIdFacilityFromToken(String token) {
+<b class="nc">&nbsp;        Claims claims = getClaimsToken(token);</b>
+<b class="nc">&nbsp;        String idFacility = claims.get(&quot;idFacility&quot;, String.class);</b>
+<b class="nc">&nbsp;        return (idFacility != null &amp;&amp; !idFacility.isEmpty()) ? idFacility : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getUserIdFromToken(String token) {
+<b class="nc">&nbsp;        Claims claims = getClaimsToken(token);</b>
+<b class="nc">&nbsp;        return String.valueOf(claims.get(&quot;userId&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getRolesFromToken(String token) {
+<b class="nc">&nbsp;        Claims claims = getClaimsToken(token);</b>
+<b class="nc">&nbsp;        return String.valueOf(claims.get(&quot;roleScreen&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;udpm.hn.server.entity.Role&gt; getRolesCodesFromToken(String token) {
+<b class="nc">&nbsp;        Claims claims = getClaimsToken(token);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;Claims từ token: &quot; + claims);</b>
+<b class="nc">&nbsp;        return (List&lt;udpm.hn.server.entity.Role&gt;) claims.get(&quot;rolesCode&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmailFromToken(String token) {
+<b class="nc">&nbsp;        Claims claims = getClaimsToken(token);</b>
+<b class="nc">&nbsp;        String email = claims.get(&quot;email&quot;, String.class);</b>
+<b class="nc">&nbsp;        if (email != null &amp;&amp; !email.isEmpty()) {</b>
+<b class="nc">&nbsp;            return email;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return claims.get(&quot;email&quot;, String.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // giải mã
+&nbsp;    private Claims getClaimsToken(String token) {
+<b class="nc">&nbsp;        return Jwts.parserBuilder()</b>
+<b class="nc">&nbsp;                .setSigningKey(Keys.hmacShaKeyFor(tokenSecret.getBytes()))</b>
+<b class="nc">&nbsp;                .build()</b>
+<b class="nc">&nbsp;                .parseClaimsJws(token)</b>
+<b class="nc">&nbsp;                .getBody();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean validateToken(String authToken) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Jwts.parserBuilder()</b>
+<b class="nc">&nbsp;                    .setSigningKey(Keys.hmacShaKeyFor(tokenSecret.getBytes()))</b>
+<b class="nc">&nbsp;                    .build()</b>
+<b class="nc">&nbsp;                    .parseClaimsJws(authToken);</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } catch (SignatureException ex) {
+<b class="nc">&nbsp;            log.error(&quot;Invalid JWT signature&quot;);</b>
+&nbsp;        } catch (MalformedJwtException ex) {
+<b class="nc">&nbsp;            log.error(&quot;Invalid JWT token&quot;);</b>
+&nbsp;        } catch (ExpiredJwtException ex) {
+<b class="nc">&nbsp;            log.error(&quot;Expired JWT token&quot;);</b>
+&nbsp;        } catch (UnsupportedJwtException ex) {
+<b class="nc">&nbsp;            log.error(&quot;Unsupported JWT token&quot;);</b>
+&nbsp;        } catch (IllegalArgumentException ex) {
+<b class="nc">&nbsp;            log.error(&quot;JWT claims string is empty.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Staff getCurrentStaffLogin(String email) {
+<b class="nc">&nbsp;        Optional&lt;Staff&gt; staffFPT = staffAuthRepository.findByEmailFpt(email);</b>
+<b class="nc">&nbsp;        return staffFPT.orElse(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Student getCurrentStudentLogin(String email) {
+<b class="nc">&nbsp;        Optional&lt;Student&gt; student = studentAuthRepository.findByEmailAndStatus(email, EntityStatus.ACTIVE);</b>
+<b class="nc">&nbsp;        return student.orElse(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public void setStaffRoleAuthRepository(StaffRoleAuthRepository staffRoleAuthRepository) {
+<b class="fc">&nbsp;        this.staffRoleAuthRepository = staffRoleAuthRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public void setStaffAuthRepository(StaffAuthRepository staffAuthRepository) {
+<b class="fc">&nbsp;        this.staffAuthRepository = staffAuthRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public void setStudentAuthRepository(StudentAuthRepository studentAuthRepository) {
+<b class="fc">&nbsp;        this.studentAuthRepository = studentAuthRepository;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

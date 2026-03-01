@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StaffTasklet</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.staff.commonio</a>
+</div>
+
+<h1>Coverage Summary for Class: StaffTasklet (udpm.hn.server.infrastructure.job.staff.commonio)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StaffTasklet</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.6%
+  </span>
+  <span class="absValue">
+    (6/41)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StaffTasklet$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.6%
+  </span>
+  <span class="absValue">
+    (6/41)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.staff.commonio;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.core.StepContribution;
+&nbsp;import org.springframework.batch.core.scope.context.ChunkContext;
+&nbsp;import org.springframework.batch.core.step.tasklet.Tasklet;
+&nbsp;import org.springframework.batch.item.ItemProcessor;
+&nbsp;import org.springframework.batch.item.ItemReader;
+&nbsp;import org.springframework.batch.repeat.RepeatStatus;
+&nbsp;import org.springframework.beans.factory.annotation.Qualifier;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import udpm.hn.server.entity.Staff;
+&nbsp;import udpm.hn.server.entity.StaffMajorFacility;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.dto.TransferStaffRole;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.model.request.StaffExcelRequest;
+&nbsp;import udpm.hn.server.infrastructure.job.staff.repository.ConfigStaffCustomRepository;
+&nbsp;import udpm.hn.server.repository.StaffMajorFacilityRepository;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Transactional
+&nbsp;public class StaffTasklet implements Tasklet {
+&nbsp;
+&nbsp;    private final ConfigStaffCustomRepository staffRepository;
+&nbsp;    private final StaffMajorFacilityRepository staffMajorFacilityRepository;
+&nbsp;    private final ItemReader&lt;StaffExcelRequest&gt; reader;
+&nbsp;    private final ItemProcessor&lt;StaffExcelRequest, TransferStaffRole&gt; processor;
+&nbsp;
+&nbsp;    public StaffTasklet(ConfigStaffCustomRepository staffRepository,
+&nbsp;                        StaffMajorFacilityRepository staffMajorFacilityRepository,
+&nbsp;                        ItemReader&lt;StaffExcelRequest&gt; reader,
+<b class="fc">&nbsp;                        @Qualifier(&quot;staffExcelProcessor&quot;) ItemProcessor&lt;StaffExcelRequest, TransferStaffRole&gt; processor) {</b>
+<b class="fc">&nbsp;        this.staffRepository = staffRepository;</b>
+<b class="fc">&nbsp;        this.staffMajorFacilityRepository = staffMajorFacilityRepository;</b>
+<b class="fc">&nbsp;        this.reader = reader;</b>
+<b class="fc">&nbsp;        this.processor = processor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+<b class="nc">&nbsp;        log.info(&quot;BẮT ĐẦU STAFF TASKLET&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;TransferStaffRole&gt; validItems = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;String&gt; errorMessages = new ArrayList&lt;&gt;();</b>
+&nbsp;        StaffExcelRequest readItem;
+<b class="nc">&nbsp;        int readCount = 0;</b>
+&nbsp;
+&nbsp;        // Đọc và xử lý tất cả bản ghi
+<b class="nc">&nbsp;        while ((readItem = reader.read()) != null) {</b>
+<b class="nc">&nbsp;            readCount++;</b>
+<b class="nc">&nbsp;            log.info(&quot;ĐỌC BẢN GHI: {}&quot;, readItem);</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                TransferStaffRole item = processor.process(readItem);</b>
+<b class="nc">&nbsp;                if (item != null) {</b>
+<b class="nc">&nbsp;                    validItems.add(item);</b>
+&nbsp;                } else {
+&nbsp;                    // Lỗi đã được ghi trong processor, không cần thêm lỗi ở đây
+<b class="nc">&nbsp;                    errorMessages.add(&quot;Bản ghi có lỗi: &quot; + readItem.toString());</b>
+&nbsp;                }
+&nbsp;            } catch (Exception e) {
+<b class="nc">&nbsp;                log.error(&quot;LỖI XỬ LÝ BẢN GHI: {}&quot;, readItem, e);</b>
+<b class="nc">&nbsp;                errorMessages.add(&quot;Lỗi xử lý bản ghi: &quot; + readItem + &quot; - &quot; + e.getMessage());</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        log.info(&quot;TỔNG SỐ BẢN GHI ĐỌC: {}&quot;, readCount);</b>
+&nbsp;
+&nbsp;        // Kiểm tra xem có lỗi nào không
+<b class="nc">&nbsp;        if (!errorMessages.isEmpty()) {</b>
+<b class="nc">&nbsp;            log.warn(&quot;CÓ LỖI TRONG QUÁ TRÌNH XỬ LÝ, KHÔNG LƯU DỮ LIỆU. SỐ LỖI: {}&quot;, errorMessages.size());</b>
+<b class="nc">&nbsp;            for (String error : errorMessages) {</b>
+<b class="nc">&nbsp;                log.warn(&quot;LỖI: {}&quot;, error);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return RepeatStatus.FINISHED; // Kết thúc mà không lưu gì</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Nếu không có lỗi, lưu tất cả bản ghi
+<b class="nc">&nbsp;        if (!validItems.isEmpty()) {</b>
+<b class="nc">&nbsp;            List&lt;Staff&gt; staffList = validItems.stream()</b>
+<b class="nc">&nbsp;                    .map(TransferStaffRole::getStaff)</b>
+<b class="nc">&nbsp;                    .toList();</b>
+<b class="nc">&nbsp;            List&lt;Staff&gt; savedStaffList = staffRepository.saveAll(staffList);</b>
+&nbsp;
+<b class="nc">&nbsp;            for (TransferStaffRole transfer : validItems) {</b>
+<b class="nc">&nbsp;                Staff savedStaff = savedStaffList.stream()</b>
+<b class="nc">&nbsp;                        .filter(s -&gt; s.getCode().equals(transfer.getStaff().getCode()))</b>
+<b class="nc">&nbsp;                        .findFirst()</b>
+<b class="nc">&nbsp;                        .orElseThrow(() -&gt; new RuntimeException(&quot;Staff không tồn tại sau khi lưu&quot;));</b>
+<b class="nc">&nbsp;                StaffMajorFacility smf = transfer.getStaffMajorFacility();</b>
+<b class="nc">&nbsp;                smf.setStaff(savedStaff);</b>
+<b class="nc">&nbsp;                staffMajorFacilityRepository.save(smf);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            log.info(&quot;Đã lưu {} Staff và StaffMajorFacility thành công.&quot;, validItems.size());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            log.warn(&quot;KHÔNG CÓ BẢN GHI HỢP LỆ NÀO ĐƯỢC LƯU&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return RepeatStatus.FINISHED;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

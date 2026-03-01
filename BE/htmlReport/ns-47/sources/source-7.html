@@ -1,0 +1,293 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeMemberProjectServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeMemberProjectServiceImpl (udpm.hn.server.core.member.projectdetails.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeMemberProjectServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.1%
+  </span>
+  <span class="absValue">
+    (49/59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MBMeMemberProjectServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71.4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.1%
+  </span>
+  <span class="absValue">
+    (49/59)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service.impl;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeCreateOrDeleteTodoVoteRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBMeMemberProjectResponse;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeActivityRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeMemberProjectRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeTodoRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeAssignRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeMemberProjectService;
+&nbsp;import udpm.hn.server.entity.Activity;
+&nbsp;import udpm.hn.server.entity.Assign;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeMemberProjectServiceImpl implements MBMeMemberProjectService {
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;    private final MBMeMemberProjectRepository mbMeMemberProjectRepository;
+&nbsp;
+&nbsp;    private final MBMeTodoRepository mbMeTodoRepository;
+&nbsp;
+&nbsp;    private final MBMeAssignRepository mbMeAssignRepository;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllMemberProject(String idProject,String idTodo) {
+<b class="fc">&nbsp;        List&lt;MBMeMemberProjectResponse&gt; lstMemberProject = mbMeMemberProjectRepository.findAllMembersWithAddedFlag(idProject,idTodo);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(lstMemberProject,HttpStatus.OK,&quot;getAllMemberProject&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; joinTodoVoteMemberProject(MBMeCreateOrDeleteTodoVoteRequest request) {
+<b class="fc">&nbsp;        String idStaffProject = mbMeMemberProjectRepository</b>
+<b class="fc">&nbsp;                .findIdByMemberIdAndProjectId(request.getIdMember(), request.getProjectId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todo = mbMeTodoRepository.findById(request.getIdTodo());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;StaffProject&gt; staffProject = mbMeMemberProjectRepository.findById(idStaffProject);</b>
+&nbsp;
+&nbsp;        // Kiểm tra tồn tại Todo và StaffProject
+<b class="pc">&nbsp;        if (todo.isEmpty() || staffProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo hoặc StaffProject không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //  Kiểm tra đã join chưa
+<b class="fc">&nbsp;        boolean alreadyJoined = mbMeAssignRepository.existsByTodoAndStaffProject(todo.get(), staffProject.get());</b>
+<b class="fc">&nbsp;        if (alreadyJoined) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CONFLICT, &quot;Đã vote Todo này rồi&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Assign todoVote = new Assign();</b>
+<b class="fc">&nbsp;        todoVote.setTodo(todo.get());</b>
+<b class="fc">&nbsp;        todoVote.setStaffProject(staffProject.get());</b>
+<b class="fc">&nbsp;        mbMeAssignRepository.save(todoVote);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+&nbsp;
+&nbsp;// Lấy tên assigner và assignee
+<b class="fc">&nbsp;        String assignerName = request.getNameAssigner(); // Tên người phân công</b>
+<b class="fc">&nbsp;        String assigneeName = request.getNameMember();   // Tên người nhận</b>
+&nbsp;
+&nbsp;// Nội dung thông báo
+<b class="pc">&nbsp;        if (assignerName.equals(assigneeName)) {</b>
+&nbsp;            // Người nhận tự nhận công việc
+<b class="nc">&nbsp;            activity.setContentAction(assigneeName + &quot; đã nhận công việc này&quot;);</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(assigneeName + &quot; đã nhận công việc &quot; + todo.get().getName());</b>
+&nbsp;        } else {
+&nbsp;            // Người phân công khác người nhận
+<b class="nc">&nbsp;            activity.setContentAction(assignerName + &quot; đã phân công công việc cho &quot; + assigneeName);</b>
+<b class="nc">&nbsp;            activity.setContentActionProject(assignerName + &quot; đã phân công công việc &quot; + todo.get().getName() + &quot; cho &quot; + assigneeName);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        mbMeActivityRepository.save(activity);</b>
+<b class="nc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Cập nhat thanh cong phân công cng việc&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(todoVote,HttpStatus.OK,&quot;joinTodoVoteMemberProject&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; outTodoVoteMemberProject(MBMeCreateOrDeleteTodoVoteRequest request) {
+<b class="fc">&nbsp;        String idStaffProject = mbMeMemberProjectRepository</b>
+<b class="fc">&nbsp;                .findIdByMemberIdAndProjectId(request.getIdMember(), request.getProjectId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todo = mbMeTodoRepository.findById(request.getIdTodo());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;StaffProject&gt; staffProject = mbMeMemberProjectRepository.findById(idStaffProject);</b>
+&nbsp;
+&nbsp;        // Kiểm tra tồn tại Todo và StaffProject
+<b class="pc">&nbsp;        if (todo.isEmpty() || staffProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Todo hoặc StaffProject không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Kiểm tra xem đã vote chưa (đã tồn tại TodoVote chưa)
+<b class="fc">&nbsp;        Optional&lt;String&gt; idTodoVote = mbMeAssignRepository</b>
+<b class="fc">&nbsp;                .findIdAssignByIdTodoAndIdStaffProject(request.getIdTodo(), idStaffProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (idTodoVote.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Người dùng chưa vote nên không thể out&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+&nbsp;
+&nbsp;        // Nội dung hiển thị ai assign cho ai
+<b class="fc">&nbsp;        String assignerName = request.getNameAssigner(); // Tên người phân công</b>
+<b class="fc">&nbsp;        String assigneeName = request.getNameMember();   // Tên người nhận</b>
+&nbsp;
+<b class="fc">&nbsp;        activity.setContentAction(</b>
+&nbsp;                assignerName + &quot; đã từ chối công việc này của &quot; + assigneeName
+&nbsp;        );
+<b class="fc">&nbsp;        activity.setContentActionProject(</b>
+<b class="fc">&nbsp;                assignerName + &quot; đã từ chối công việc &quot; + todo.get().getName() + &quot; của &quot; + assigneeName</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        mbMeActivityRepository.save(activity);</b>
+&nbsp;
+<b class="nc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Cập nhat thanh cong phân công cng việc&quot;);</b>
+<b class="nc">&nbsp;        mbMeAssignRepository.deleteById(idTodoVote.get());</b>
+&nbsp;//        messagingTemplate.convertAndSend(&quot;/topic/out-todoVote&quot;, &quot;Out thành công&quot;);
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(null,HttpStatus.OK,&quot;outTodoVoteMemberProject&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllFilterMemberProject(String idProject) {
+<b class="fc">&nbsp;        List&lt;MBMeMemberProjectResponse&gt; lstMemberProject = mbMeMemberProjectRepository.getAllFilterMemberProject(idProject);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(lstMemberProject,HttpStatus.OK,&quot;getAllFilterMemberProject&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

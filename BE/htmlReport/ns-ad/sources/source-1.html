@@ -1,0 +1,168 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAReportRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.report.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAReportRepository (udpm.hn.server.core.manage.report.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAReportRepository$MockitoMock$cVJhptg7</td>
+  </tr>
+  <tr>
+    <td class="name">MAReportRepository$MockitoMock$cVJhptg7$auxiliary$r2pgdehh</td>
+  </tr>
+  <tr>
+    <td class="name">MAReportRepository$MockitoMock$cVJhptg7$auxiliary$YCeQ3kEx</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.report.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.report.model.request.MAReportRequest;
+&nbsp;import udpm.hn.server.core.manage.report.model.response.MAReportDTO;
+&nbsp;import udpm.hn.server.core.manage.report.model.response.MAReportResponse;
+&nbsp;import udpm.hn.server.entity.Report;
+&nbsp;import udpm.hn.server.repository.ReportRepository;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MAReportRepository extends ReportRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                SELECT 
+&nbsp;                       ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS orderNumber,
+&nbsp;                       s.name as nameStaff,
+&nbsp;                       s.picture as imageStaff,
+&nbsp;                       s2.name as nameStudent,
+&nbsp;                       sp.id as idStaffProject,
+&nbsp;                       s2.image as imageStudent,
+&nbsp;                       s2.code as codeStudent,
+&nbsp;                       s.code as codeStaff,
+&nbsp;                       r.workDoneToday as workDoneToday,
+&nbsp;                       r.workPlanTomorrow as workPlanTomorrow,
+&nbsp;                       r.obstacles as obstacles,
+&nbsp;                       r.reportTime as reportTime
+&nbsp;                from StaffProject sp
+&nbsp;                left join Staff s on sp.staff.id = s.id
+&nbsp;                left join Student s2 on sp.student.id = s2.id
+&nbsp;                left join Report r ON r.staffProject.id = sp.id 
+&nbsp;                AND (r.reportTime between :dateStart and :dateEnd  or r.reportTime IS NULL)
+&nbsp;                WHERE sp.project.id = :idProject and sp.status =0
+&nbsp;
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;MAReportResponse&gt; getAllReport(Pageable pageable, @Param(&quot;dateStart&quot;) Long dateStart, @Param(&quot;dateEnd&quot;) Long dateEnd, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                SELECT 
+&nbsp;                    r.workDoneToday as workDoneToday,
+&nbsp;                    r.workPlanTomorrow as workPlanTomorrow,
+&nbsp;                    r.obstacles as obstacles,
+&nbsp;                    r.reportTime as reportTime
+&nbsp;                    
+&nbsp;                FROM Report r
+&nbsp;                JOIN r.staffProject sp
+&nbsp;                LEFT JOIN Staff s ON sp.staff.id = s.id
+&nbsp;                LEFT JOIN Student s2 ON sp.student.id = s2.id
+&nbsp;                WHERE sp.project.id = :idProject 
+&nbsp;                and sp.id = :memberId
+&nbsp;
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MAReportResponse&gt; findReportByProjectAndMember(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;memberId&quot;) String memberId);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;                SELECT 
+&nbsp;                       ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS orderNumber,
+&nbsp;                       s.name as nameStaff,
+&nbsp;                       s.picture as imageStaff,
+&nbsp;                       s2.name as nameStudent,
+&nbsp;                       sp.id as idStaffProject,
+&nbsp;                       s2.image as imageStudent,
+&nbsp;                       s2.code as codeStudent,
+&nbsp;                       s.code as codeStaff,
+&nbsp;                       r.workDoneToday as workDoneToday,
+&nbsp;                       r.workPlanTomorrow as workPlanTomorrow,
+&nbsp;                       r.obstacles as obstacles,
+&nbsp;                       r.reportTime as reportTime
+&nbsp;                from StaffProject sp
+&nbsp;                left join Staff s on sp.staff.id = s.id
+&nbsp;                left join Student s2 on sp.student.id = s2.id
+&nbsp;                left join Report r ON r.staffProject.id = sp.id 
+&nbsp;                AND (r.reportTime between :dateStart and :dateEnd  or r.reportTime IS NULL)
+&nbsp;                WHERE sp.project.id = :idProject and sp.status =0
+&nbsp;
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;MAReportResponse&gt; getAllReport(@Param(&quot;dateStart&quot;) Long dateStart, @Param(&quot;dateEnd&quot;) Long dateEnd, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT COUNT(r) FROM Report r&quot;)
+&nbsp;    Long countAllReports();
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

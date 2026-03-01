@@ -1,0 +1,171 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoListController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoListController (udpm.hn.server.core.member.projectdetails.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeTodoListController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.controller;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.messaging.handler.annotation.DestinationVariable;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.handler.annotation.SendTo;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.*;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeTodoListService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(MappingConstants.API_PROJECT_DETAILS_TODO_LIST)
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeTodoListController {
+&nbsp;
+&nbsp;    private final MBMeTodoListService mbMeTodoListService;
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-index-todo-list/{projectId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-index-todo-list&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateIndexTodoList(MBMeUpdateTodoListRequest request,
+&nbsp;                                                 @DestinationVariable String projectId) {
+<b class="fc">&nbsp;        request.setIdProject(projectId);</b>
+<b class="fc">&nbsp;        return mbMeTodoListService.updateIndexTodoList(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/create-todo-list/{projectId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/create-todo-list&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; createTodoList(MBMeCreateTodoListRequest request,
+&nbsp;                                         @DestinationVariable String projectId,
+&nbsp;                                         StompHeaderAccessor headerAccessor) {
+<b class="nc">&nbsp;        return mbMeTodoListService.createTodoList(request, headerAccessor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/delete-todo-list/{projectId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/delete-todo-list&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; deleteTodoList( MBMeDeleteTodoListRequest request,
+&nbsp;                                         @DestinationVariable String projectId) {
+<b class="fc">&nbsp;        return mbMeTodoListService.deleteTodoList(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/update-name-todo-list/{projectId}&quot;)
+&nbsp;    @SendTo(&quot;/topic/update-name-todo-list&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; updateNameTodoList( MBMeUpdateNameTodoListRequest request,
+&nbsp;                                             @DestinationVariable String projectId) {
+<b class="fc">&nbsp;        return mbMeTodoListService.updateNameTodoList(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/all-todolist/by-id-phase-project&quot;)
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodoListByIdPhaseProject(@RequestParam(&quot;idPhaseProject&quot;) String idPhaseProject) {
+<b class="fc">&nbsp;        return mbMeTodoListService.getAllTodoListByIdPhaseProject(idPhaseProject);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/details-project/by-id-phase-project&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getProjectByIdPhaseProject(@RequestParam(&quot;idPhaseProject&quot;) String idPhaseProject) {
+<b class="fc">&nbsp;        return  Helper.createResponseEntity(mbMeTodoListService.getProjectByIdPhaseProject(idPhaseProject));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

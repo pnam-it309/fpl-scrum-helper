@@ -1,0 +1,414 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBReportServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.report.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBReportServiceImpl (udpm.hn.server.core.member.report.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBReportServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (22/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (131/131)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.report.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageImpl;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.report.model.request.UpdateReportSettingRequest;
+&nbsp;import udpm.hn.server.core.member.report.model.response.MBReportResponse;
+&nbsp;import udpm.hn.server.core.member.report.model.response.MBReportSettingReponse;
+&nbsp;import udpm.hn.server.core.member.report.model.response.ReportRateResponse;
+&nbsp;import udpm.hn.server.core.member.report.repository.MBReportSetting;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.core.member.report.model.request.MBReportRequest;
+&nbsp;import udpm.hn.server.core.member.report.repository.MBReportRepository;
+&nbsp;import udpm.hn.server.core.member.report.repository.MBTodoProjectRepository;
+&nbsp;import udpm.hn.server.core.member.report.service.MBReportService;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.Help;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusReport;
+&nbsp;import udpm.hn.server.repository.*;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.time.*;
+&nbsp;import java.time.temporal.ChronoUnit;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBReportServiceImpl implements MBReportService {
+&nbsp;
+&nbsp;    private final MBReportRepository mbReportRepository;
+&nbsp;
+&nbsp;    private final MBTodoProjectRepository todoProjectRepository;
+&nbsp;
+&nbsp;    private final StaffProjectRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final UserContextHelper userContextHelper;
+&nbsp;
+&nbsp;    private final MBReportSetting reportSettingRepository;
+&nbsp;
+&nbsp;    private final HolidayRepository holidayRepository;
+&nbsp;
+&nbsp;    private final PhaseProjectRepository phaseProjectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAll(MBReportRequest request, String idProject) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;reportTime&quot;);</b>
+&nbsp;
+&nbsp;        // Lấy danh sách báo cáo
+<b class="fc">&nbsp;        List&lt;MBReportResponse&gt; reports = mbReportRepository</b>
+<b class="fc">&nbsp;                .getAll(pageable, idProject, userContextHelper, request)</b>
+<b class="fc">&nbsp;                .getContent();</b>
+&nbsp;
+&nbsp;        // Lấy danh sách ngày nghỉ (không lọc theo thời gian)
+<b class="fc">&nbsp;        List&lt;MBReportResponse&gt; holidays = holidayRepository</b>
+<b class="fc">&nbsp;                .findHolidayReports(idProject);</b>
+&nbsp;
+&nbsp;        // Gộp dữ liệu
+<b class="fc">&nbsp;        List&lt;MBReportResponse&gt; merged = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        merged.addAll(reports);</b>
+<b class="fc">&nbsp;        merged.addAll(holidays);</b>
+&nbsp;
+&nbsp;        // Sắp xếp theo reportTime mới nhất trước
+<b class="fc">&nbsp;        merged.sort(Comparator.comparing(MBReportResponse::getReportTime, Comparator.nullsLast(Long::compareTo)).reversed());</b>
+&nbsp;
+&nbsp;        // Phân trang thủ công
+<b class="fc">&nbsp;        int start = (int) pageable.getOffset();</b>
+<b class="fc">&nbsp;        int end = Math.min(start + pageable.getPageSize(), merged.size());</b>
+<b class="fc">&nbsp;        List&lt;MBReportResponse&gt; pagedResult = merged.subList(start, end);</b>
+&nbsp;
+<b class="fc">&nbsp;        Page&lt;MBReportResponse&gt; pageResult = new PageImpl&lt;&gt;(pagedResult, pageable, merged.size());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(pageResult),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy danh sách báo cáo thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getReportSetting(String idProject) {
+<b class="fc">&nbsp;        MBReportSettingReponse setting = reportSettingRepository</b>
+<b class="fc">&nbsp;                .getSettingByProjectId(idProject)</b>
+<b class="fc">&nbsp;                .orElse(null);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(setting, HttpStatus.OK, &quot;Lấy dữ liệu cấu hình báo cáo thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateReportSetting(String idProject, UpdateReportSettingRequest request) {
+<b class="fc">&nbsp;        Optional&lt;ReportSetting&gt; optional = reportSettingRepository.findByProject_Id(idProject);</b>
+&nbsp;
+&nbsp;        ReportSetting setting;
+<b class="fc">&nbsp;        if (optional.isPresent()) {</b>
+<b class="fc">&nbsp;            setting = optional.get();</b>
+&nbsp;        } else {
+&nbsp;            // Nếu chưa có thì tạo mới
+<b class="fc">&nbsp;            setting = new ReportSetting();</b>
+<b class="fc">&nbsp;            Project project = projectRepository.findById(idProject)</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Không tìm thấy dự án với ID: &quot; + idProject));</b>
+<b class="fc">&nbsp;            setting.setProject(project);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        setting.setStopReportHour(request.getStopReportHour());</b>
+<b class="fc">&nbsp;        reportSettingRepository.save(setting);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(setting, HttpStatus.OK, &quot;Cập nhật cấu hình báo cáo thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detail(String id, String idProject) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                mbReportRepository.detail(id, idProject, userContextHelper),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy dữ liệu báo cáo thành công&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; add(MBReportRequest request, String idProject) {
+<b class="fc">&nbsp;        Optional&lt;StaffProject&gt; optionalStaffProject = staffProjectRepository.getStaffProjectByStaffAndProject(userContextHelper, idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        Long setting = reportSettingRepository.getStopReportHour(idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (setting == null) {</b>
+<b class="fc">&nbsp;            Optional&lt;Project&gt; optionalProject = projectRepository.findById(idProject);</b>
+<b class="fc">&nbsp;            if (optionalProject.isEmpty()) {</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy thông tin dự án&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Project project = optionalProject.get();</b>
+&nbsp;
+<b class="fc">&nbsp;            ReportSetting newSetting = new ReportSetting();</b>
+<b class="fc">&nbsp;            newSetting.setProject(project);</b>
+&nbsp;
+<b class="fc">&nbsp;            LocalTime defaultStopTime = LocalTime.of(23, 0);</b>
+<b class="fc">&nbsp;            long defaultStopMillis = LocalDateTime.of(LocalDate.now(), defaultStopTime)</b>
+<b class="fc">&nbsp;                    .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                    .toInstant()</b>
+<b class="fc">&nbsp;                    .toEpochMilli();</b>
+&nbsp;
+<b class="fc">&nbsp;            newSetting.setStopReportHour(defaultStopMillis);</b>
+<b class="fc">&nbsp;            reportSettingRepository.save(newSetting);</b>
+<b class="fc">&nbsp;            setting = defaultStopMillis;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (optionalStaffProject.isPresent()) {</b>
+<b class="fc">&nbsp;            StaffProject staffProject = optionalStaffProject.get();</b>
+<b class="fc">&nbsp;            Optional&lt;Project&gt; optionalProject = projectRepository.findProjectById(idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (optionalProject.isPresent()) {</b>
+<b class="fc">&nbsp;                Project project = optionalProject.get();</b>
+<b class="fc">&nbsp;                Report report = new Report();</b>
+<b class="fc">&nbsp;                report.setWorkDoneToday(request.getWorkDoneToday());</b>
+<b class="fc">&nbsp;                report.setObstacles(request.getObstacles());</b>
+<b class="pc">&nbsp;                report.setHelp(request.getHelp() ? Help.CAN_GIUP_DO : Help.KHONG_CO_VAN_DE);                report.setWorkPlanTomorrow(request.getWorkPlanTomorrow());</b>
+<b class="fc">&nbsp;                report.setStatus(EntityStatus.ACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;                long nowMillis = new Date().getTime();</b>
+&nbsp;
+<b class="fc">&nbsp;                Instant stopInstant = Instant.ofEpochMilli(setting);</b>
+<b class="fc">&nbsp;                LocalTime stopTime = stopInstant.atZone(ZoneId.systemDefault()).toLocalTime();</b>
+&nbsp;
+<b class="fc">&nbsp;                long todayStopMillis = LocalDateTime.of(LocalDate.now(), stopTime)</b>
+<b class="fc">&nbsp;                        .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                        .toInstant()</b>
+<b class="fc">&nbsp;                        .toEpochMilli();</b>
+&nbsp;
+<b class="fc">&nbsp;                report.setReportTime(nowMillis);</b>
+<b class="pc">&nbsp;                report.setStatusReport(nowMillis &lt;= todayStopMillis ? StatusReport.DA_BAO_CAO : StatusReport.BAO_CAO_MUON);</b>
+<b class="fc">&nbsp;                report.setStaffProject(staffProject);</b>
+<b class="fc">&nbsp;                report.setProject(project);</b>
+<b class="fc">&nbsp;                mbReportRepository.save(report);</b>
+&nbsp;
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm báo cáo thành công&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy thông tin dự án&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy thông tin dự án của nhân viên&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; update(String id, MBReportRequest request, String idProject) {
+<b class="fc">&nbsp;        Optional&lt;Report&gt; optionalReport = mbReportRepository.findById(id);</b>
+<b class="fc">&nbsp;        Long setting = reportSettingRepository.getStopReportHour(idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalReport.isPresent()) {</b>
+<b class="fc">&nbsp;            Report report = optionalReport.get();</b>
+<b class="fc">&nbsp;            report.setWorkDoneToday(request.getWorkDoneToday());</b>
+<b class="fc">&nbsp;            report.setObstacles(request.getObstacles());</b>
+<b class="fc">&nbsp;            report.setHelp(request.getHelp() ? Help.CAN_GIUP_DO : Help.KHONG_CO_VAN_DE);</b>
+<b class="fc">&nbsp;            report.setWorkPlanTomorrow(request.getWorkPlanTomorrow());</b>
+<b class="fc">&nbsp;            report.setWorkPlanTomorrow(request.getWorkPlanTomorrow());</b>
+<b class="fc">&nbsp;            report.setStatus(EntityStatus.ACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;            long nowMillis = new Date().getTime();</b>
+&nbsp;
+<b class="fc">&nbsp;            Instant stopInstant = Instant.ofEpochMilli(setting);</b>
+<b class="fc">&nbsp;            LocalTime stopTime = stopInstant.atZone(ZoneId.systemDefault()).toLocalTime();</b>
+&nbsp;
+<b class="fc">&nbsp;            long todayStopMillis = LocalDateTime.of(LocalDate.now(), stopTime)</b>
+<b class="fc">&nbsp;                    .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                    .toInstant()</b>
+<b class="fc">&nbsp;                    .toEpochMilli();</b>
+&nbsp;
+<b class="fc">&nbsp;            report.setReportTime(nowMillis);</b>
+<b class="fc">&nbsp;            report.setStatusReport(nowMillis &lt;= todayStopMillis ? StatusReport.DA_BAO_CAO : StatusReport.BAO_CAO_MUON);</b>
+&nbsp;
+<b class="fc">&nbsp;            mbReportRepository.save(report);</b>
+&nbsp;
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Sửa báo cáo thành công&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Không có báo cáo này&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailByDate(Long reportTime, String idProject) {
+<b class="fc">&nbsp;        LocalDateTime startOfDay = Instant.ofEpochMilli(reportTime)</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                .toLocalDate()</b>
+<b class="fc">&nbsp;                .atStartOfDay();</b>
+&nbsp;
+<b class="fc">&nbsp;        Long startTimestamp = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();</b>
+<b class="fc">&nbsp;        Long endTimestamp = startTimestamp + 86400000;</b>
+&nbsp;
+<b class="fc">&nbsp;        String idUser = userContextHelper.getCurrentUserId();</b>
+&nbsp;
+<b class="fc">&nbsp;        String reportId = mbReportRepository.findIdByReportTime(startTimestamp, endTimestamp,idUser, idProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (reportId != null) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(reportId, HttpStatus.OK, &quot;Lấy ID báo cáo thành công&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy báo cáo cho ngày này&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getReportRateByPhase(String phaseId, String projectId) {
+<b class="fc">&nbsp;        PhaseProject phase = phaseProjectRepository.findById(phaseId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Không tìm thấy phase&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        Long startTime = phase.getStartTime();</b>
+<b class="fc">&nbsp;        Long endTime = normalizeEndToEndOfDay(phase.getEndTime());</b>
+&nbsp;
+&nbsp;        // Số ngày trong phase
+<b class="fc">&nbsp;        long totalDays = ChronoUnit.DAYS.between(</b>
+<b class="fc">&nbsp;                Instant.ofEpochMilli(startTime).atZone(ZoneId.systemDefault()).toLocalDate(),</b>
+<b class="fc">&nbsp;                Instant.ofEpochMilli(endTime).atZone(ZoneId.systemDefault()).toLocalDate()</b>
+&nbsp;        ) + 1;
+&nbsp;
+&nbsp;        // Số ngày nghỉ trong phase
+<b class="fc">&nbsp;        Long holidayCount = holidayRepository.countByProjectIdAndDateBetween(projectId, startTime, endTime);</b>
+&nbsp;
+&nbsp;        // Số lượng báo cáo hợp lệ
+<b class="fc">&nbsp;        Long reportCount = mbReportRepository.countValidReportsInRange(projectId, startTime, endTime, userContextHelper);</b>
+&nbsp;
+<b class="fc">&nbsp;        long validWorkDays = totalDays - holidayCount;</b>
+<b class="fc">&nbsp;        double reportRate = (validWorkDays == 0) ? 0.0 :</b>
+<b class="fc">&nbsp;                BigDecimal.valueOf((double) reportCount / validWorkDays * 100)</b>
+<b class="fc">&nbsp;                        .setScale(2, RoundingMode.HALF_UP)</b>
+<b class="fc">&nbsp;                        .doubleValue();</b>
+&nbsp;
+<b class="fc">&nbsp;        ReportRateResponse response = new ReportRateResponse(totalDays, holidayCount, reportCount, reportRate);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(response, HttpStatus.OK, &quot;Tỷ lệ báo cáo trong phase&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private Long normalizeEndToEndOfDay(Long timestamp) {
+<b class="fc">&nbsp;        return Instant.ofEpochMilli(timestamp)</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                .toLocalDate()</b>
+<b class="fc">&nbsp;                .atTime(LocalTime.MAX)</b>
+<b class="fc">&nbsp;                .atZone(ZoneId.systemDefault())</b>
+<b class="fc">&nbsp;                .toInstant()</b>
+<b class="fc">&nbsp;                .toEpochMilli();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

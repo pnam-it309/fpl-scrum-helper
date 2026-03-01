@@ -1,0 +1,154 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExcelFormatStaffValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.filecheck</a>
+</div>
+
+<h1>Coverage Summary for Class: ExcelFormatStaffValidator (udpm.hn.server.infrastructure.job.filecheck)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExcelFormatStaffValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.filecheck;
+&nbsp;
+&nbsp;import org.apache.poi.ss.usermodel.*;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class ExcelFormatStaffValidator {</b>
+&nbsp;
+<b class="nc">&nbsp;    private static final List&lt;String&gt; EXPECTED_HEADERS = Arrays.asList(</b>
+&nbsp;            &quot;STT&quot;, &quot;Mã Nhân Viên&quot;, &quot;Họ và Tên&quot;, &quot;Email FPT&quot;, &quot;Email FE&quot;, &quot;Chuyên ngành&quot;, &quot;Bộ môn&quot;, &quot;Cơ sở&quot;
+&nbsp;    );
+&nbsp;
+&nbsp;    public static boolean isValidFormat(MultipartFile file) {
+<b class="nc">&nbsp;        try (InputStream is = file.getInputStream();</b>
+<b class="nc">&nbsp;             Workbook workbook = WorkbookFactory.create(is)) {</b>
+&nbsp;
+<b class="nc">&nbsp;            Sheet sheet = workbook.getSheetAt(0);</b>
+<b class="nc">&nbsp;            Row headerRow = sheet.getRow(0);</b>
+<b class="nc">&nbsp;            if (headerRow == null) return false;</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; EXPECTED_HEADERS.size(); i++) {</b>
+<b class="nc">&nbsp;                Cell cell = headerRow.getCell(i);</b>
+<b class="nc">&nbsp;                if (cell == null) return false;</b>
+<b class="nc">&nbsp;                String value = cell.getStringCellValue().trim();</b>
+<b class="nc">&nbsp;                if (!value.equalsIgnoreCase(EXPECTED_HEADERS.get(i))) {</b>
+<b class="nc">&nbsp;                    return false;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

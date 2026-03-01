@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MajorFacilityExtendRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.departmentfacility.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MajorFacilityExtendRepository (udpm.hn.server.core.admin.department.departmentfacility.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MajorFacilityExtendRepository$MockitoMock$bUsW2beE</td>
+  </tr>
+  <tr>
+    <td class="name">MajorFacilityExtendRepository$MockitoMock$bUsW2beE$auxiliary$3iiDAqTM</td>
+  </tr>
+  <tr>
+    <td class="name">MajorFacilityExtendRepository$MockitoMock$bUsW2beE$auxiliary$ZQfRlvfs</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.departmentfacility.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.MajorFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.response.FacilityDepartmentInfoResponse;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.response.MajorFacilityDetailResponse;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.response.MajorFacilityResponse;
+&nbsp;import udpm.hn.server.entity.MajorFacility;
+&nbsp;import udpm.hn.server.repository.MajorFacilityRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MajorFacilityExtendRepository extends MajorFacilityRepository {
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                    SELECT
+&nbsp;                        ROW_NUMBER() OVER(
+&nbsp;                        ORDER BY mf.createdDate DESC) AS orderNumber,
+&nbsp;                        mf.id as majorFacilityId,
+&nbsp;                        mf.status as majorFacilityStatus,
+&nbsp;                        m.name as majorName,
+&nbsp;                        df.id as departmentFacilityId,
+&nbsp;                        m.id as majorId,
+&nbsp;                        m.code as majorCode
+&nbsp;                    FROM
+&nbsp;                        MajorFacility mf
+&nbsp;                    LEFT JOIN Major m ON mf.major.id = m.id
+&nbsp;                    LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                    LEFT JOIN Facility f ON df.facility.id = f.id
+&nbsp;                    LEFT JOIN Department d ON df.department.id = d.id
+&nbsp;                    WHERE
+&nbsp;                        df.id = :#{#request.departmentFacilityId}
+&nbsp;                    AND (:#{#request.majorName} IS NULL OR m.name LIKE CONCAT(&#39;%&#39;, :#{#request.majorName}, &#39;%&#39;))
+&nbsp;                                        ORDER BY mf.createdDate DESC
+&nbsp;                    &quot;&quot;&quot;,
+&nbsp;            countQuery = &quot;&quot;&quot;
+&nbsp;                    SELECT
+&nbsp;                        COUNT(mf.id)
+&nbsp;                    FROM
+&nbsp;                        MajorFacility mf
+&nbsp;                    LEFT JOIN Major m ON mf.major.id = m.id
+&nbsp;                    LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                    LEFT JOIN Facility f ON df.facility.id = f.id
+&nbsp;                    WHERE
+&nbsp;                        df.id = :#{#request.departmentFacilityId}
+&nbsp;                    AND (:#{#request.majorName} IS NULL OR m.name LIKE CONCAT(&#39;%&#39;, :#{#request.majorName}, &#39;%&#39;))
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;MajorFacilityResponse&gt; findAllMajorFacilities(MajorFacilityRequest request, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                    SELECT
+&nbsp;                             f.name as facilityName,
+&nbsp;                             d.id as departmentId,
+&nbsp;                             d.name as departmentName
+&nbsp;                    FROM
+&nbsp;                        DepartmentFacility df
+&nbsp;                    LEFT JOIN Facility f ON df.facility.id = f.id
+&nbsp;                    LEFT JOIN Department d ON df.department.id = d.id
+&nbsp;                    WHERE
+&nbsp;                        df.id = :departmentFacilityId
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    FacilityDepartmentInfoResponse getFacilityDepartmentInfo(String departmentFacilityId);
+&nbsp;
+&nbsp;    @Query(
+&nbsp;            value = &quot;&quot;&quot;
+&nbsp;                    SELECT
+&nbsp;                        mf.id as id,
+&nbsp;                        m.id as majorId
+&nbsp;                    FROM
+&nbsp;                        MajorFacility mf
+&nbsp;                    LEFT JOIN Major m ON mf.major.id = m.id
+&nbsp;                    LEFT JOIN DepartmentFacility df ON mf.departmentFacility.id = df.id
+&nbsp;                    LEFT JOIN Facility f ON df.facility.id = f.id
+&nbsp;                    WHERE
+&nbsp;                        mf.id = :majorFacilityId
+&nbsp;                    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    MajorFacilityDetailResponse findMajorFacilityById(String majorFacilityId);
+&nbsp;
+&nbsp;    Optional&lt;MajorFacility&gt; findByMajor_IdAndDepartmentFacility_Id(String majorId, String departmentFacilityId);
+&nbsp;
+&nbsp;    Optional&lt;MajorFacility&gt; findMajorFacilitiesByMajorId(String majorId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

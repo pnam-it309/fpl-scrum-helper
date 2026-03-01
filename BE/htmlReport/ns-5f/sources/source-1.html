@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ReportExportServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.doc.ADReportProject.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: ReportExportServiceImpl (udpm.hn.server.infrastructure.doc.ADReportProject.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReportExportServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.5%
+  </span>
+  <span class="absValue">
+    (4/88)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.doc.ADReportProject.service.impl;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.utils.docx.DocxReportUtil;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.utils.excel.ExcelOneFileMultiSheet;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.utils.excel.ExcelOneFileOneSheet;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.utils.docx.ReportExporter;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.request.GenerateReportRequest;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.model.response.DocADProjectMemberResponse;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.ADReportRepository;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.repository.DocADProjectRepository;
+&nbsp;import udpm.hn.server.infrastructure.doc.ADReportProject.service.ReportExportService;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileInputStream;
+&nbsp;import java.io.FileOutputStream;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.zip.ZipEntry;
+&nbsp;import java.util.zip.ZipOutputStream;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class ReportExportServiceImpl implements ReportExportService {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final String EXPORT_FOLDER = System.getProperty(&quot;java.io.tmpdir&quot;) + &quot;bao-cao-folder&quot; + File.separator;</b>
+<b class="fc">&nbsp;    private static final String ZIP_PATH = System.getProperty(&quot;java.io.tmpdir&quot;) + &quot;bao-cao-folder.zip&quot;;</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private DocADProjectRepository docADProjectRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ADReportRepository adReportRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public byte[] downloadExcelOneFileOneSheet(GenerateReportRequest request) {
+&nbsp;        try {
+&nbsp;
+<b class="nc">&nbsp;            File exportFolder = new File(EXPORT_FOLDER);</b>
+<b class="nc">&nbsp;            if (exportFolder.exists()) {</b>
+<b class="nc">&nbsp;                deleteFolder(exportFolder);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            exportFolder.mkdirs();</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;DocADProjectMemberResponse&gt; allMembers = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (String projectId : request.getProjectIds()) {</b>
+<b class="nc">&nbsp;                List&lt;DocADProjectMemberResponse&gt; members = docADProjectRepository.findProjectAndMemberNamesByProjectId(projectId);</b>
+<b class="nc">&nbsp;                allMembers.addAll(members);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            String filePath = EXPORT_FOLDER + &quot;BaoCao_TongHop.xlsx&quot;;</b>
+<b class="nc">&nbsp;            ExcelOneFileOneSheet.exportExcelOneFileOneSheet(filePath, allMembers, adReportRepository, docADProjectRepository);</b>
+&nbsp;
+<b class="nc">&nbsp;            File file = new File(filePath);</b>
+<b class="nc">&nbsp;            try (InputStream in = new FileInputStream(file)) {</b>
+<b class="nc">&nbsp;                return in.readAllBytes();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Error during download merged Excel&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public byte[] downloadReportExcelOneFileMultiSheet(GenerateReportRequest request) {
+&nbsp;        try {
+&nbsp;
+<b class="nc">&nbsp;            File exportFolder = new File(EXPORT_FOLDER);</b>
+<b class="nc">&nbsp;            if (exportFolder.exists()) {</b>
+<b class="nc">&nbsp;                deleteFolder(exportFolder);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            exportFolder.mkdirs();</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;DocADProjectMemberResponse&gt; allMembers = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (String projectId : request.getProjectIds()) {</b>
+<b class="nc">&nbsp;                List&lt;DocADProjectMemberResponse&gt; members = docADProjectRepository.findProjectAndMemberNamesByProjectId(projectId);</b>
+<b class="nc">&nbsp;                allMembers.addAll(members);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            String filePath = EXPORT_FOLDER + &quot;BaoCao_TongHop.xlsx&quot;;</b>
+<b class="nc">&nbsp;            ExcelOneFileMultiSheet.exportExcelOneFileMultiSheet(filePath, allMembers, adReportRepository, docADProjectRepository);</b>
+&nbsp;
+<b class="nc">&nbsp;            File file = new File(filePath);</b>
+<b class="nc">&nbsp;            try (InputStream in = new FileInputStream(file)) {</b>
+<b class="nc">&nbsp;                return in.readAllBytes();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Error during download merged Excel&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public byte[] downloadReportExcelMultiFileSheetZip(GenerateReportRequest request) {
+&nbsp;        try {
+<b class="nc">&nbsp;            File exportFolder = new File(EXPORT_FOLDER);</b>
+<b class="nc">&nbsp;            if (exportFolder.exists()) {</b>
+<b class="nc">&nbsp;                deleteFolder(exportFolder);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            exportFolder.mkdirs();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (String projectId : request.getProjectIds()) {</b>
+<b class="nc">&nbsp;                List&lt;DocADProjectMemberResponse&gt; members = docADProjectRepository.findProjectAndMemberNamesByProjectId(projectId);</b>
+&nbsp;
+<b class="nc">&nbsp;                if (members == null || members.isEmpty()) {</b>
+&nbsp;                    continue; // Bỏ qua project không có member
+&nbsp;                }
+&nbsp;
+&nbsp;                // Sanitize tên file tránh ký tự đặc biệt
+<b class="nc">&nbsp;                String sanitizedProjectName = members.get(0).getProjectName().replaceAll(&quot;[\\\\/:*?\&quot;&lt;&gt;|]&quot;, &quot;_&quot;);</b>
+<b class="nc">&nbsp;                String projectFileName = &quot;Report_&quot; + sanitizedProjectName + &quot;.xlsx&quot;;</b>
+<b class="nc">&nbsp;                String filePath = EXPORT_FOLDER + File.separator + projectFileName;</b>
+&nbsp;
+&nbsp;                // Gọi hàm export tạo file Excel cho từng project (Hàm này chỉ tạo Excel, không zip)
+<b class="nc">&nbsp;                ExcelOneFileMultiSheet.exportExcelOneFileMultiSheet(filePath, members, adReportRepository, docADProjectRepository);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Tạo file ZIP gộp tất cả file Excel
+<b class="nc">&nbsp;            File zipFile = new File(EXPORT_FOLDER + File.separator + &quot;BaoCaoTongHop.zip&quot;);</b>
+<b class="nc">&nbsp;            try (FileOutputStream fos = new FileOutputStream(zipFile);</b>
+<b class="nc">&nbsp;                 ZipOutputStream zos = new ZipOutputStream(fos)) {</b>
+&nbsp;
+<b class="nc">&nbsp;                File[] files = exportFolder.listFiles((dir, name) -&gt; name.endsWith(&quot;.xlsx&quot;));</b>
+<b class="nc">&nbsp;                if (files != null) {</b>
+<b class="nc">&nbsp;                    byte[] buffer = new byte[1024];</b>
+<b class="nc">&nbsp;                    for (File file : files) {</b>
+<b class="nc">&nbsp;                        try (FileInputStream fis = new FileInputStream(file)) {</b>
+<b class="nc">&nbsp;                            ZipEntry zipEntry = new ZipEntry(file.getName());</b>
+<b class="nc">&nbsp;                            zos.putNextEntry(zipEntry);</b>
+&nbsp;
+&nbsp;                            int length;
+<b class="nc">&nbsp;                            while ((length = fis.read(buffer)) &gt; 0) {</b>
+<b class="nc">&nbsp;                                zos.write(buffer, 0, length);</b>
+&nbsp;                            }
+&nbsp;
+<b class="nc">&nbsp;                            zos.closeEntry();</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Đọc file zip và trả về mảng byte
+<b class="nc">&nbsp;            try (InputStream in = new FileInputStream(zipFile)) {</b>
+<b class="nc">&nbsp;                return in.readAllBytes();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Error during export and zip Excel files&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public byte[] downloadZip(GenerateReportRequest request) {
+&nbsp;        try {
+&nbsp;            // 1. Xoá folder cũ nếu có
+<b class="nc">&nbsp;            File exportFolder = new File(EXPORT_FOLDER);</b>
+<b class="nc">&nbsp;            if (exportFolder.exists()) {</b>
+<b class="nc">&nbsp;                deleteFolder(exportFolder);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            exportFolder.mkdirs();</b>
+&nbsp;
+&nbsp;            // 2. Duyệt qua từng project
+<b class="nc">&nbsp;            for (String projectId : request.getProjectIds()) {</b>
+<b class="nc">&nbsp;                List&lt;DocADProjectMemberResponse&gt; members = docADProjectRepository.findProjectAndMemberNamesByProjectId(projectId);</b>
+&nbsp;
+<b class="nc">&nbsp;                for (DocADProjectMemberResponse member : members) {</b>
+<b class="nc">&nbsp;                    String projectFolder = EXPORT_FOLDER + cleanFileName(member.getProjectName()) + File.separator;</b>
+<b class="nc">&nbsp;                    new File(projectFolder).mkdirs();</b>
+&nbsp;
+<b class="nc">&nbsp;                    String fileName = &quot;BaoCao_&quot; + cleanFileName(member.getUserEmail()) + &quot;.docx&quot;;</b>
+<b class="nc">&nbsp;                    String filePath = projectFolder + fileName;</b>
+&nbsp;
+<b class="nc">&nbsp;                    new DocxReportUtil().createSingleDocxFile(filePath, member,adReportRepository,docADProjectRepository);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;            // 3. Nén folder
+<b class="nc">&nbsp;            ReportExporter.zipFolder(EXPORT_FOLDER, ZIP_PATH);</b>
+&nbsp;
+&nbsp;            // 4. Đọc nội dung zip và trả về
+<b class="nc">&nbsp;            File zipFile = new File(ZIP_PATH);</b>
+<b class="nc">&nbsp;            try (InputStream in = new FileInputStream(zipFile)) {</b>
+<b class="nc">&nbsp;                return in.readAllBytes();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;Error during download zip&quot;, e);</b>
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void deleteFolder(File folder) {
+<b class="nc">&nbsp;        File[] files = folder.listFiles();</b>
+<b class="nc">&nbsp;        if (files != null) {</b>
+<b class="nc">&nbsp;            for (File f : files) {</b>
+<b class="nc">&nbsp;                if (f.isDirectory()) {</b>
+<b class="nc">&nbsp;                    deleteFolder(f);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    f.delete();</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        folder.delete();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String cleanFileName(String name) {
+<b class="nc">&nbsp;        return name.replaceAll(&quot;[\\\\/:*?\&quot;&lt;&gt;|]&quot;, &quot;&quot;).replaceAll(&quot;\\s+&quot;, &quot;_&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MATodoServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MATodoServiceImpl (udpm.hn.server.core.manage.todo.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MATodoServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (22/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.7%
+  </span>
+  <span class="absValue">
+    (89/95)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.hibernate.annotations.Nationalized;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.todo.model.request.MATodoCURequest;
+&nbsp;import udpm.hn.server.core.manage.todo.model.request.MATodoSearchRequest;
+&nbsp;import udpm.hn.server.core.manage.todo.model.request.MATodoStatisticsRequest;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoByPhaseDTO;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoProjection;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoResponse;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MAListTodoProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MAStaffProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MATodoRepository;
+&nbsp;import udpm.hn.server.core.manage.todo.service.MATodoService;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeActivityRepository;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.PriorityLevel;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.repository.TypeTodoRepository;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.TodoListHelper;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MATodoServiceImpl implements MATodoService {
+&nbsp;
+&nbsp;    private final MATodoRepository maTodoRepository;
+&nbsp;
+&nbsp;    private final MAStaffProjectRepository staffProjectRepository;
+&nbsp;
+&nbsp;    private final MAListTodoProjectRepository maListTodoProjectRepository;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final TodoListHelper todoListHelper;
+&nbsp;
+&nbsp;    private final TypeTodoRepository typeTodoRepository;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;//    @Override
+&nbsp;//    public ResponseObject&lt;?&gt; getAllTodo(MATodoSearchRequest request) {
+&nbsp;//
+&nbsp;//        Pageable page = Helper.createPageable(request,&quot;createDate&quot;);
+&nbsp;//        return new ResponseObject&lt;&gt;(maTodoRepository.getAllTodo(page), HttpStatus.OK,&quot;Lấy dữ liệu công việc thành công&quot;);
+&nbsp;//    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Nationalized
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodo(MATodoSearchRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Request nhân vào khi vào get all todo :{}&quot;,request.toString());</b>
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request, &quot;createDate&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        PriorityLevel level = null;</b>
+<b class="fc">&nbsp;        if (request.getLevel() != null) {</b>
+<b class="fc">&nbsp;            level = PriorityLevel.values()[Integer.valueOf(request.getLevel())];</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Page&lt;MATodoResponse&gt; todos = maTodoRepository.getAllTodo(page, request.getIdProject(), level, request.getSearch());</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, MATodoProjection&gt; todoMap = new LinkedHashMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        todos.forEach(todo -&gt; {</b>
+<b class="nc">&nbsp;            todoMap.computeIfAbsent(todo.getId(), id -&gt; new MATodoProjection(todo))</b>
+<b class="nc">&nbsp;                    .addParticipant(todo.getNameStaff(), todo.getImageStaff());</b>
+<b class="nc">&nbsp;            todoMap.get(todo.getId()).addParticipant(todo.getNameStudent(), todo.getImageStudent());</b>
+&nbsp;        });
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Danh sách todo : {}&quot;,todoMap.toString());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(new ArrayList&lt;&gt;(todoMap.values()), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; fetchDataTodoByProject(String idProject) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maTodoRepository.findAllTodoByProject(idProject),HttpStatus.OK,&quot;Lâý dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Nationalized
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodoStatistics(MATodoStatisticsRequest request) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maTodoRepository.AllTodoStatistics(request.getIdProject(),request.getIdPhase()),HttpStatus.OK,&quot;Lấy danh sách thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Nationalized
+&nbsp;    public ResponseObject&lt;?&gt; countTodoByStaffProject(MATodoStatisticsRequest request) {
+<b class="fc">&nbsp;        log.info(request.toString());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(staffProjectRepository.countTodoByStaffProject(request.getIdProject(),request.getIdPhase()),HttpStatus.OK,&quot;Lấy danh sách thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllStaffByTodo(MATodoSearchRequest request, String idTodo) {
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        long currentTime = Calendar.getInstance().getTimeInMillis();</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maTodoRepository.getAllStaffByTodo(page, idTodo, currentTime), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodoByPhase(MATodoSearchRequest request, String idPhase) {
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request, &quot;createDate&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        Map&lt;String, MATodoByPhaseDTO&gt; todoByPhaseDTOMap = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        Page&lt;MATodoResponse&gt; todoList = maTodoRepository.getAllTodoByPhaseProject(page, idPhase, request.getSearch());</b>
+<b class="fc">&nbsp;        todoList.forEach(item -&gt; {</b>
+<b class="fc">&nbsp;            todoByPhaseDTOMap</b>
+<b class="fc">&nbsp;                    .computeIfAbsent(item.getId(), id -&gt; new MATodoByPhaseDTO(item))</b>
+<b class="fc">&nbsp;                    .addParticipant(</b>
+<b class="pc">&nbsp;                            item.getNameStaff() != null ? item.getNameStaff() : item.getNameStudent(),</b>
+<b class="pc">&nbsp;                            item.getImageStaff() != null ? item.getImageStaff() : item.getImageStudent()</b>
+&nbsp;                    );
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(new ArrayList&lt;&gt;(todoByPhaseDTOMap.values()), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;Todo&gt; createTodo(MATodoCURequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;request todo: {}&quot;, request.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;TypeTodo&gt; optionalTypeTodo = typeTodoRepository.findById(request.getIdType());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalTypeTodo.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy loại công việc&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findById(request.getIdProject());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (optionalProject.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy project&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        TodoList todoList = maListTodoProjectRepository.findByProject(request.getIdProject())</b>
+<b class="fc">&nbsp;                .stream().findFirst().orElse(null);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (todoList == null) {</b>
+<b class="fc">&nbsp;            todoList = new TodoList();</b>
+<b class="fc">&nbsp;            todoList.setCode(request.getCode());</b>
+<b class="fc">&nbsp;            todoList.setName(request.getName());</b>
+<b class="fc">&nbsp;            todoList.setIndexTodoList(todoListHelper.genIndexTodoList(request.getIdProject()));</b>
+&nbsp;
+<b class="fc">&nbsp;            todoList.setProject(optionalProject.get());</b>
+<b class="fc">&nbsp;            maListTodoProjectRepository.save(todoList);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Xử lý PriorityLevel (nếu request có giá trị hợp lệ)
+<b class="fc">&nbsp;        PriorityLevel priorityLevel = (request.getPriorityLevel() != null)</b>
+<b class="fc">&nbsp;                ? PriorityLevel.values()[request.getPriorityLevel()]</b>
+<b class="fc">&nbsp;                : null;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        Long count = maTodoRepository.findAll().stream().filter(a-&gt; a.getTodoList().getProject().getId().equals(optionalProject.get().getId())).count();</b>
+&nbsp;
+&nbsp;        // Tạo mới Todo
+<b class="fc">&nbsp;        Todo todo = new Todo();</b>
+<b class="fc">&nbsp;        todo.setCode(&quot;Scrum &quot; + count );</b>
+<b class="fc">&nbsp;        todo.setName(request.getName());</b>
+<b class="fc">&nbsp;        todo.setStatusTodo(StatusTodo.CHUA_HOAN_THANH);</b>
+<b class="fc">&nbsp;        todo.setPriorityLevel(priorityLevel);</b>
+<b class="fc">&nbsp;        todo.setIndexTodo((short) 0);</b>
+<b class="fc">&nbsp;        todo.setTypeTodo(optionalTypeTodo.get());</b>
+<b class="fc">&nbsp;        todo.setPriorityLevel(PriorityLevel.THAP);</b>
+<b class="fc">&nbsp;        todo.setTodoList(todoList);</b>
+&nbsp;
+<b class="fc">&nbsp;        maTodoRepository.save(todo);</b>
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getIdProject());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+&nbsp;
+<b class="fc">&nbsp;        String memberName = request.getNameUser(); // hoặc query từ idUser</b>
+<b class="fc">&nbsp;        activity.setContentActionProject(</b>
+&nbsp;                 &quot; đã tạo công việc mới &#39;&quot;
+<b class="fc">&nbsp;                        + todo.getName() + &quot;&#39; trong khối lượng công việc&quot;</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        mbMeActivityRepository.save(activity);</b>
+&nbsp;
+<b class="nc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Thêm cong việc thành công&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(todo, HttpStatus.OK, &quot;Thêm công việc thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteTodo(String id) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; optionalTodo = maTodoRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalTodo.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy công việc này&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Todo todo = optionalTodo.get();</b>
+<b class="fc">&nbsp;        todo.setStatus(EntityStatus.INACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;        maTodoRepository.save(todo);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Xóa thành công&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; dataStaffProject(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(staffProjectRepository.getAllUserByProject(id), HttpStatus.OK, &quot;Lấy dữ liệu thành viên dự án thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateTodo(String id, MATodoCURequest request) {
+<b class="fc">&nbsp;        log.info(&quot;request vào trong update todo ===&gt;{}&quot;, request.toString());</b>
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; optionalTodo = maTodoRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalTodo.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Không tìm thấy công việc này&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Todo todo = optionalTodo.get();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (request.getCode() != null) {</b>
+<b class="fc">&nbsp;            todo.setCode(request.getCode());</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (request.getName() != null) {</b>
+<b class="fc">&nbsp;            todo.setName(request.getName());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if (request.getPoint() != null) {</b>
+<b class="fc">&nbsp;            todo.setStoryPoint(request.getPoint());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;//        if(request.getName().length() &gt;= 250){
+&nbsp;//            return new ResponseObject&lt;&gt;().error(HttpStatus.NOT_FOUND,&quot;Tên ko được quá 250 kí tự &quot;);
+&nbsp;//        }
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if (request.getPriorityLevel() != null) {</b>
+<b class="fc">&nbsp;            PriorityLevel priorityLevel = PriorityLevel.values()[request.getPriorityLevel()];</b>
+<b class="fc">&nbsp;            todo.setPriorityLevel(priorityLevel);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        maTodoRepository.save(todo);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

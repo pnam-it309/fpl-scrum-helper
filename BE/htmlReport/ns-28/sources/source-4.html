@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaTodoServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MaTodoServiceImpl (udpm.hn.server.core.manage.project.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MaTodoServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MaTodoServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaTodoSummaryResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardLabelResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MeDataDashboardTodoListResponse;
+&nbsp;import udpm.hn.server.core.manage.project.repository.MaTodoProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.project.service.MaTodoService;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MATodoRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MaTodoServiceImpl implements MaTodoService {
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MATodoRepository maTodoRepository;
+&nbsp;
+&nbsp;    private final MaTodoProjectRepository maTodoProjectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListAllProject(String projectId) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByTodoListAllProject(projectId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByDueDateAllProject(String projectId, Integer statusTodo) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByDueDateAllProject(projectId, statusTodo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByNoDueDateAllProject(String projectTodo) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByNoDueDateAllProject(projectTodo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MeDataDashboardLabelResponse&gt; countTodoByLabelAllProject(String projectId) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByLabelAllProject(projectId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByNoLabelAllProject(String projectId) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByNoLabelAllProject(projectId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MeDataDashboardTodoListResponse&gt; countTodoByTodoListPhase(String projectId, String phaseId) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByTodoListPhase(projectId, phaseId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByDueDatePhase(String projectId, String phaseId, Integer statusTodo) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByDueDatePhase(projectId, phaseId, statusTodo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByNoDueDatePhase(String projectId, String phaseId) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByNoDueDatePhase(projectId, phaseId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Integer countTodoByPriorityLevel(String projectId, Integer priorityLevel) {
+<b class="fc">&nbsp;        return maTodoRepository.countTodoByPriorityLevel(projectId,priorityLevel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; countTodoByTodoStatus(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maTodoProjectRepository.countTodoByTodoStatus(id), HttpStatus.OK, &quot;Tìm thấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

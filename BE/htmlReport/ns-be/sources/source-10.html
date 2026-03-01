@@ -1,0 +1,187 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CapacityEstimateRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: CapacityEstimateRepository (udpm.hn.server.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$CNFNtI8B</td>
+  </tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$CNFNtI8B$auxiliary$GH6sU5vt</td>
+  </tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$CNFNtI8B$auxiliary$X6l78Qoz</td>
+  </tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$DATQuRjw</td>
+  </tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$DATQuRjw$auxiliary$O0Wx8yl1</td>
+  </tr>
+  <tr>
+    <td class="name">CapacityEstimateRepository$MockitoMock$DATQuRjw$auxiliary$SEAiZrth</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.member.capacityestimate.model.response.capacityEstimateResponse;
+&nbsp;import udpm.hn.server.entity.CapacityEstimate;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface CapacityEstimateRepository extends JpaRepository&lt;CapacityEstimate, String&gt; {
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            select
+&nbsp;             ROW_NUMBER() OVER (ORDER BY ce.created_date) as orderNumber,
+&nbsp;                ce.id as id,
+&nbsp;                ce.workday as workday,
+&nbsp;                ce.adjusted_story_points,
+&nbsp;                coalesce(s.name, s2.name) as name,
+&nbsp;                coalesce(s.id, s2.id) as idUser,
+&nbsp;                pp.name as sprint,
+&nbsp;                pp.id as idPhase,
+&nbsp;                ce.describe as descriptions,
+&nbsp;                pp.start_time as startTime,
+&nbsp;                pp.end_time as endTime
+&nbsp;            from
+&nbsp;                capacity_estimate ce
+&nbsp;            join staff_project sp on
+&nbsp;                ce.id_staff_project = sp.id
+&nbsp;            join phase_project pp on 
+&nbsp;                pp.id = ce.id_phase_project
+&nbsp;            left join student s on
+&nbsp;                sp.id_student = s.id
+&nbsp;            left join staff s2 on
+&nbsp;                sp.id_staff = s2.id
+&nbsp;            join project p on p.id  = sp.id_project 
+&nbsp;            where p.id = :idProject and sp.id = :idStaffProject
+&nbsp;            order by ce.created_date
+&nbsp;              &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Page&lt;capacityEstimateResponse&gt; getAll(Pageable pageable, @Param(&quot;idProject&quot;) String idProject, @Param(&quot;idStaffProject&quot;) String idStaffProject);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;                select 
+&nbsp;                       ce.id                     as id,
+&nbsp;                       ce.adjusted_story_points,
+&nbsp;                       ce.workday                as workday,
+&nbsp;                       ce.describe               as description,
+&nbsp;                       coalesce(s.name, s2.name) as name,
+&nbsp;                       coalesce(s.id, s2.id)     as idUser,
+&nbsp;                       pp.name                   as sprint,
+&nbsp;                       pp.id                     as idPhase,
+&nbsp;                       pp.start_time             as startTime,
+&nbsp;                       pp.end_time               as endTime
+&nbsp;                from capacity_estimate ce
+&nbsp;                         join phase_project pp on ce.id_phase_project = pp.id
+&nbsp;                         join staff_project sp on ce.id_staff_project = sp.id
+&nbsp;                         left join student s on
+&nbsp;                    sp.id_student = s.id
+&nbsp;                         left join staff s2 on
+&nbsp;                    sp.id_staff = s2.id
+&nbsp;                where ce.id = :idCapacityEstimate
+&nbsp;            &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Optional&lt;capacityEstimateResponse&gt; detailCapacityEstimate(@Param(&quot;idCapacityEstimate&quot;) String idCapacityEstimate);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            select
+&nbsp;             ROW_NUMBER() OVER (ORDER BY ce.created_date) as orderNumber,
+&nbsp;                ce.id as id,
+&nbsp;                ce.workday as workday,
+&nbsp;                ce.describe as descriptions,
+&nbsp;                ce.adjusted_story_points,
+&nbsp;                coalesce(s.name, s2.name) as name,
+&nbsp;                coalesce(s.id, s2.id) as idUser,
+&nbsp;                pp.name as sprint,
+&nbsp;                pp.id as idPhase,
+&nbsp;                pp.start_time as startTime,
+&nbsp;                pp.end_time as endTime
+&nbsp;            from
+&nbsp;                capacity_estimate ce
+&nbsp;            join staff_project sp on
+&nbsp;                ce.id_staff_project = sp.id
+&nbsp;            join phase_project pp on 
+&nbsp;                pp.id = ce.id_phase_project
+&nbsp;            left join student s on
+&nbsp;                sp.id_student = s.id
+&nbsp;            left join staff s2 on
+&nbsp;                sp.id_staff = s2.id
+&nbsp;            join project p on p.id  = sp.id_project 
+&nbsp;            where p.id = :idProject 
+&nbsp;            order by ce.created_date
+&nbsp;              &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;capacityEstimateResponse&gt; capacityEstimateBySprint( @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

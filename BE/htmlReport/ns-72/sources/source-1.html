@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DowLoadFileLog</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.student.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: DowLoadFileLog (udpm.hn.server.infrastructure.job.student.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DowLoadFileLog</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.student.service.impl;
+&nbsp;
+&nbsp;
+&nbsp;import org.springframework.core.io.ClassPathResource;
+&nbsp;import org.springframework.core.io.FileSystemResource;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.InputStream;
+&nbsp;@Service
+<b class="fc">&nbsp;public class DowLoadFileLog {</b>
+&nbsp;
+&nbsp;    public byte[] getCsvFile() throws IOException {
+&nbsp;//        FileSystemResource resource = new FileSystemResource(&quot;src/main/resources/log-accountability-index/nvv.csv&quot;);
+&nbsp;//        if (!resource.exists()) {
+&nbsp;//            throw new IOException(&quot;File không tồn tại.&quot;);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        try (InputStream inputStream = resource.getInputStream()) {
+&nbsp;//            return inputStream.readAllBytes();
+&nbsp;//        }
+&nbsp;
+<b class="nc">&nbsp;        ClassPathResource resource = new ClassPathResource(&quot;log-accountability-index/nvv.csv&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!resource.exists()) {</b>
+<b class="nc">&nbsp;            throw new IOException(&quot;File không tồn tại.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        try (InputStream inputStream = resource.getInputStream()) {</b>
+<b class="nc">&nbsp;            return inputStream.readAllBytes();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

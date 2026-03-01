@@ -1,0 +1,102 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PhaseBurndownRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.chart.burndown.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: PhaseBurndownRepository (udpm.hn.server.core.member.chart.burndown.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">PhaseBurndownRepository$MockitoMock$43ueX9QN</td>
+  </tr>
+  <tr>
+    <td class="name">PhaseBurndownRepository$MockitoMock$43ueX9QN$auxiliary$34gcxhAb</td>
+  </tr>
+  <tr>
+    <td class="name">PhaseBurndownRepository$MockitoMock$43ueX9QN$auxiliary$G0uSzU5A</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.chart.burndown.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import udpm.hn.server.entity.PhaseProject;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface PhaseBurndownRepository extends PhaseRepository {
+&nbsp;
+&nbsp;    @Query(&quot;SELECT (p.endTime - p.startTime) / (1000 * 60 * 60 * 24) FROM PhaseProject p WHERE p.id = :phaseId and p.project.id = :idProject&quot;)
+&nbsp;    Long calculatePhaseDurationDays(@Param(&quot;phaseId&quot;) String phaseId, @Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT p FROM PhaseProject p
+&nbsp;    WHERE p.id = :phaseId AND p.project.id = :projectId
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Optional&lt;PhaseProject&gt; findByIdAndProjectId(
+&nbsp;            @Param(&quot;phaseId&quot;) String phaseId,
+&nbsp;            @Param(&quot;projectId&quot;) String projectId
+&nbsp;    );
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

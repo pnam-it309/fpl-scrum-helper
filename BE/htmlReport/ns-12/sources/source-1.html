@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADProjectRestController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: ADProjectRestController (udpm.hn.server.core.admin.project.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ADProjectRestController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (13/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (13/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.controller;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectCreateRequest;
+&nbsp;import udpm.hn.server.core.admin.project.model.request.ADProjectSearchRequest;
+&nbsp;import udpm.hn.server.core.admin.project.service.ADProjectService;
+&nbsp;import udpm.hn.server.infrastructure.constant.MappingConstants;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequiredArgsConstructor
+&nbsp;@RequestMapping(MappingConstants.API_ADMIN_PROJECT)
+&nbsp;public class ADProjectRestController {
+&nbsp;
+&nbsp;    private final ADProjectService adProjectService;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; getAllProject(ADProjectSearchRequest request){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.getAllProject(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/facility&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllFacility(){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.getAllFacility());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; detailProject(@PathVariable String id){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.detailProject(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/department-facility/{idFacility}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllDepartmentFacility(@PathVariable String idFacility){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.getAllDepartmentFacility(idFacility));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;?&gt; createProject( @RequestBody ADProjectCreateRequest request){
+<b class="fc">&nbsp;        return  Helper.createResponseEntity(adProjectService.createProject(request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateProject(@PathVariable String id, @RequestBody ADProjectCreateRequest request){
+<b class="nc">&nbsp;        return  Helper.createResponseEntity(adProjectService.updateProject(id,request));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteProject(@PathVariable String id){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.deleteProject(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; countProjectByStatus(){
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.countProjectByStatus());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/participants&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getProjectParticipantCounts() {
+<b class="fc">&nbsp;        return Helper.createResponseEntity(adProjectService.getProjectParticipantCounts());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/project-todo-counts&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getProjectTodoCounts() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(adProjectService.getProjectTodoCounts());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/count-total-projects&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getCountTotalProjects() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(adProjectService.countTotalProjects());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/project-by-facility&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getProjectCountByFacility() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(adProjectService.countProjectsByFacility());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/project-by-department&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getProjectCountByDepartment() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(adProjectService.countProjectsByDepartment());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/project-statistics/task-by-status-project&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getTaskByStatusAndProject() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(adProjectService.countTaskByStatusAndProject());</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

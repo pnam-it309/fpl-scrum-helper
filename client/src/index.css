@@ -1,0 +1,31 @@
+.ant-tooltip-inner {
+  background-image: linear-gradient(to right, #202020, #97722a) !important;
+  color: #ffffff !important;
+  border: 1px solid #f7a800 !important;
+}
+
+.dark .ant-tooltip-inner {
+  background-image: linear-gradient(to right, #c0a457, #97722a) !important;
+  color: #ffffff !important;
+  border: 1px solid #ffe58f !important;
+}
+
+:root {
+  --selected-header: linear-gradient(to right, #2c3e50, #2c3e50);
+  --selected-header-hover: linear-gradient(to right, #282729, #97722a);
+  --selected-text: #fff; /* Chữ màu trắng (không thay đổi) */
+}
+
+/* Xóa toàn bộ style mặc định của nút a-button */
+.ant-btn {
+  box-shadow: none !important; /* Không có shadow */
+  font-weight: 500;
+  /* border: 1px solid #dba800; */
+}
+
+/* Hiệu ứng hover */
+.ant-btn:hover {
+  background: #f3f2f7 !important; /* Nền xanh nhạt khi hover */
+  color: #1890ff !important; /* Đảm bảo màu chữ khi hover */
+  border-color: #1890ff !important; /* Đảm bảo viền khi hover */
+}

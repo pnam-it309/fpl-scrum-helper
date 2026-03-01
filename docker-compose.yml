@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MySQL service
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: scrum
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  # Backend service (Spring Boot)
+  springboot-app:
+    image: my_backend_image:tag-v1
+    container_name: springboot-container
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: scrum
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+      SERVER_PORT: 9999
+      JPA_SHOW_SQL: "true"
+      JPA_DDL_AUTO: "update"
+      # DB GENERATOR
+      GENERATE_DB: "true"
+      USER_EMAIL: "ngolucky45@gmail.com"
+      USER_CODE: "PH54328"
+      USER_NAME: "Ngo Van Truong"
+      USER_PHONE: "0385423035"
+
+      # SECURITY CONFIGURATION
+      JWT_SECRET: "${JWT_SECRET}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}" 
+
+      # SERVER INFORMATION
+      ALLOWED_ORIGIN: "${ALLOWED_ORIGIN}"
+      SERVER_VERSION: "${SERVER_VERSION}"
+      FRONTEND_URL: "${FRONTEND_URL}"
+
+      # Schedule
+      PROJECT_UPDATE_CRON: "*/5 * * * * ?"
+    ports:
+      - "9999:9999"
+    depends_on:
+      - mysql
+
+  # Frontend service (Vue.js)
+  vuejs-app:
+    build:
+      context: ./client
+    image: my_vuejs_image:tag-v1.1
+    container_name: vuejs-container
+    ports:
+      - "6789:6789"
+    depends_on:
+      - springboot-app

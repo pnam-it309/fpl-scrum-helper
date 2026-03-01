@@ -1,0 +1,136 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeTodoService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeTodoService (udpm.hn.server.core.member.projectdetails.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBMeTodoService$MockitoMock$YvAygETL</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoService$MockitoMock$YvAygETL$auxiliary$54l4GrA5</td>
+  </tr>
+  <tr>
+    <td class="name">MBMeTodoService$MockitoMock$YvAygETL$auxiliary$hjrtRFKR</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service;
+&nbsp;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.*;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MBMeTodoService {
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllBoard(MBMeFilterTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; findTodoById(MBFilterTodoModalRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllDetailTodo(MBFilterTodoModalRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getAllCheckTodoChild(MBCheckTodoChildRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateIndexTodoViewTable(@Valid MBMeUpdateIndexTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createTodo(MBMeCreateTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; createTodoChildChecklist(@Valid MBMeCreateDetailTodoChildRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; editTodoChildChecklist(@Valid MBMeEditDetailTodoChildRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteDetailTodoChild(@Valid MBMeDeleteDetailTodoChildRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; handleStatusTodoChildChange(@Valid MBHandleStatusTodoChildRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt;  updateDescriptionsTodo(@Valid final MBMeUpdateDescriptionsTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateNameTodo(@Valid MBMeUpdateNameTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateDeadlineTodo(@Valid MBMeUpdateDeadlineTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; deleteDeadlineTodo(@Valid MBMeDeleteDeadlineTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateCompleteTodo(@Valid MBMeUpdateCompleteTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updatePriorityLevel(@Valid MBMeUpdateTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; updateProgress(@Valid MBMeUpdateProgressTodoRequest request, StompHeaderAccessor headerAccessor);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; sortTodoPriority(@Valid MBMeSortTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; sortTodoDeadline(@Valid MBMeSortTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; sortTodoCreatedDate(@Valid MBMeSortTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; sortTodoName(@Valid MBMeSortTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; sortTodoProgress(@Valid MBMeSortTodoRequest request);
+&nbsp;
+&nbsp;    ResponseObject&lt;?&gt; getStatusByIdPhase(String idPhase);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

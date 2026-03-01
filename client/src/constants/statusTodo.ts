@@ -1,0 +1,6 @@
+export enum StatusTodo {
+    CHUA_HOAN_THANH = 'CHUA_HOAN_THANH',
+    DA_HOAN_THANH = 'DA_HOAN_THANH',
+    HOAN_THANH_SOM = 'HOAN_THANH_SOM',
+    QUA_HAN = 'QUA_HAN',
+}

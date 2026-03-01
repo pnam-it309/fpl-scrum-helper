@@ -1,0 +1,115 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADStaffByDeparmentFacilityRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.staff.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADStaffByDeparmentFacilityRepository (udpm.hn.server.core.admin.staff.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADStaffByDeparmentFacilityRepository$MockitoMock$XfBGpGdE</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffByDeparmentFacilityRepository$MockitoMock$XfBGpGdE$auxiliary$Fq8PqVMT</td>
+  </tr>
+  <tr>
+    <td class="name">ADStaffByDeparmentFacilityRepository$MockitoMock$XfBGpGdE$auxiliary$RApU5NuY</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.staff.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.staff.model.response.ADStaffByDepartmentFacility;
+&nbsp;import udpm.hn.server.repository.FacilityRepository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface ADStaffByDeparmentFacilityRepository extends FacilityRepository {
+&nbsp;
+&nbsp;    @Query(value =
+&nbsp;            &quot;&quot;&quot;
+&nbsp;            select
+&nbsp;                smf.id as id,
+&nbsp;                f.id as idFacility,
+&nbsp;                f.name as nameFacility,
+&nbsp;                d.id as idDepartment,
+&nbsp;                d.name as nameDepartment,
+&nbsp;                m.id as idMajor,
+&nbsp;                m.name as nameMajor
+&nbsp;            from
+&nbsp;                Facility f
+&nbsp;            left join DepartmentFacility df on
+&nbsp;                f.id = df.facility.id
+&nbsp;            left  join Department d on
+&nbsp;                df.department.id = d.id
+&nbsp;            left join MajorFacility mf on
+&nbsp;                df.id = mf.departmentFacility.id
+&nbsp;            left join Major m on
+&nbsp;                mf.major.id = m.id
+&nbsp;            left join StaffMajorFacility smf on
+&nbsp;                mf.id = smf.majorFacility.id
+&nbsp;            where smf.staff.id = :staffId
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;ADStaffByDepartmentFacility&gt; staffByDepartmentFacility(@Param(&quot;staffId&quot;) String staffId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

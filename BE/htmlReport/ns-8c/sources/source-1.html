@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MATodoVoteRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MATodoVoteRepository (udpm.hn.server.core.manage.todo.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MATodoVoteRepository$MockitoMock$ryw8CzET</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoVoteRepository$MockitoMock$ryw8CzET$auxiliary$flpiBNGv</td>
+  </tr>
+  <tr>
+    <td class="name">MATodoVoteRepository$MockitoMock$ryw8CzET$auxiliary$NoQinOyn</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoVoteResponse;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.TodoVoteLevelStatistics;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.WorkVoteResponse;
+&nbsp;import udpm.hn.server.entity.StaffProject;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.entity.TodoVote;
+&nbsp;import udpm.hn.server.repository.TodoVoteRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MATodoVoteRepository extends TodoVoteRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    select 
+&nbsp;        tv.todo.name as nameTodo,
+&nbsp;        tv.staffProject.student.name as nameStudent,
+&nbsp;        tv.staffProject.staff.name as  nameStaff,
+&nbsp;        tv.id as id 
+&nbsp;    from TodoVote tv
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;MATodoVoteResponse&gt;  getAllVote();
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;       SELECT
+&nbsp;            td.priority_Level as level,
+&nbsp;            COUNT(DISTINCT td.id) as total
+&nbsp;        FROM Todo td
+&nbsp;        JOIN Todo_Vote tv ON td.id = tv.id_todo
+&nbsp;        JOIN stage_vote sv on sv.id = tv.id_stage_vote
+&nbsp;        JOIN Todo_List tl ON td.id_todo_list = tl.id
+&nbsp;        JOIN Project p ON tl.id_project = p.id
+&nbsp;        WHERE td.status = 0
+&nbsp;        AND p.id = :idProject
+&nbsp;        AND (:time between sv.start_time and sv.end_time )
+&nbsp;        GROUP BY td.priority_Level
+&nbsp;&quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;TodoVoteLevelStatistics&gt; countTodoVotedByPriorityLevel(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;time&quot;) Long time);
+&nbsp;
+&nbsp;
+&nbsp;    Optional&lt;TodoVote&gt; findByTodoAndStaffProjectAndStageVoteId(Todo todo, StaffProject staffProject, String stageVote);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    select
+&nbsp;        td.name as name,
+&nbsp;        coalesce(st.name, s.name) as memberName,
+&nbsp;        coalesce(st.image, s.picture) as memberImage,
+&nbsp;        td.priority_Level as level
+&nbsp;    from
+&nbsp;        Todo td
+&nbsp;    join Todo_Vote tv on
+&nbsp;        td.id = tv.id_todo
+&nbsp;    join stage_vote sv on
+&nbsp;        tv.id_stage_vote = sv.id
+&nbsp;    left join Staff_Project sf on
+&nbsp;        tv.id_staff_Project = sf.id
+&nbsp;    left join Student st on
+&nbsp;        st.id = sf.id_student
+&nbsp;    left join Staff s on
+&nbsp;        s.id = sf.id_staff
+&nbsp;    WHERE td.status = 0 
+&nbsp;      AND td.priority_Level IS NOT NULL
+&nbsp;      AND sf.id_project = :idProject
+&nbsp;&quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;WorkVoteResponse&gt; findAllVotedTodos(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

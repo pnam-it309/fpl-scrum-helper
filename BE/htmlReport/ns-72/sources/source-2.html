@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DownloadStudentTemplate</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.infrastructure.job.student.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: DownloadStudentTemplate (udpm.hn.server.infrastructure.job.student.service.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DownloadStudentTemplate</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.3%
+  </span>
+  <span class="absValue">
+    (2/46)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.infrastructure.job.student.service.impl;
+&nbsp;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.poi.ss.usermodel.Cell;
+&nbsp;import org.apache.poi.ss.usermodel.CellStyle;
+&nbsp;import org.apache.poi.ss.usermodel.FillPatternType;
+&nbsp;import org.apache.poi.ss.usermodel.Font;
+&nbsp;import org.apache.poi.ss.usermodel.IndexedColors;
+&nbsp;import org.apache.poi.ss.usermodel.Row;
+&nbsp;import org.apache.poi.ss.usermodel.Sheet;
+&nbsp;import org.apache.poi.ss.usermodel.Workbook;
+&nbsp;import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;
+&nbsp;import java.io.ByteArrayInputStream;
+&nbsp;import java.io.ByteArrayOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+<b class="fc">&nbsp;public class DownloadStudentTemplate {</b>
+&nbsp;
+&nbsp;
+&nbsp;    public ResponseObject&lt;?&gt; downloadTemplate() {
+&nbsp;
+<b class="nc">&nbsp;        try (Workbook workbook = new XSSFWorkbook()) {</b>
+<b class="nc">&nbsp;            Sheet sheet = workbook.createSheet(&quot;Template Thông Tin sinh viên&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            Row row = sheet.createRow(0);</b>
+&nbsp;
+<b class="nc">&nbsp;            Font font = workbook.createFont();</b>
+<b class="nc">&nbsp;            font.setColor(IndexedColors.WHITE.getIndex());</b>
+&nbsp;
+<b class="nc">&nbsp;            CellStyle headerCellStyle = workbook.createCellStyle();</b>
+<b class="nc">&nbsp;            headerCellStyle.setLocked(true);</b>
+<b class="nc">&nbsp;            headerCellStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());</b>
+<b class="nc">&nbsp;            headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);</b>
+<b class="nc">&nbsp;            headerCellStyle.setFont(font);</b>
+<b class="nc">&nbsp;            headerCellStyle.setWrapText(true);</b>
+&nbsp;
+<b class="nc">&nbsp;            Cell cell = row.createCell(0);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;STT&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(1);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Mã Sinh Viên&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(2);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Họ và Tên&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(3);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Email&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(4);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Chuyên ngành&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(5);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Bộ môn&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            cell = row.createCell(6);</b>
+<b class="nc">&nbsp;            cell.setCellValue(&quot;Cơ sở&quot;);</b>
+<b class="nc">&nbsp;            cell.setCellStyle(headerCellStyle);</b>
+&nbsp;
+<b class="nc">&nbsp;            sheet.setColumnWidth(0, 256 * 10);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(1, 256 * 20);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(2, 256 * 30);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(3, 256 * 30);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(4, 256 * 30);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(5, 256 * 25);</b>
+<b class="nc">&nbsp;            sheet.setColumnWidth(6, 256 * 25);</b>
+&nbsp;
+<b class="nc">&nbsp;            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();</b>
+<b class="nc">&nbsp;            workbook.write(outputStream);</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(new ByteArrayInputStream(outputStream.toByteArray()), HttpStatus.OK, &quot;Download template successfully&quot;);</b>
+&nbsp;        } catch (IOException ex) {
+<b class="nc">&nbsp;            log.error(&quot;Error during export Excel file&quot;, ex);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

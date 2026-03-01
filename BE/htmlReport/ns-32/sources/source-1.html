@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MATodoByPhaseDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.model.response</a>
+</div>
+
+<h1>Coverage Summary for Class: MATodoByPhaseDTO (udpm.hn.server.core.manage.todo.model.response)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MATodoByPhaseDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.model.response;
+&nbsp;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Getter;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.Setter;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Getter
+&nbsp;@Setter
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class MATodoByPhaseDTO {
+&nbsp;
+&nbsp;
+&nbsp;    private String id;
+&nbsp;    private String name;
+&nbsp;    private String code;
+&nbsp;    private String date;
+&nbsp;    private String priorityLevel;
+&nbsp;    private String progress;
+&nbsp;    private String idStaffProject;
+&nbsp;    private String idStaff;
+&nbsp;    private String nameStaff;
+&nbsp;    private String imageStaff;
+&nbsp;    private String idStudent;
+&nbsp;    private String deadline;
+&nbsp;    private String type;
+&nbsp;    private String nameStudent;
+&nbsp;    private String imageStudent;
+&nbsp;    private String statusTodo;
+&nbsp;    private String point;
+&nbsp;
+<b class="fc">&nbsp;    private List&lt;ParticipantDTO&gt; participants = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    public MATodoByPhaseDTO(MATodoResponse response) {</b>
+<b class="fc">&nbsp;        this.id = response.getId();</b>
+<b class="fc">&nbsp;        this.name = response.getName();</b>
+<b class="fc">&nbsp;        this.code = response.getCode();</b>
+<b class="fc">&nbsp;        this.deadline = response.getDeadline();</b>
+<b class="fc">&nbsp;        this.idStaff = response.getIdStaff();</b>
+<b class="fc">&nbsp;        this.idStaffProject = response.getIdStaffProject();</b>
+<b class="fc">&nbsp;        this.idStudent = response.getIdStudent();</b>
+<b class="fc">&nbsp;        this.imageStaff = response.getImageStaff();</b>
+<b class="fc">&nbsp;        this.imageStudent = response.getImageStudent();</b>
+<b class="fc">&nbsp;        this.nameStaff = response.getNameStaff();</b>
+<b class="fc">&nbsp;        this.nameStudent =response.getNameStudent();</b>
+<b class="fc">&nbsp;        this.date = response.getDate();</b>
+<b class="fc">&nbsp;        this.statusTodo = response.getStatusTodo();</b>
+<b class="fc">&nbsp;        this.priorityLevel = response.getPriorityLevel();</b>
+<b class="fc">&nbsp;        this.progress = response.getProgress();</b>
+<b class="fc">&nbsp;        this.type = response.getType();</b>
+<b class="fc">&nbsp;        this.point = response.getPoint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addParticipant(String name, String image) {
+<b class="pc">&nbsp;        if (name != null) {</b>
+<b class="fc">&nbsp;            participants.add(new ParticipantDTO(name, image));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

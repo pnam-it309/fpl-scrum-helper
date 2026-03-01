@@ -1,0 +1,446 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MaTodoListProjectServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.project.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MaTodoListProjectServiceImpl (udpm.hn.server.core.manage.project.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MaTodoListProjectServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (20/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.5%
+  </span>
+  <span class="absValue">
+    (105/110)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MaTodoListProjectServiceImpl$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">MaTodoListProjectServiceImpl$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (20/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.5%
+  </span>
+  <span class="absValue">
+    (107/112)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.project.service.impl;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.JsonProcessingException;
+&nbsp;import com.fasterxml.jackson.core.type.TypeReference;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import udpm.hn.server.core.common.base.PageableObject;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaCreateOrUpdateTodoListProject;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaTodoListProjectRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaUpdateTodoProjectRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MATodoProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MaPhaseProjectResponse;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.TodoProjectResponseDTO;
+&nbsp;import udpm.hn.server.core.manage.project.repository.MaPhaseProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.project.repository.MaProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.project.repository.MaTodoListProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.project.repository.MaTodoProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.project.service.MaTodoListProjectService;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusListTodo;
+&nbsp;import udpm.hn.server.infrastructure.log.LogEntryTodoList;
+&nbsp;import udpm.hn.server.infrastructure.log.LogService;
+&nbsp;import udpm.hn.server.repository.*;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;import udpm.hn.server.utils.TodoListHelper;
+&nbsp;
+&nbsp;import java.io.FileNotFoundException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.UUID;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MaTodoListProjectServiceImpl implements MaTodoListProjectService {
+&nbsp;    private final TodoListRepository todoListRepository;
+&nbsp;
+&nbsp;    private final MaTodoListProjectRepository maTodoListProjectRepository;
+&nbsp;
+&nbsp;    private final MaProjectRepository maProjectRepository;
+&nbsp;
+&nbsp;    private final MaTodoProjectRepository todoProjectRepository;
+&nbsp;
+&nbsp;    private final LogService logService;
+&nbsp;
+&nbsp;    private final ToDoRepository toDoRepository;
+&nbsp;
+&nbsp;    private final ObjectMapper objectMapper;
+&nbsp;
+&nbsp;    private final MaPhaseProjectRepository phaseRepository;
+&nbsp;
+&nbsp;    private final PhaseTodoProjectRepository phaseTodoProjectRepository;
+&nbsp;
+&nbsp;    private final TodoListHelper todoListHelper;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodoList(MaTodoListProjectRequest request, String id) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(maTodoListProjectRepository.getAllTodo(pageable, id, request)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công danh sách task theo dự án&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; addTodoList(MaCreateOrUpdateTodoListProject request) {
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = maProjectRepository.findById(request.getProjectId());</b>
+&nbsp;
+<b class="fc">&nbsp;        if(optionalProject.isPresent()){</b>
+<b class="fc">&nbsp;            TodoList todoList = new TodoList();</b>
+<b class="fc">&nbsp;            todoList.setCode(request.getCodeTodoList());</b>
+<b class="fc">&nbsp;            todoList.setName(request.getNameTodoList());</b>
+<b class="fc">&nbsp;            todoList.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;            todoList.setDescribe(request.getDescribeTodoList());</b>
+<b class="fc">&nbsp;            todoList.setProject(optionalProject.get());</b>
+<b class="fc">&nbsp;            todoList.setIndexTodoList((byte) 0);</b>
+<b class="fc">&nbsp;            todoListRepository.save(todoList);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm thành công&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy dự án trên&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateTodpList(MaCreateOrUpdateTodoListProject request, String id) {
+<b class="fc">&nbsp;        Optional&lt;TodoList&gt; optionalTodoList = maTodoListProjectRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalTodoList.isPresent()){</b>
+<b class="fc">&nbsp;            Optional&lt;Project&gt; optionalProject = maProjectRepository.findById(request.getProjectId());</b>
+<b class="fc">&nbsp;            if (optionalProject.isPresent()){</b>
+<b class="fc">&nbsp;                TodoList updateTodoList = optionalTodoList.get();</b>
+<b class="fc">&nbsp;                updateTodoList.setCode(request.getCodeTodoList());</b>
+<b class="fc">&nbsp;                updateTodoList.setName(request.getNameTodoList());</b>
+<b class="fc">&nbsp;                updateTodoList.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;                updateTodoList.setDescribe(request.getDescribeTodoList());</b>
+<b class="fc">&nbsp;                updateTodoList.setIndexTodoList((byte) 0);</b>
+<b class="fc">&nbsp;                maTodoListProjectRepository.save(updateTodoList);</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Sửa thành công&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy dự án&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Task không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailTodoList(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                maTodoListProjectRepository.getDetailTodoListProject(id),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công chi tiết task&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseObject&lt;?&gt; readCSV() {
+<b class="fc">&nbsp;        String filePath = &quot;src/main/resources/log-accountability-index/todolist.csv&quot;;</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;LogEntryTodoList&gt; logEntries = logService.readCSVTodoList(filePath);</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(logEntries, HttpStatus.OK, &quot;Đọc file thành công!&quot;);</b>
+&nbsp;        } catch (FileNotFoundException e) {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy file!&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllPhase(String id) {
+<b class="fc">&nbsp;        List&lt;StatusPhase&gt; excludedStatuses = List.of(</b>
+&nbsp;                StatusPhase.DA_HOAN_THANH,
+&nbsp;                StatusPhase.QUA_HAN
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        List&lt;MaPhaseProjectResponse&gt; phaseList = phaseRepository.getALl(id, excludedStatuses);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+&nbsp;                phaseList,
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công danh sách task theo dự án&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateTodoByPhaseProject(String todoId, String newPhaseId, String projectId) {
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; optionalPhaseProject = phaseRepository.findById(newPhaseId);</b>
+<b class="fc">&nbsp;        if (!optionalPhaseProject.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;PhaseProject không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findById(projectId);</b>
+<b class="fc">&nbsp;        if (!optionalProject.isPresent()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Project không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; optionalTodo = toDoRepository.findById(todoId);</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;PhaseTodoProject&gt; optionalPhaseTodoProject = phaseTodoProjectRepository.findByTodoId(todoId);</b>
+<b class="pc">&nbsp;        if (optionalPhaseTodoProject.isPresent()) {</b>
+<b class="nc">&nbsp;            PhaseTodoProject updateTodo = optionalPhaseTodoProject.get();</b>
+<b class="nc">&nbsp;            updateTodo.setPhaseProject(optionalPhaseProject.get());</b>
+<b class="nc">&nbsp;            phaseTodoProjectRepository.save(updateTodo);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            PhaseTodoProject phaseTodoProject = new PhaseTodoProject();</b>
+<b class="fc">&nbsp;            phaseTodoProject.setPhaseProject(optionalPhaseProject.get());</b>
+<b class="fc">&nbsp;            phaseTodoProject.setTodo(optionalTodo.get());</b>
+<b class="fc">&nbsp;            phaseTodoProjectRepository.save(phaseTodoProject);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (optionalTodo.isPresent()) {</b>
+<b class="fc">&nbsp;            Todo todo = optionalTodo.get();</b>
+<b class="fc">&nbsp;            Optional&lt;TodoList&gt; optionalTodoList = todoListRepository.findByPhaseProjectId(newPhaseId);</b>
+&nbsp;            TodoList todoList;
+&nbsp;
+<b class="pc">&nbsp;            if (optionalTodoList.isPresent()) {</b>
+<b class="nc">&nbsp;                todoList = optionalTodoList.get();</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                todoList = new TodoList();</b>
+<b class="fc">&nbsp;                todoList.setPhaseProject(optionalPhaseProject.get());</b>
+<b class="fc">&nbsp;                todoList.setName(&quot;Chưa làm&quot;);</b>
+<b class="fc">&nbsp;                todoList.setCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase());</b>
+<b class="fc">&nbsp;                todoList.setStatusListTodo(StatusListTodo.CHUA_BAT_DAU);</b>
+<b class="fc">&nbsp;                todoList.setStatus(EntityStatus.ACTIVE);</b>
+<b class="fc">&nbsp;                todoList.setIndexTodoList(todoListHelper.genIndexTodoListWHEREIDPHASE(projectId,newPhaseId));</b>
+<b class="fc">&nbsp;                todoList.setProject(optionalProject.get());</b>
+<b class="fc">&nbsp;                todoList = todoListRepository.save(todoList);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            todo.setTodoList(todoList);</b>
+<b class="fc">&nbsp;            toDoRepository.save(todo);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllTodoByProject(MaTodoListProjectRequest request, String id) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        Page&lt;MATodoProjectResponse&gt; results = maTodoListProjectRepository.getAllTodoProject(pageable, id, request);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(</b>
+<b class="fc">&nbsp;                PageableObject.of(results.map(this::convertToDto)),</b>
+&nbsp;                HttpStatus.OK,
+&nbsp;                &quot;Lấy thành công danh sách task theo dự án&quot;
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    private TodoProjectResponseDTO convertToDto(MATodoProjectResponse response) {
+<b class="fc">&nbsp;        List&lt;Student&gt; students = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;Staff&gt; staffList = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            if (response.getStudents() != null) {</b>
+<b class="fc">&nbsp;                students = objectMapper.readValue(response.getStudents(), new com.fasterxml.jackson.core.type.TypeReference&lt;&gt;() {});</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (response.getStaff() != null) {</b>
+<b class="fc">&nbsp;                staffList = objectMapper.readValue(response.getStaff(), new TypeReference&lt;&gt;() {});</b>
+&nbsp;            }
+&nbsp;        } catch (JsonProcessingException e) {
+<b class="fc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return new TodoProjectResponseDTO(</b>
+<b class="fc">&nbsp;                response.getOrderNumber(),</b>
+<b class="fc">&nbsp;                response.getIdTodo(),</b>
+<b class="fc">&nbsp;                response.getNameTodo(),</b>
+<b class="fc">&nbsp;                response.getDeadline(),</b>
+<b class="fc">&nbsp;                response.getDescriptionsTodo(),</b>
+<b class="fc">&nbsp;                response.getStatusTodo(),</b>
+<b class="fc">&nbsp;                response.getNamePhaseProject(),</b>
+<b class="fc">&nbsp;                response.getPicture(),</b>
+<b class="fc">&nbsp;                response.getEmail(),</b>
+<b class="fc">&nbsp;                response.getPriorityLevel(),</b>
+<b class="fc">&nbsp;                response.getCreatedDate(),</b>
+<b class="fc">&nbsp;                response.getLastModifiedDate(),</b>
+<b class="fc">&nbsp;                response.getPhaseId(),</b>
+<b class="fc">&nbsp;                response.getProjectId(),</b>
+&nbsp;                students,
+&nbsp;                staffList
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateTodoProject(MaUpdateTodoProjectRequest request, String id) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; optionalTodo = toDoRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalTodo.isPresent()){</b>
+<b class="fc">&nbsp;            Optional&lt;Project&gt; optionalProject = maProjectRepository.findById(request.getProjectId());</b>
+<b class="pc">&nbsp;            if (optionalProject.isPresent()){</b>
+<b class="fc">&nbsp;                Todo updateTodo = optionalTodo.get();</b>
+<b class="fc">&nbsp;                updateTodo.setName(request.getNameTodo());</b>
+<b class="fc">&nbsp;                updateTodo.setStatusTodo(request.getStatusTodo());</b>
+<b class="fc">&nbsp;                updateTodo.setPriorityLevel(request.getPriorityLevel());</b>
+<b class="fc">&nbsp;                toDoRepository.save(updateTodo);</b>
+<b class="fc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Sửa thành công&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Không tìm thấy dự án&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_ACCEPTABLE, &quot;Task không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,349 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBMeImageServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.projectdetails.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MBMeImageServiceImpl (udpm.hn.server.core.member.projectdetails.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MBMeImageServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (11/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.2%
+  </span>
+  <span class="absValue">
+    (83/93)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MBMeImageServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (11/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.2%
+  </span>
+  <span class="absValue">
+    (83/93)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.projectdetails.service.impl;
+&nbsp;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.validation.annotation.Validated;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.common.base.TodoObject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeChangeCoverTodoRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeCreateImageRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeDeleteImageRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.request.MBMeUpdateNameImageRequest;
+&nbsp;import udpm.hn.server.core.member.projectdetails.model.response.MBUpdateBackgroundProject;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeActivityRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeImageRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeProjectRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeTodoRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.service.MBMeImageService;
+&nbsp;import udpm.hn.server.entity.Activity;
+&nbsp;import udpm.hn.server.entity.Image;
+&nbsp;import udpm.hn.server.entity.Project;
+&nbsp;import udpm.hn.server.entity.Todo;
+&nbsp;import udpm.hn.server.infrastructure.cloudinary.CloudinaryUploadImages;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusImage;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Validated
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class MBMeImageServiceImpl implements MBMeImageService {
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;    private final MBMeImageRepository mbMeImageRepository;
+&nbsp;
+&nbsp;    private final MBMeTodoRepository mbMeTodoRepository;
+&nbsp;
+&nbsp;    private final CloudinaryUploadImages cloudinaryUploadImages;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    private final MBMeProjectRepository mbMeProjectRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; add(MBMeCreateImageRequest request, StompHeaderAccessor headerAccessor) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if(todoFind.isEmpty()){</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Image image = new Image();</b>
+<b class="fc">&nbsp;        image.setTodo(todoFind.get());</b>
+<b class="fc">&nbsp;        image.setName(request.getNameFileOld());</b>
+<b class="fc">&nbsp;        Integer countImage = mbMeImageRepository.countImageByIdTodo(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (countImage == 0) {</b>
+<b class="fc">&nbsp;            image.setStatusImage(StatusImage.COVER);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            image.setStatusImage(StatusImage.NO_COVER);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        image.setUrlImage(request.getUrlImage());</b>
+<b class="fc">&nbsp;        Image newImage = mbMeImageRepository.save(image);</b>
+<b class="pc">&nbsp;        if (countImage == 0) {</b>
+&nbsp;
+<b class="pc">&nbsp;            if (!todoFind.isPresent()) {</b>
+<b class="nc">&nbsp;               return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;Không tìm thấy todo&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            todoFind.get().setImageId(newImage.getId());</b>
+<b class="fc">&nbsp;            todoFind.get().setUrlImage(request.getUrlImage());</b>
+<b class="fc">&nbsp;            mbMeTodoRepository.save(todoFind.get());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setImageId(newImage.getId());</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setContentAction(&quot;đã thêm &quot; + request.getNameFileOld() + &quot; vào thẻ này&quot;);</b>
+<b class="fc">&nbsp;        activity.setContentActionProject(&quot;đã thêm &quot;+request.getNameFileOld()+&quot; vào thẻ &quot;+todoFind.get().getName());</b>
+<b class="fc">&nbsp;        activity.setUrlImage(request.getUrlImage());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(newImage)</b>
+<b class="fc">&nbsp;                .dataActivity(mbMeActivityRepository.save(activity))</b>
+<b class="fc">&nbsp;                .idTodoList(request.getIdTodoList())</b>
+<b class="fc">&nbsp;                .idTodo(request.getIdTodo()).build();</b>
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Thêm thành công file&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null,HttpStatus.OK,&quot;add thành công file&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; uploadFile(MultipartFile file) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(cloudinaryUploadImages.uploadImage(file),</b>
+&nbsp;                    HttpStatus.OK,
+&nbsp;                    &quot;Update file ảnh thành công&quot;);
+&nbsp;        } catch (Exception ex) {
+<b class="fc">&nbsp;            ex.printStackTrace();</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.INTERNAL_SERVER_ERROR,&quot;Tải file that bai&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; findById(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeImageRepository.findById(id).get(),HttpStatus.OK,&quot;Lấy ảnh thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllByIdTodo(String idTodo) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeImageRepository.getAllByIdTodo(idTodo),HttpStatus.OK,&quot;Get all by idTodo&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateNameImage(MBMeUpdateNameImageRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Image&gt; imageFind = mbMeImageRepository.findById(request.getId());</b>
+<b class="pc">&nbsp;        if (!imageFind.isPresent()) {</b>
+<b class="nc">&nbsp;            new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;Không tìm thấy image&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        imageFind.get().setName(request.getNameImage());</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeImageRepository.save(imageFind.get()),HttpStatus.OK,&quot;Update thành công tên ảnh&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteImage(MBMeDeleteImageRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (request.getStatusImage().equals(&quot;0&quot;)) {</b>
+<b class="pc">&nbsp;            if (!todoFind.isPresent()) {</b>
+<b class="nc">&nbsp;               return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            todoFind.get().setImageId(null);</b>
+<b class="fc">&nbsp;            todoFind.get().setUrlImage(null);</b>
+<b class="fc">&nbsp;            mbMeTodoRepository.save(todoFind.get());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;//        String publicId = CloundinaryUtils.extractPublicId(request.getUrlImage());
+&nbsp;//        cloudinaryUploadImages.deleteImage(publicId);
+&nbsp;
+<b class="fc">&nbsp;        Activity activityFind = mbMeActivityRepository.findActivityByIdImage(request.getId());</b>
+&nbsp;//        activityFind.setUrlImage(null);
+&nbsp;//        activityFind.setImageId(null);
+<b class="fc">&nbsp;        mbMeActivityRepository.save(activityFind);</b>
+&nbsp;
+<b class="fc">&nbsp;        Activity activity = new Activity();</b>
+<b class="fc">&nbsp;        activity.setProjectId(request.getProjectId());</b>
+<b class="fc">&nbsp;        activity.setTodoListId(request.getIdTodoList());</b>
+<b class="fc">&nbsp;        activity.setTodoId(request.getIdTodo());</b>
+<b class="fc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="fc">&nbsp;        activity.setContentAction(&quot;đã xóa &quot; + request.getNameImage() + &quot; khỏi thẻ này&quot;);</b>
+<b class="fc">&nbsp;        activity.setContentActionProject(&quot;đã xóa &quot;+request.getNameImage()+&quot; khỏi thẻ &quot;+todoFind.get().getName());</b>
+<b class="fc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+<b class="fc">&nbsp;        Activity newActivity = mbMeActivityRepository.save(activity);</b>
+&nbsp;
+<b class="fc">&nbsp;        mbMeImageRepository.deleteById(request.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        TodoObject todoObject = TodoObject.builder().data(mbMeTodoRepository.save(todoFind.get()))</b>
+<b class="fc">&nbsp;                .dataImage(request.getId())</b>
+<b class="fc">&nbsp;                .dataActivity(newActivity)</b>
+<b class="fc">&nbsp;                .idTodoList(request.getIdTodoList()).</b>
+<b class="fc">&nbsp;                idTodo(request.getIdTodo()).build();</b>
+&nbsp;
+<b class="fc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Xóa thành công ảnh&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(todoObject,HttpStatus.OK,&quot;&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; changeCoverTodo(MBMeChangeCoverTodoRequest request, StompHeaderAccessor headerAccessor) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; todoFind = mbMeTodoRepository.findById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (!todoFind.isPresent()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy todo&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Optional&lt;Image&gt; imageFind = mbMeImageRepository.findById(request.getIdImage());</b>
+<b class="pc">&nbsp;        if (!imageFind.isPresent()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy image&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (request.getStatus().equals(&quot;0&quot;)) { // xóa khỏi cover</b>
+<b class="nc">&nbsp;            todoFind.get().setImageId(null);</b>
+<b class="nc">&nbsp;            todoFind.get().setUrlImage(null);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            todoFind.get().setImageId(request.getIdImage());</b>
+<b class="fc">&nbsp;            todoFind.get().setUrlImage(request.getUrlImage());</b>
+<b class="fc">&nbsp;            mbMeImageRepository.updateCoverOld(request.getIdTodo());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (imageFind.get().getStatusImage().equals(StatusImage.COVER)) {</b>
+<b class="nc">&nbsp;            imageFind.get().setStatusImage(StatusImage.NO_COVER);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            imageFind.get().setStatusImage(StatusImage.COVER);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Image newImage = mbMeImageRepository.save(imageFind.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;( mbMeTodoRepository.save(todoFind.get()),HttpStatus.OK,&quot;changeCoverTodo&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getBackgroundByIdProject(String idProject) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeImageRepository.getBackgroundByIdProject(idProject),HttpStatus.OK,&quot;Get all by idTodo&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updateBackgroundProject(MBUpdateBackgroundProject request) {
+<b class="fc">&nbsp;        Project projectFind = mbMeProjectRepository.findById(request.getIdProject()).orElse(null);</b>
+<b class="fc">&nbsp;        projectFind.setBackgroundColor(request.getBackgroundColor());</b>
+<b class="fc">&nbsp;        projectFind.setBackgroundImage(request.getBackgroundImage());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(mbMeProjectRepository.save(projectFind),HttpStatus.OK,&quot;update background project&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

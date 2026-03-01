@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MBPhaseRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.member.phase.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MBPhaseRepository (udpm.hn.server.core.member.phase.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MBPhaseRepository$MockitoMock$sn8BqC9n</td>
+  </tr>
+  <tr>
+    <td class="name">MBPhaseRepository$MockitoMock$sn8BqC9n$auxiliary$0I7Q1len</td>
+  </tr>
+  <tr>
+    <td class="name">MBPhaseRepository$MockitoMock$sn8BqC9n$auxiliary$5QKdrGZc</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.member.phase.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.manage.project.model.request.MaTodoListProjectRequest;
+&nbsp;import udpm.hn.server.core.manage.project.model.response.MATodoProjectResponse;
+&nbsp;import udpm.hn.server.core.member.phase.model.request.MBPhaseRequest;
+&nbsp;import udpm.hn.server.core.member.phase.model.response.MBDetailPhase;
+&nbsp;import udpm.hn.server.core.member.phase.model.response.MBPhaseResponse;
+&nbsp;import udpm.hn.server.repository.PhaseRepository;
+&nbsp;import udpm.hn.server.utils.UserContextHelper;
+&nbsp;
+&nbsp;public interface MBPhaseRepository extends PhaseRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select 
+&nbsp;            ROW_NUMBER() OVER (ORDER BY pp.id DESC ) AS orderNumber,
+&nbsp;            pp.name as name,
+&nbsp;            pp.id as id,
+&nbsp;            pp.code as code,
+&nbsp;            pp.createdDate as createDate,
+&nbsp;            pp.startTime as startTime,
+&nbsp;            pp.endTime as endTime,
+&nbsp;            pp.descriptions as descriptions,
+&nbsp;            pp.statusPhase as statusPhase
+&nbsp;         from PhaseProject  pp 
+&nbsp;         join Project p on pp.project.id = p.id
+&nbsp;         where pp.status = 0 and (pp.statusPhase = 0 OR pp.statusPhase = 1) 
+&nbsp;          and p.id = :idProject
+&nbsp;          and (:#{#req.search} IS NULL OR
+&nbsp;            pp.name LIKE CONCAT(&#39;%&#39;, :#{#req.search}, &#39;%&#39;) )
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    Page&lt;MBPhaseResponse&gt; getAllPhaseProject(Pageable pageable,String idProject,@Param(&quot;req&quot;) MBPhaseRequest req);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select 
+&nbsp;            pp.id as id
+&nbsp;         from PhaseProject  pp 
+&nbsp;         join Project p on pp.project.id = p.id
+&nbsp;         where pp.status = 0 and pp.statusPhase = 1
+&nbsp;          and p.id = :idProject
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    MBDetailPhase getPhaseId(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    SELECT DISTINCT
+&nbsp;        ROW_NUMBER() OVER(ORDER BY t.id DESC) AS orderNumber,\s
+&nbsp;        t.id AS idTodo,
+&nbsp;        t.name AS nameTodo,
+&nbsp;        t.descriptions AS descriptionsTodo,
+&nbsp;        t.statusTodo AS statusTodo,
+&nbsp;        t.deadline AS deadline,
+&nbsp;        COALESCE(pp.name, &#39;&#39;) AS namePhaseProject,
+&nbsp;        t.priorityLevel AS priorityLevel,
+&nbsp;        t.createdDate AS createdDate,
+&nbsp;        t.lastModifiedDate AS lastModifiedDate,
+&nbsp;        tl.project.id AS projectId,
+&nbsp;        pp.id AS phaseId,
+&nbsp;        (
+&nbsp;            SELECT JSON_ARRAYAGG(JSON_OBJECT(
+&nbsp;                &#39;id&#39;, sp_student.id,
+&nbsp;                &#39;name&#39;, sp_student.name,
+&nbsp;                &#39;image&#39;, sp_student.image,
+&nbsp;                &#39;email&#39;, sp_student.email
+&nbsp;            ))
+&nbsp;            FROM Assign tv_sub
+&nbsp;            JOIN StaffProject sp ON tv_sub.staffProject.id = sp.id
+&nbsp;            JOIN Student sp_student ON sp.student.id = sp_student.id
+&nbsp;            WHERE tv_sub.todo.id = t.id 
+&nbsp;        ) AS students,
+&nbsp;        (
+&nbsp;            SELECT JSON_ARRAYAGG(JSON_OBJECT(
+&nbsp;                &#39;id&#39;, sp_staff.id,
+&nbsp;                &#39;name&#39;, sp_staff.name,
+&nbsp;                &#39;picture&#39;, sp_staff.picture,
+&nbsp;                &#39;email&#39;, sp_staff.emailFpt
+&nbsp;            ))
+&nbsp;            FROM Assign tv_sub
+&nbsp;            JOIN StaffProject sp ON tv_sub.staffProject.id = sp.id
+&nbsp;            JOIN Staff sp_staff ON sp.staff.id = sp_staff.id
+&nbsp;            WHERE tv_sub.todo.id = t.id 
+&nbsp;        ) AS staff
+&nbsp;    FROM
+&nbsp;        Todo t  
+&nbsp;        LEFT JOIN PhaseTodoProject ptp ON t.id = ptp.todo.id\s
+&nbsp;        LEFT JOIN Assign tv ON tv.todo.id = t.id
+&nbsp;        LEFT JOIN StaffProject sp ON tv.staffProject.id = sp.id
+&nbsp;        LEFT JOIN Staff s ON sp.staff.id = s.id
+&nbsp;        LEFT JOIN Student s2 ON sp.student.id = s2.id
+&nbsp;        LEFT JOIN TodoList tl ON t.todoList.id = tl.id
+&nbsp;        LEFT JOIN PhaseProject pp ON ptp.phaseProject.id = pp.id
+&nbsp;    WHERE 
+&nbsp;        (tl.project.id = :id)
+&nbsp;         AND ((sp.student.id = :#{#userContextHelper.currentUserId}) 
+&nbsp;            or (sp.staff.id = :#{#userContextHelper.currentUserId}))
+&nbsp;        AND ( :#{#req.search} IS NULL OR t.name LIKE CONCAT(&#39;%&#39;, :#{#req.search} ,&#39;%&#39;))
+&nbsp;    &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;    SELECT 
+&nbsp;        COUNT(DISTINCT t.id) 
+&nbsp;    FROM 
+&nbsp;        Todo t
+&nbsp;        LEFT JOIN Assign tv ON tv.todo.id = t.id
+&nbsp;        LEFT JOIN StaffProject sp ON tv.staffProject.id = sp.id
+&nbsp;        LEFT JOIN Staff s ON sp.staff.id = s.id
+&nbsp;        LEFT JOIN Student s2 ON sp.student.id = s2.id
+&nbsp;        LEFT JOIN TodoList tl ON t.todoList.id = tl.id
+&nbsp;        LEFT JOIN PhaseProject pp ON tl.phaseProject.id = pp.id
+&nbsp;    WHERE 
+&nbsp;        (tl.project.id = :id)
+&nbsp;        AND ((sp.student.id = :#{#userContextHelper.currentUserId}) 
+&nbsp;            or (sp.staff.id = :#{#userContextHelper.currentUserId}))
+&nbsp;        AND ( :#{#req.search} IS NULL OR t.name LIKE CONCAT(&#39;%&#39;, :#{#req.search} ,&#39;%&#39;))
+&nbsp;    &quot;&quot;&quot;
+&nbsp;    )
+&nbsp;    Page&lt;MATodoProjectResponse&gt; getAllTodoProjectMemBer(Pageable pageable, String id, @Param(&quot;req&quot;) MBPhaseRequest req, UserContextHelper userContextHelper);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

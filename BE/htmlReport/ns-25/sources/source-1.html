@@ -1,0 +1,687 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAPhaseServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.phase.service.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: MAPhaseServiceImpl (udpm.hn.server.core.manage.phase.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MAPhaseServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (18/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.2%
+  </span>
+  <span class="absValue">
+    (65/90)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85%
+  </span>
+  <span class="absValue">
+    (187/220)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MAPhaseServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (18/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.2%
+  </span>
+  <span class="absValue">
+    (65/90)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85%
+  </span>
+  <span class="absValue">
+    (187/220)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.phase.service.impl;
+&nbsp;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;import udpm.hn.server.core.common.base.ResponseObject;
+&nbsp;import udpm.hn.server.core.manage.phase.model.request.*;
+&nbsp;import udpm.hn.server.core.manage.phase.repository.MAPhaseRepository;
+&nbsp;import udpm.hn.server.core.manage.phase.repository.MAPhaseStaffProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.phase.service.MAPhaseService;
+&nbsp;import udpm.hn.server.core.manage.todo.model.response.MATodoResponse;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MAListTodoProjectRepository;
+&nbsp;import udpm.hn.server.core.manage.todo.repository.MATodoRepository;
+&nbsp;import udpm.hn.server.core.member.projectdetails.repository.MBMeActivityRepository;
+&nbsp;import udpm.hn.server.entity.*;
+&nbsp;import udpm.hn.server.infrastructure.configemail.AsyncEmailService;
+&nbsp;import udpm.hn.server.infrastructure.configemail.EmailSender;
+&nbsp;import udpm.hn.server.infrastructure.constant.EntityStatus;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusListTodo;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusTodo;
+&nbsp;import udpm.hn.server.repository.CapacityEstimateRepository;
+&nbsp;import udpm.hn.server.repository.PhaseProjectRepository;
+&nbsp;import udpm.hn.server.repository.PhaseTodoProjectRepository;
+&nbsp;import udpm.hn.server.repository.ProjectRepository;
+&nbsp;import udpm.hn.server.repository.ToDoRepository;
+&nbsp;import udpm.hn.server.repository.VelocityRecordRepository;
+&nbsp;import udpm.hn.server.utils.Helper;
+&nbsp;import udpm.hn.server.utils.StatusPhase;
+&nbsp;import udpm.hn.server.utils.TodoListHelper;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.ZoneId;
+&nbsp;import java.time.ZoneOffset;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class MAPhaseServiceImpl implements MAPhaseService {
+&nbsp;
+&nbsp;    private final MAPhaseRepository maPhaseRepository;
+&nbsp;
+&nbsp;    private final ToDoRepository toDoRepository;
+&nbsp;
+&nbsp;    private final PhaseTodoProjectRepository phaseTodoProjectRepository;
+&nbsp;
+&nbsp;    private final MAListTodoProjectRepository maListTodoProjectRepository;
+&nbsp;
+&nbsp;    private final TodoListHelper todoListHelper;
+&nbsp;
+&nbsp;    private final ProjectRepository projectRepository;
+&nbsp;
+&nbsp;    private final MATodoRepository maTodoRepository;
+&nbsp;
+&nbsp;    private final EmailSender emailService;
+&nbsp;
+&nbsp;    private final MAPhaseStaffProjectRepository maPhaseStaffProjectRepository;
+&nbsp;
+&nbsp;    private final VelocityRecordRepository velocityRecordRepository;
+&nbsp;
+&nbsp;    private final CapacityEstimateRepository capacityEstimateRepository;
+&nbsp;
+&nbsp;
+&nbsp;    private final PhaseProjectRepository phaseProjectRepository;
+&nbsp;
+&nbsp;    private final AsyncEmailService asyncEmailService;
+&nbsp;
+&nbsp;    private final MBMeActivityRepository mbMeActivityRepository;
+&nbsp;
+&nbsp;    private final SimpMessagingTemplate messagingTemplate;
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllPhase(MAPhaseRequest request) {
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;createdDate&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maPhaseRepository.getAllPhaseProject(pageable, request.getIdProject()), HttpStatus.OK, &quot;Lấy dự liệu giai đoạn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; findByPhaseStatus(String idProject) {
+&nbsp;
+<b class="pc">&nbsp;        Optional&lt;PhaseProject&gt; optionalPhaseProject = maPhaseRepository.findAll().stream().filter(ps -&gt; ps.getStatusPhase() == StatusPhase.DANG_LAM).filter(ps -&gt; ps.getProject().getId().equals(idProject)) // lọc thêm theo idProject</b>
+<b class="fc">&nbsp;                .findFirst();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalPhaseProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        log.info(optionalPhaseProject.get() + &quot; DỮ LIỆU&quot;);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(optionalPhaseProject.get(), HttpStatus.OK, &quot;Tìm thấy&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllPhase(String idProject) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maPhaseRepository.getAllPhaseProjectStatistics(idProject), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllSprint(MAPhaseRequest request) {
+<b class="fc">&nbsp;        StatusPhase statusPhase = null;</b>
+<b class="fc">&nbsp;        if (request.getStatus() != null) {</b>
+<b class="fc">&nbsp;            statusPhase = StatusPhase.values()[Integer.valueOf(request.getStatus())];</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Long startOfDay = null;</b>
+<b class="fc">&nbsp;        Long endOfDay = null;</b>
+&nbsp;
+&nbsp;        // Log: Kiểm tra timestamp time nhận vào
+<b class="fc">&nbsp;        System.out.println(&quot;Received timestamp (time): &quot; + request.getTime());</b>
+&nbsp;
+&nbsp;        // Chuyển đổi timestamp (time) thành ngày bắt đầu (00:00:00) và kết thúc (23:59:59) nếu time không null
+<b class="fc">&nbsp;        if (request.getTime() != null) {</b>
+<b class="fc">&nbsp;            LocalDate localDate = LocalDate.ofEpochDay(request.getTime() / 86400000);  // Chuyển timestamp thành LocalDate (ngày)</b>
+&nbsp;
+<b class="fc">&nbsp;            startOfDay = localDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();  // 00:00:00</b>
+<b class="fc">&nbsp;            endOfDay = localDate.atTime(23, 59, 59).toInstant(ZoneOffset.UTC).toEpochMilli();  // 23:59:59</b>
+&nbsp;
+&nbsp;            // Log: Kiểm tra ngày bắt đầu và kết thúc tính toán từ timestamp
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Pageable pageable = Helper.createPageable(request, &quot;statusPhase&quot;);</b>
+&nbsp;
+&nbsp;        // Log trước khi gọi phương thức repository
+<b class="fc">&nbsp;        System.out.println(&quot;Calling repository with startOfDay: &quot; + startOfDay + &quot; and endOfDay: &quot; + endOfDay);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maPhaseRepository.getAllSprintProject(pageable, request.getIdProject(), statusPhase, startOfDay, endOfDay, request.getSearch()), HttpStatus.OK, &quot;Lấy dữ liệu giai đoạn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; getAllPhaseByProjectId(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maPhaseRepository.getAllPhaseByProjectId(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createPhase(MACreatePhaseRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findById(request.getIdProject());</b>
+<b class="fc">&nbsp;        if (optionalProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy project&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        long countPhase = maPhaseRepository.findAll().stream().filter(a -&gt; a.getProject().getId().equals(optionalProject.get().getId())).count() + 1;</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        long endTimeMax = maPhaseRepository.findAll().stream()</b>
+<b class="pc">&nbsp;                .filter(p -&gt; p.getProject() != null &amp;&amp; p.getProject().getId().equals(optionalProject.get().getId()))</b>
+<b class="fc">&nbsp;                .map(PhaseProject::getEndTime)</b>
+<b class="fc">&nbsp;                .filter(Objects::nonNull)</b>
+<b class="fc">&nbsp;                .max(Long::compareTo)</b>
+<b class="fc">&nbsp;                .orElse(System.currentTimeMillis());</b>
+&nbsp;
+<b class="pc">&nbsp;        String namePhase = &quot;Giai đoạn &quot; + (countPhase == 0 ? 1 : countPhase);</b>
+&nbsp;
+<b class="fc">&nbsp;        long currentTime = endTimeMax;</b>
+&nbsp;
+<b class="fc">&nbsp;        long oneWeekAgo = currentTime + (7L * 24 * 60 * 60 * 1000);</b>
+<b class="fc">&nbsp;        PhaseProject phaseProject = new PhaseProject();</b>
+<b class="fc">&nbsp;        phaseProject.setCode(namePhase);</b>
+<b class="fc">&nbsp;        phaseProject.setName(namePhase);</b>
+<b class="fc">&nbsp;        phaseProject.setStartTime(currentTime);</b>
+<b class="fc">&nbsp;        phaseProject.setEndTime(oneWeekAgo);</b>
+<b class="fc">&nbsp;        phaseProject.setProject(optionalProject.get());</b>
+<b class="fc">&nbsp;        phaseProject.setStatusPhase(StatusPhase.CHUA_HOAN_THANH);</b>
+<b class="fc">&nbsp;        maPhaseRepository.save(phaseProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 3; i++) {</b>
+<b class="fc">&nbsp;            TodoList newTodoList = new TodoList();</b>
+<b class="fc">&nbsp;            newTodoList.setCode(todoListHelper.genCodeTodoList(request.getIdProject()) + &quot;_&quot; + phaseProject.getId());</b>
+<b class="fc">&nbsp;            newTodoList.setName(i == 0 ? &quot;Chưa làm&quot; : i == 1 ? &quot;Đang làm&quot; : &quot;Đã xong&quot;);</b>
+<b class="fc">&nbsp;            Byte index = todoListHelper.genIndexTodoList(request.getIdProject());</b>
+<b class="pc">&nbsp;            newTodoList.setIndexTodoList(index != null ? index : 0);</b>
+<b class="fc">&nbsp;            newTodoList.setProject(optionalProject.get());</b>
+<b class="fc">&nbsp;            newTodoList.setPhaseProject(phaseProject);</b>
+<b class="fc">&nbsp;            newTodoList.setStatusListTodo(i == 0 ? StatusListTodo.CHUA_BAT_DAU : i == 1 ? StatusListTodo.DANG_DIEN_RA : StatusListTodo.DA_XONG);</b>
+<b class="fc">&nbsp;            maListTodoProjectRepository.save(newTodoList);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        int countPhaseCompleted = maPhaseRepository.countPhaseProjectByIdProject(phaseProject.getProject().getId(), StatusPhase.DA_HOAN_THANH);</b>
+<b class="fc">&nbsp;        int countAllPhase = maPhaseRepository.getAllPhaseByProjectId(optionalProject.get().getId()).size();</b>
+&nbsp;
+<b class="fc">&nbsp;        float progress = ((float) countPhaseCompleted / countAllPhase) * 100;</b>
+&nbsp;
+<b class="fc">&nbsp;        optionalProject.get().setProgress(progress);</b>
+&nbsp;
+<b class="fc">&nbsp;        projectRepository.save(optionalProject.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.CREATED, &quot;Thêm giai đoạn thành công&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; detailPhase(String id) {
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(maPhaseRepository.findById(id), HttpStatus.OK, &quot;Lấy dữ liệu thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createPhaseTOdoList(MACreatePhaseRequest request) {
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; createTodoByPhase(MATodoByPhase request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Dữ liệu request khi kéo todo và phase: {}&quot;, request.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        if (request.getIdTodo() == null || request.getIdTodo().isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Danh sách công việc không được để trống&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Pageable page = Helper.createPageable(request, &quot;createDate&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        Page&lt;MATodoResponse&gt; todoByPhase = maTodoRepository.getAllTodoByPhaseProject(page, request.getIdPhase(), &quot;&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        Project project = projectRepository.findById(request.getIdProject()).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Không tìm thấy project&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        PhaseProject phaseProject = maPhaseRepository.findById(request.getIdPhase()).orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn&quot;));</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        TodoList todoList = maListTodoProjectRepository.findTodoListNotStratedByProjectAndPhase(request.getIdProject(), request.getIdPhase(), StatusListTodo.CHUA_BAT_DAU).stream().findFirst().orElseGet(() -&gt; {</b>
+<b class="fc">&nbsp;            TodoList newTodoList = new TodoList();</b>
+<b class="fc">&nbsp;            newTodoList.setCode(todoListHelper.genCodeTodoList(request.getIdProject()) + request.getIdPhase());</b>
+<b class="fc">&nbsp;            newTodoList.setName(&quot;Chưa làm&quot;);</b>
+<b class="fc">&nbsp;            Byte index = todoListHelper.genIndexTodoList(request.getIdProject());</b>
+<b class="pc">&nbsp;            newTodoList.setIndexTodoList(index != null ? index : 0);</b>
+<b class="fc">&nbsp;            newTodoList.setProject(project);</b>
+<b class="fc">&nbsp;            newTodoList.setPhaseProject(phaseProject);</b>
+<b class="fc">&nbsp;            newTodoList.setStatusListTodo(StatusListTodo.CHUA_BAT_DAU);</b>
+<b class="fc">&nbsp;            return maListTodoProjectRepository.save(newTodoList);</b>
+&nbsp;        });
+&nbsp;
+&nbsp;        // nếu chưa có thì bắt đầu từ 1
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Todo&gt; todos = toDoRepository.findAllById(request.getIdTodo());</b>
+<b class="pc">&nbsp;        if (todos.size() != request.getIdTodo().size()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Một hoặc nhiều công việc không tồn tại&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        todos.forEach(todo -&gt; {</b>
+<b class="nc">&nbsp;            if (!todoList.equals(todo.getTodoList())) {</b>
+<b class="nc">&nbsp;                todo.setTodoList(todoList);</b>
+<b class="nc">&nbsp;                todo.setIndexTodo(Short.valueOf(request.getIndex()));</b>
+<b class="nc">&nbsp;                toDoRepository.save(todo);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (!phaseTodoProjectRepository.existsDistinctByTodoAndPhaseProject(todo, phaseProject)) {</b>
+<b class="nc">&nbsp;                PhaseTodoProject phaseTodoProject1 = new PhaseTodoProject();</b>
+<b class="nc">&nbsp;                phaseTodoProject1.setPhaseProject(phaseProject);</b>
+<b class="nc">&nbsp;                phaseTodoProject1.setTodo(todo);</b>
+<b class="nc">&nbsp;                phaseTodoProjectRepository.save(phaseTodoProject1);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        Activity activity = new Activity();</b>
+<b class="nc">&nbsp;        activity.setMemberCreatedId(request.getIdUser());</b>
+<b class="nc">&nbsp;        activity.setProjectId(request.getIdProject());</b>
+<b class="nc">&nbsp;        activity.setUrl(request.getUrlPath());</b>
+&nbsp;
+<b class="nc">&nbsp;        String memberName = request.getNameUser(); // hoặc query từ idUser</b>
+<b class="nc">&nbsp;        activity.setContentActionProject(</b>
+&nbsp;                  &quot; đã kéo &quot;
+<b class="nc">&nbsp;                        + request.getIdTodo().size() + &quot; công việc vào giai đoạn &#39;&quot;</b>
+<b class="nc">&nbsp;                        + phaseProject.getName() + &quot;&#39;&quot;</b>
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        mbMeActivityRepository.save(activity);</b>
+&nbsp;
+<b class="nc">&nbsp;        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;kéo công viec vào giai đoạn thành công&quot;);</b>
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Thêm công việc vào giai đoạn thành công&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; updatePhase(String id, MACreatePhaseRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Request nhận vào bắt đầu sprint:{}&quot;, request.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; optionalPhaseProject = maPhaseRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalPhaseProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn công việc này&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;Project&gt; optionalProject = projectRepository.findById(request.getIdProject());</b>
+<b class="fc">&nbsp;        if (optionalProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy project&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Long startTime = Long.valueOf(request.getStartTime());</b>
+<b class="fc">&nbsp;        Long endTime = Long.valueOf(request.getEndTime());</b>
+&nbsp;
+&nbsp;        // Kiểm tra endTime phải sau startTime
+<b class="fc">&nbsp;        if (endTime &lt;= startTime) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.BAD_REQUEST, &quot;Thời gian kết thúc phải lớn hơn thời gian bắt đầu&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Tiến hành cập nhật
+<b class="fc">&nbsp;        PhaseProject phaseProject = optionalPhaseProject.get();</b>
+<b class="fc">&nbsp;        phaseProject.setName(request.getName());</b>
+<b class="fc">&nbsp;        phaseProject.setCode(request.getCode());</b>
+<b class="fc">&nbsp;        phaseProject.setStartTime(startTime);</b>
+<b class="fc">&nbsp;        phaseProject.setEndTime(endTime);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (request.getDescriptions() != null) {</b>
+<b class="fc">&nbsp;            phaseProject.setDescriptions(request.getDescriptions());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        maPhaseRepository.save(phaseProject);</b>
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; existsPhaseProject = maPhaseRepository.findById(id);</b>
+<b class="fc">&nbsp;        log.info(&quot;{} {} {}&quot;, existsPhaseProject.get().getId(), existsPhaseProject.get().getName(), existsPhaseProject.get().getDescriptions());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật thành công giai đoạn&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ResponseObject&lt;?&gt; updateStatusPhase(String id, Integer indexStatus) {
+<b class="fc">&nbsp;        log.info(&quot;Request đầu vào: {} {}&quot;, id, indexStatus);</b>
+<b class="fc">&nbsp;        StatusPhase newStatus = null; // Đổi tên biến để rõ ràng hơn</b>
+<b class="fc">&nbsp;        if (indexStatus != null) {</b>
+<b class="fc">&nbsp;            newStatus = StatusPhase.values()[indexStatus];</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; optionalPhaseProject = maPhaseRepository.findById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalPhaseProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn công việc này&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PhaseProject phaseProject = optionalPhaseProject.get();</b>
+<b class="fc">&nbsp;        StatusPhase oldStatus = phaseProject.getStatusPhase();</b>
+&nbsp;
+&nbsp;        VelocityRecord velocityRecord;
+<b class="fc">&nbsp;        Optional&lt;VelocityRecord&gt; optionalVelocityRecord = velocityRecordRepository.findAll().stream()</b>
+&nbsp;                // Thêm null check để tránh NullPointerException nếu getPhaseProject() null
+<b class="pc">&nbsp;                .filter(vr -&gt; vr.getPhaseProject() != null &amp;&amp; vr.getPhaseProject().getId().equals(phaseProject.getId()))</b>
+<b class="fc">&nbsp;                .findFirst();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalVelocityRecord.isEmpty()) {</b>
+<b class="fc">&nbsp;            velocityRecord = new VelocityRecord();</b>
+&nbsp;            // Đặt PhaseProject cho VelocityRecord mới
+<b class="fc">&nbsp;            velocityRecord.setPhaseProject(phaseProject);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            velocityRecord = optionalVelocityRecord.get();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Cập nhật actualPoint nếu trạng thái mới là DA_HOAN_THANH hoặc QUA_HAN
+<b class="fc">&nbsp;        if (newStatus == StatusPhase.DA_HOAN_THANH || newStatus == StatusPhase.QUA_HAN) {</b>
+<b class="fc">&nbsp;            Double actualStoryPoint = StoryPoint(phaseProject);</b>
+<b class="fc">&nbsp;            velocityRecord.setActualPoint(actualStoryPoint);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Cập nhật estimatedPoint và xử lý email khi trạng thái chuyển sang DANG_LAM (bắt đầu)
+&nbsp;        // Đây là nơi hợp lý để tính estimatedPoint và gửi email, thường là khi giai đoạn BẮT ĐẦU
+<b class="pc">&nbsp;        if (newStatus == StatusPhase.DANG_LAM &amp;&amp; oldStatus != StatusPhase.DANG_LAM) { // Chỉ thực hiện khi chuyển trạng thái sang DANG_LAM</b>
+<b class="fc">&nbsp;            Double estimatedStoryPoint = commit(phaseProject);</b>
+<b class="fc">&nbsp;            velocityRecord.setEstimatedPoint(estimatedStoryPoint);</b>
+&nbsp;
+&nbsp;            // Gửi email
+<b class="fc">&nbsp;            List&lt;String&gt; emailStaffs = maPhaseStaffProjectRepository.getStaffByPhaseProject(id);</b>
+<b class="fc">&nbsp;            List&lt;String&gt; emailStudents = maPhaseStaffProjectRepository.getStudentByPhaseProject(id);</b>
+&nbsp;
+<b class="fc">&nbsp;            Project project = phaseProject.getProject(); // Đảm bảo Project được fetch hoặc lazily loaded</b>
+&nbsp;
+<b class="fc">&nbsp;            String subject = &quot;Dự án &quot; + project.getName() + &quot; có giai đoạn mới đã bắt đầu&quot;;</b>
+<b class="fc">&nbsp;            String title = &quot;&quot;; // Có thể điền nội dung hoặc bỏ qua nếu không dùng</b>
+&nbsp;
+<b class="fc">&nbsp;            String timeStart = Instant.ofEpochMilli(phaseProject.getStartTime()).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;));</b>
+<b class="nc">&nbsp;            String timeEnd = Instant.ofEpochMilli(phaseProject.getEndTime()).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;            String content = String.format(&quot;&quot;&quot;</b>
+&nbsp;                    &lt;p&gt;Thời gian của giai đoạn %s: &lt;/p&gt;
+&nbsp;                    &lt;ul&gt;
+&nbsp;                        &lt;li&gt;Bắt đầu: &lt;strong&gt;%s&lt;/strong&gt;&lt;/li&gt;
+&nbsp;                        &lt;li&gt;Kết thúc: &lt;strong&gt;%s&lt;/strong&gt;&lt;/li&gt;
+&nbsp;                    &lt;/ul&gt;
+&nbsp;                    &lt;p&gt;Vui lòng đăng nhập để biết thêm chi tiết.&lt;/p&gt;
+<b class="nc">&nbsp;                    &quot;&quot;&quot;, phaseProject.getName(), timeStart, timeEnd);</b>
+&nbsp;
+<b class="nc">&nbsp;            asyncEmailService.sendEmailToStaffs(emailStaffs.toArray(new String[0]), subject, title, content);</b>
+<b class="nc">&nbsp;            asyncEmailService.sendEmailToStudents(emailStudents.toArray(new String[0]), subject, title, content);</b>
+&nbsp;
+<b class="nc">&nbsp;            log.info(&quot;Bắt đầu giai đoạn {}, đã gửi email nhân viên và sinh viên trong dự án&quot;, phaseProject.getId());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Lưu VelocityRecord sau khi tất cả các điểm đã được cập nhật
+<b class="fc">&nbsp;        velocityRecordRepository.save(velocityRecord);</b>
+&nbsp;
+&nbsp;        // Cập nhật trạng thái của PhaseProject
+<b class="fc">&nbsp;        phaseProject.setStatusPhase(newStatus);</b>
+<b class="fc">&nbsp;        maPhaseRepository.save(phaseProject); // Lưu PhaseProject cuối cùng, sau khi tất cả logic đã hoàn tất</b>
+&nbsp;
+&nbsp;        // Cập nhật progress của Project
+<b class="fc">&nbsp;        Optional&lt;Project&gt; existProjectOptional = projectRepository.findProjectById(phaseProject.getProject().getId());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (existProjectOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Project projectToUpdate = existProjectOptional.get();</b>
+<b class="fc">&nbsp;            int countPhaseCompleted = maPhaseRepository.countPhaseProjectByIdProject(projectToUpdate.getId(), StatusPhase.DA_HOAN_THANH);</b>
+<b class="fc">&nbsp;            int countAllPhase = maPhaseRepository.getAllPhaseByProjectId(projectToUpdate.getId()).size();</b>
+&nbsp;
+<b class="pc">&nbsp;            if (countAllPhase &gt; 0) { // Tránh chia cho 0</b>
+<b class="fc">&nbsp;                float progress = ((float) countPhaseCompleted / countAllPhase) * 100;</b>
+<b class="fc">&nbsp;                projectToUpdate.setProgress(progress);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                projectToUpdate.setProgress(0.0f); // Nếu không có giai đoạn nào, tiến độ là 0</b>
+&nbsp;            }
+<b class="fc">&nbsp;            projectRepository.save(projectToUpdate); // Lưu Project sau khi cập nhật progress</b>
+&nbsp;        }
+&nbsp;//        Activity activity = new Activity();
+&nbsp;//        activity.setMemberCreatedId(request.getIdUser());
+&nbsp;//        activity.setProjectId(request.getIdProject());
+&nbsp;//        activity.setUrl(request.getUrlPath());
+&nbsp;//
+&nbsp;//        String memberName = request.getNameUser(); // hoặc query từ idUser
+&nbsp;//        activity.setContentActionProject(
+&nbsp;//                memberName +   &quot; đã bắt đầu  giai đoạn &#39;&quot;
+&nbsp;//                        + phaseProject.getName()
+&nbsp;//        );
+&nbsp;//
+&nbsp;//        mbMeActivityRepository.save(activity);
+&nbsp;
+&nbsp;//        messagingTemplate.convertAndSend(&quot;/topic/subscribe-activity&quot;,&quot;Thêm cong việc thành công&quot;);
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Cập nhật thành công giai đoạn&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deletePhase(String id) {
+&nbsp;
+<b class="fc">&nbsp;        Optional&lt;PhaseProject&gt; optionalPhaseProject = maPhaseRepository.findById(id);</b>
+<b class="fc">&nbsp;        if (optionalPhaseProject.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        PhaseProject phaseProject = optionalPhaseProject.get();</b>
+<b class="fc">&nbsp;        phaseProject.setStatus(EntityStatus.INACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;        maPhaseRepository.save(phaseProject);</b>
+<b class="fc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Xóa thành công giai đoạn&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseObject&lt;?&gt; deleteTodoByPhase(String id) {
+<b class="fc">&nbsp;        Optional&lt;Todo&gt; optionalTodo = toDoRepository.findById(id);</b>
+<b class="pc">&nbsp;        if (optionalTodo.isEmpty()) {</b>
+<b class="fc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy công việc&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;//        Optional&lt;Project&gt; optionalProject = projectRepository.findById(request.getIdProject());
+&nbsp;//        if(optionalProject.isEmpty()){
+&nbsp;//            return new ResponseObject&lt;&gt;(null,HttpStatus.NOT_FOUND,&quot;không tìm thấy project&quot;);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        TodoList todoList = maListTodoProjectRepository.findByProject(request.getIdProject())
+&nbsp;//                .stream().findFirst().orElse(null);
+&nbsp;//
+&nbsp;//        // Nếu chưa có TodoList, tạo mới
+&nbsp;//        if (todoList == null) {
+&nbsp;//            todoList = new TodoList();
+&nbsp;//            todoList.setCode(optionalTodo.get().getCode());
+&nbsp;//            todoList.setName(optionalTodo.get().getName());
+&nbsp;//            todoList.setIndexTodoList(todoListHelper.genIndexTodoList(request.getIdProject()));
+&nbsp;//
+&nbsp;//            todoList.setProject(optionalProject.get());
+&nbsp;//            maListTodoProjectRepository.save(todoList);
+&nbsp;//        }
+&nbsp;//
+&nbsp;
+<b class="nc">&nbsp;        Optional&lt;PhaseTodoProject&gt; optionalPhaseTodoProject = phaseTodoProjectRepository.findByTodo(optionalTodo.get());</b>
+<b class="nc">&nbsp;        if (optionalPhaseTodoProject.isEmpty()) {</b>
+<b class="nc">&nbsp;            return new ResponseObject&lt;&gt;(null, HttpStatus.NOT_FOUND, &quot;Không tìm thấy giai đoạn &quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        phaseTodoProjectRepository.delete(optionalPhaseTodoProject.get());</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ResponseObject&lt;&gt;(null, HttpStatus.OK, &quot;Xoá thành công&quot;);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private Double commit(PhaseProject phaseProject) {
+&nbsp;
+<b class="fc">&nbsp;        Double velocity = tb(phaseProject.getProject().getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Double totalWorkdayForPhase = capacityEstimateRepository.findAll().stream()</b>
+<b class="pc">&nbsp;                .filter(v -&gt; v.getPhaseProject() != null &amp;&amp; v.getPhaseProject().getId().equals(phaseProject.getId())) // Compare by ID for correctness</b>
+<b class="pc">&nbsp;                .filter(v -&gt; v.getStatus() == EntityStatus.ACTIVE)</b>
+<b class="pc">&nbsp;                .mapToDouble(v -&gt; v.getWorkday() != null ? v.getWorkday() : 0.0)</b>
+<b class="fc">&nbsp;                .sum();</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Tổng số giai ngày làm việc ước luognjw trong giai đoạn : ===&gt; {}&quot;, totalWorkdayForPhase);</b>
+&nbsp;
+<b class="fc">&nbsp;        Double estimatedPoints = velocity * totalWorkdayForPhase;</b>
+&nbsp;
+<b class="fc">&nbsp;        return estimatedPoints;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private Double tb(String id) {
+<b class="fc">&nbsp;        Float actualPoint = velocityRecordRepository.avgActualPoint(id);</b>
+<b class="fc">&nbsp;        Float actualWorkingDay = velocityRecordRepository.avgActualWorkingDay(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        Double velocity = 0.0;</b>
+<b class="pc">&nbsp;        if (actualWorkingDay != null &amp;&amp; actualWorkingDay &gt; 0) {</b>
+<b class="pc">&nbsp;            velocity = (double) actualPoint / actualWorkingDay == 0 ? 1.0 : (double) actualPoint / actualWorkingDay;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            velocity = 1.0;</b>
+<b class="fc">&nbsp;            log.warn(&quot;Actual working day is null or zero for project ID: &quot; + &quot;. Velocity will be 0.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return velocity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Double StoryPoint(PhaseProject pp) {
+<b class="fc">&nbsp;        Set&lt;StatusTodo&gt; validPhases = Set.of(StatusTodo.DA_HOAN_THANH, StatusTodo.HOAN_THANH_SOM, StatusTodo.QUA_HAN);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Todo&gt; todos = toDoRepository.findAll().stream()</b>
+<b class="pc">&nbsp;                .filter(t -&gt; t.getTodoList() != null &amp;&amp; t.getTodoList().getPhaseProject() != null)</b>
+<b class="fc">&nbsp;                .filter(t -&gt; t.getTodoList().getPhaseProject().getId().equals(pp.getId()))</b>
+<b class="pc">&nbsp;                .filter(t -&gt; t.getStatusTodo() != null &amp;&amp; validPhases.contains(t.getStatusTodo()))</b>
+<b class="fc">&nbsp;                .toList();</b>
+<b class="fc">&nbsp;        log.info(&quot;Danh sách todos : ==&gt; {}&quot;, todos);</b>
+&nbsp;
+<b class="fc">&nbsp;        Double storyPointUL = todos.stream()</b>
+<b class="fc">&nbsp;                .map(Todo::getStoryPoint)</b>
+<b class="fc">&nbsp;                .filter(Objects::nonNull)</b>
+<b class="fc">&nbsp;                .map(Short::doubleValue)</b>
+<b class="fc">&nbsp;                .reduce(0.0, Double::sum);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Tổng số story point thực tế đạt đc ===&gt;{}&quot;, storyPointUL);</b>
+&nbsp;
+<b class="fc">&nbsp;        return storyPointUL;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

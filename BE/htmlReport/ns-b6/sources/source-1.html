@@ -1,0 +1,129 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ADProjectStaffRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.project.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ADProjectStaffRepository (udpm.hn.server.core.admin.project.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$5Nm4aTZP</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$5Nm4aTZP$auxiliary$g1MHiQ67</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$5Nm4aTZP$auxiliary$Sgu06qJb</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$ON9BvSSc</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$ON9BvSSc$auxiliary$8j6hrIys</td>
+  </tr>
+  <tr>
+    <td class="name">ADProjectStaffRepository$MockitoMock$ON9BvSSc$auxiliary$ctVK344T</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.project.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.project.model.response.ADProjectStaffStudentResponse;
+&nbsp;import udpm.hn.server.repository.StaffRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ADProjectStaffRepository extends StaffRepository {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            s.id as id,
+&nbsp;            s.name as name,
+&nbsp;            s.code as code,
+&nbsp;            s.emailFe as email,
+&nbsp;            s.picture as image
+&nbsp;        from Staff s 
+&nbsp;        join StaffMajorFacility smf on s.id = smf.staff.id
+&nbsp;        join MajorFacility mf on smf.majorFacility.id = mf.id
+&nbsp;        where mf.id = :IdMajorFacility
+&nbsp;        and s.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;ADProjectStaffStudentResponse&gt; getALl(@Param(&quot;IdMajorFacility&quot;)  String IdMajorFacility);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;	select 
+&nbsp;	    s.name as name,
+&nbsp;	    s.id as id,
+&nbsp;	    s.code as code,
+&nbsp;	    s.picture as image,
+&nbsp;	    s.emailFe as email,
+&nbsp;	    sp.role as role
+&nbsp;	from  StaffProject sp 
+&nbsp;	join Staff s ON sp.staff.id = s.id 
+&nbsp;	join Project p on sp.project.id  = p.id 
+&nbsp;	where p.id = :idProject
+&nbsp;	and sp.status = 0
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    List&lt;ADProjectStaffStudentResponse&gt; getAllStaffByProject (@Param(&quot;idProject&quot;) String idProject);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

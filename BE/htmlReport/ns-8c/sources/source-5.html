@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MAListTodoProjectRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.manage.todo.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MAListTodoProjectRepository (udpm.hn.server.core.manage.todo.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$HUefHPqk</td>
+  </tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$HUefHPqk$auxiliary$eRElThG7</td>
+  </tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$HUefHPqk$auxiliary$Vr69UBUI</td>
+  </tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$MPnCBbMY</td>
+  </tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$MPnCBbMY$auxiliary$WWmTdqtC</td>
+  </tr>
+  <tr>
+    <td class="name">MAListTodoProjectRepository$MockitoMock$MPnCBbMY$auxiliary$y00qzsdp</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.manage.todo.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.entity.TodoList;
+&nbsp;import udpm.hn.server.infrastructure.constant.StatusListTodo;
+&nbsp;import udpm.hn.server.repository.TodoListRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MAListTodoProjectRepository extends TodoListRepository {
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select tl from TodoList tl 
+&nbsp;        join Project p on tl.project.id = p.id
+&nbsp;        join Todo  t on tl.id = t.todoList.id
+&nbsp;        left join PhaseTodoProject  ptp on t.id = ptp.todo.id
+&nbsp;        where p.id = :idProject and ptp.todo.id is null 
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;TodoList&gt; findByProject(@Param(&quot;idProject&quot;) String idProject);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select tl from TodoList tl 
+&nbsp;        join Project p on tl.project.id = p.id
+&nbsp;        join Todo  t on tl.id = t.todoList.id
+&nbsp;        left join PhaseTodoProject  ptp on t.id = ptp.todo.id
+&nbsp;        left join PhaseProject  pp on ptp.phaseProject.id = pp.id
+&nbsp;        where p.id = :idProject and pp.id = :idPhase 
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;TodoList&gt; findByProjectAndPhase(@Param(&quot;idProject&quot;) String idProject,@Param(&quot;idPhase&quot;) String idPhase);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select tl from TodoList tl 
+&nbsp;        join Project p on tl.project.id = p.id
+&nbsp;        left join PhaseProject  pp on tl.phaseProject.id = pp.id
+&nbsp;        where p.id = :idProject and pp.id = :idPhase and tl.StatusListTodo = :statusListTodo and tl.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;TodoList&gt; findTodoListNotStratedByProjectAndPhase(@Param(&quot;idProject&quot;) String idProject, @Param(&quot;idPhase&quot;) String idPhase,@Param(&quot;statusListTodo&quot;) StatusListTodo statusListTodo);
+&nbsp;//
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;    SELECT tl FROM TodoList tl
+&nbsp;    JOIN tl.project p
+&nbsp;    WHERE p.id = :id AND tl.status = 0
+&nbsp;&quot;&quot;&quot;)
+&nbsp;    List&lt;TodoList&gt; findTodoListByProject_Id(@Param(&quot;id&quot;) String id);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>

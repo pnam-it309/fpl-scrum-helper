@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DFDepartmentFacilityExtendRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">udpm.hn.server.core.admin.department.departmentfacility.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: DFDepartmentFacilityExtendRepository (udpm.hn.server.core.admin.department.departmentfacility.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$cr3a290d</td>
+  </tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$cr3a290d$auxiliary$F7TDCOhM</td>
+  </tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$cr3a290d$auxiliary$gvRMR5Vz</td>
+  </tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$iLZfYJgI</td>
+  </tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$iLZfYJgI$auxiliary$AjnUK9Jh</td>
+  </tr>
+  <tr>
+    <td class="name">DFDepartmentFacilityExtendRepository$MockitoMock$iLZfYJgI$auxiliary$oxe2dqXW</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package udpm.hn.server.core.admin.department.departmentfacility.repository;
+&nbsp;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.CreateOrUpdateDepartmentFacilityRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.request.FindFacilityDetailRequest;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.response.DepartmentFacilityResponse;
+&nbsp;import udpm.hn.server.core.admin.department.departmentfacility.model.response.ListFacilityResponse;
+&nbsp;import udpm.hn.server.entity.DepartmentFacility;
+&nbsp;import udpm.hn.server.repository.DepartmentFacilityRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface DFDepartmentFacilityExtendRepository extends DepartmentFacilityRepository {
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;                ROW_NUMBER() OVER (ORDER BY df.createdDate DESC ) AS orderNumber,
+&nbsp;               	df.id AS departmentFacilityId,
+&nbsp;               	df.facility.id AS facilityId,
+&nbsp;               	df.status AS departmentFacilityStatus,
+&nbsp;               	f.name AS facilityName,
+&nbsp;               	df.createdDate AS createdDate,
+&nbsp;               	df.facility.code AS facilityCode
+&nbsp;            FROM
+&nbsp;               	DepartmentFacility df
+&nbsp;           LEFT JOIN Facility f ON
+&nbsp;               	f.id = df.facility.id
+&nbsp;            WHERE
+&nbsp;               	(df.department.id = :id) AND
+&nbsp;               	(:#{#req.facilityName} IS NULL OR f.name LIKE CONCAT(&#39;%&#39;, :#{#req.facilityName}, &#39;%&#39;) )
+&nbsp;               	order by df.createdDate DESC 
+&nbsp;            &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;                         	    
+&nbsp;            SELECT
+&nbsp;                COUNT(df.id)
+&nbsp;            FROM
+&nbsp;                DepartmentFacility df
+&nbsp;               LEFT JOIN Facility f ON
+&nbsp;                f.id = df.facility.id
+&nbsp;            WHERE
+&nbsp;                (df.department.id = :id) AND
+&nbsp;                (:#{#req.facilityName} IS NULL OR f.name LIKE CONCAT(&#39;%&#39;, :#{#req.facilityName}, &#39;%&#39;) )
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Page&lt;DepartmentFacilityResponse&gt; getDepartmentFacilitiesByValueFind(String id, Pageable pageable, @Param(&quot;req&quot;) FindFacilityDetailRequest req);
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            SELECT df FROM DepartmentFacility df
+&nbsp;            WHERE df.department.id = :#{#req.departmentId} AND df.facility.id = :#{#req.facilityId}
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;DepartmentFacility&gt; existsByIdDepartmentAndIdFacilityAndIdAdd(@Param(&quot;req&quot;) CreateOrUpdateDepartmentFacilityRequest req);
+&nbsp;
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;            SELECT df FROM DepartmentFacility df
+&nbsp;            WHERE df.department.id = :departmentId AND df.facility.id = :facilityId
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    Optional&lt;DepartmentFacility&gt; existsDepartmentFacilitiesByDepartmentAndFacility(String departmentId, String facilityId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;            SELECT
+&nbsp;                f.id AS facilityId,
+&nbsp;                f.name AS facilityName
+&nbsp;            FROM
+&nbsp;                Facility f
+&nbsp;            WHERE
+&nbsp;                f.status = 0
+&nbsp;            &quot;&quot;&quot;)
+&nbsp;    List&lt;ListFacilityResponse&gt; getListFacility();
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            df.id AS departmentFacilityId,
+&nbsp;            f.name AS facilityName,
+&nbsp;            f.id AS facilityId
+&nbsp;        FROM
+&nbsp;            DepartmentFacility df
+&nbsp;        LEFT JOIN Facility f ON
+&nbsp;            f.id = df.facility.id
+&nbsp;        WHERE 
+&nbsp;            df.id =:id
+&nbsp;        &quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;        SELECT 
+&nbsp;            COUNT(df.id)
+&nbsp;        FROM
+&nbsp;            DepartmentFacility df
+&nbsp;        LEFT JOIN Facility f ON
+&nbsp;            f.id = df.facility.id
+&nbsp;        WHERE 
+&nbsp;            df.id =:id
+&nbsp;        &quot;&quot;&quot;)
+&nbsp;    ListFacilityResponse getDetailDepartmentFacilityResponse(String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-27 18:37</div>
+</div>
+</body>
+</html>
