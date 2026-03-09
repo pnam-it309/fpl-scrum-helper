@@ -3,6 +3,7 @@ package udpm.hn.server.infrastructure.config.database;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import udpm.hn.server.entity.Staff;
 import udpm.hn.server.entity.StaffRole;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Lazy(false)
 public class DBGenerator {
     @Value("${db.generator.is-generated}")
     private String isGenerated;
